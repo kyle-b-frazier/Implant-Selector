@@ -2,7 +2,7 @@
 
 Open questions from the October 2026 catalog check. Each one needs a manufacturer rep (or a newer catalog) to settle. Items marked ⚠ show a "Please confirm before adding" prompt in the app until they're resolved. When one is settled, update `catalog.js`, delete its `caution`, and tick it off here.
 
-Catalogs used: Straumann iEXCEL Product Catalog 2026 (450.036), Straumann Product Catalog 2022/2023 Special Edition (452.201), Nobel Biocare Product Catalog 2024/2025, and Neodent Grand Morse Catalog **2018**. Page numbers are the catalog's own.
+Catalogs used: Straumann iEXCEL Product Catalog 2026 (450.036), Straumann Product Catalog 2022/2023 Special Edition (452.201), Nobel Biocare Product Catalog 2024/2025, Nobel S series brochure MKT-6268 Rev 00 (Jan 2026), Neodent 2026 Product Catalog (CALIT.2040), and Neodent Grand Morse Catalog 2018. Page numbers are the catalog's own.
 
 ## Straumann
 
@@ -13,22 +13,17 @@ Catalogs used: Straumann iEXCEL Product Catalog 2026 (450.036), Straumann Produc
 
 - [ ] ⚠ **Locator R-Tx NP 6mm.** The app has REF30506-06; the 2024/2025 catalog (p.77) lists **REF30506-07**. The rest of the series suggests -06 may be right and the catalog may have a misprint. Ask Nobel.
 - [ ] ⚠ **NobelZygoma TiUltra twist and pilot drills.** The catalog page (p.46) has a misprint: the Pilot Drill Ø3.5 row repeats 301605 and lists 88521, which is the TiUnite PureSet number. The catalog also gives Twist Drill Ø2.9 as Regular 301603 / Short 301602, the reverse of the app. 301606/301607, which the app uses for Twist Drill Ø3.5, aren't in the catalog. Ask Nobel for the correct numbers.
-- [ ] **Not in the 2024/2025 catalog:** zygoma healing abutments 32332/32333 (app: for TiUnite 45°/60° multi-unit abutments), lab prosthetic screw 38420 (1/pkg), and S series "Multi-unit Abutment, NP" 301950. Confirm they're still sold, or remove them.
-- [ ] **S series (NobelActive S / NobelParallel S / NobelReplace S)** isn't in the 2024/2025 catalog. Only the parts it shares with the conical connection line could be checked (cover screw, bridge healing abutment, bridge impression coping, Xeal multi-unit abutments, esthetic abutments, titanium blanks, healing caps). Everything else still rests on the S series brochure (96517 NA 2603).
+- [ ] **Not in the 2024/2025 catalog:** zygoma healing abutments 32332/32333 (app: for TiUnite 45°/60° multi-unit abutments) and lab prosthetic screw 38420 (1/pkg). Confirm they're still sold, or remove them.
+- [ ] **S series: US availability.** The S series brochure you uploaded (MKT-6268 Rev 00, Jan 2026) says on its cover that *all* S series implants and components are under FDA 510(k) and Health Canada review and not for sale in the US. The app follows a later North American brochure (96517 NA 2603, Mar 2026) that lists the implants, healing abutments, impression copings and scan bodies as available, with only the temporary abutments and Universal Base ASC still pending. The app's header note for the S series now says this. Ask Nobel what is orderable in the US today.
+- [ ] **S series guided surgery parts** (implant mounts 302565/302583/302567/302568, template abutments 302569/302570) aren't in the January brochure. Every other S series article number in the app matches it (pp.26–29).
 
 ## Neodent
 
-The uploaded Neodent catalog is the **2018** edition, while the app's Neodent data cites a 2026 catalog, so differences may just be newer numbers. Getting the current Grand Morse catalog would settle all of these at once.
+Checked against the Neodent 2026 Product Catalog (CALIT.2040). It confirms 180 of the app's 182 Neodent article numbers, and it supersedes the 2018 catalog wherever the two differ.
 
-- [ ] ⚠ **Screwdrivers.** In the 2018 catalog (p.42), Neo Screwdriver Torque Connection short 105.133 is 20mm (app says 16.5mm), medium 105.132 is 25mm (app 22mm), and long is 105.134 at 38mm (app 105.157 at 32mm). Neo Manual Screwdriver short 104.058 is 20mm (app 21mm), and long is 104.059 at 38mm (app 104.070 at 37mm).
-- [ ] **Numbers that differ from the 2018 catalog** (no warning in the app yet):
-  - GM Exact Abutment: 2018 has GH 0.8–5.5 = 115.237–115.242; app has GH 0.8–4.5 = 115.269–115.273 (p.21)
-  - Exact Mini Conical 17°/30°: 2018 has 115.249–251 / 115.252–254; app has 115.275–277 / 115.278–280 (p.23)
-  - Tapered drills Ø3.5–5.0: 2018 has 103.399, 103.402, 103.405, 103.408, 103.411; app has 103.513–103.517 (p.40)
-  - Scanbodies: 2018 GM implant intraoral is 108.183 (app 108.207); Mini Conical is 108.137 intraoral / 108.094 model (app 108.218 / 118.410); Micro is 108.140 / 108.102 (app 108.219) (p.54)
-  - Protection cylinders: 2018 Mini Conical is 106.220 (app 106.268 Regular, 106.278 Wide); Micro is 106.219 (app 106.267) (p.23, p.25)
-  - Depth probe: 2018 is 129.004 (app 129.034) (p.58)
-- [ ] **Not in the 2018 catalog at all:** Ø7.0 implants (140/109.1059–1062), customizable healing abutments 106.223–106.232, Neo GM screws 116.290–116.292, coping screws 116.267/116.270, DirectFit screw 116.303, digital crown coping 118.362, GM Abutment scanbody 108.220. Also unconfirmed: whether analog 101.090 covers Ø7.0 (2018 lists it for Ø5.0/6.0).
+- [ ] ⚠ **Implant analog sizes.** The 2026 catalog lists **101.103 = Ø3.5/3.75** and **101.089 = Ø4.0/4.3**, consistently in six places (pp.21, 23, 25 and its index); the app follows it. The 2018 catalog lists them the other way round. Neither edition lists an analog for **Ø7.0** implants: 101.090 is Ø5.0/6.0, so the wizard offers no analog for a Ø7.0 implant. Ask Neodent which analog each size uses.
+- [ ] ⚠ **Neotorque coping screw for GM Abutment.** The 2026 catalog (p.18) prints 116.266 for both the titanium and the Neotorque screw. The app shows the Neotorque one as 116.267, which the catalog doesn't contain. Ask Neodent for the Neotorque number.
+- [ ] **DirectFit screw 116.303** isn't in the 2026 catalog, which only links to a DirectFit Screw DME file. Confirm the article number.
 
 ## Gaps (not errors, nothing changed)
 

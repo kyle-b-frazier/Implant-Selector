@@ -1109,8 +1109,10 @@ const CATALOG_NOBEL_PARALLEL = {
 /* =========================================================================
    NEODENT® GRAND MORSE® (GM) — Helix GM® Implant Line, Acqua® & NeoPoros®
    surfaces. Source: Neodent® GM Product Catalog 2026, Global Edition
-   (Straumann Group). Implants, cover screws, healing abutments, impression
-   components, core abutments, screws and surgical instruments below are
+   (Straumann Group); every article re-checked against the Neodent 2026
+   Product Catalog (CALIT.2040, 6/2026) in Oct 2026. Implants, cover
+   screws, healing abutments, impression components, core abutments,
+   screws and surgical instruments below are
    transcribed directly from the catalog. A handful of deeper restorative
    lines (Titanium Base gingival-height variants, angled/CoCr/custom
    abutments) were left out where the source table's platform/height
@@ -1180,8 +1182,8 @@ const CATALOG_NEODENT_GM = {
     ["Profile 4.5mm","106.226"],["Profile 5.5mm","106.227"]
   ]},
   {label:"GM Customizable Healing Abutment, Ø7.0mm", material:"Titanium", items:[
-    ["Profile 1.5mm","106.228"],["Profile 2.5mm","106.229"],["Profile 3.5mm","106.230"],
-    ["Profile 4.5mm","106.231"],["Profile 5.5mm","106.232"]
+    ["Profile 2.5mm","106.228"],["Profile 3.5mm","106.229"],["Profile 4.5mm","106.230"],
+    ["Profile 5.5mm","106.231"],["Profile 6.5mm","106.232"]
   ]}
 ],
 "Impression Components & Analogs": [
@@ -1191,8 +1193,9 @@ const CATALOG_NEODENT_GM = {
   ]},
   {label:"GM Implant Analog (hybrid repositionable, conventional/digital)", material:"Titanium",
     fitsImplantDiameters: true, // each analog only matches the implant diameters in its name
+    caution:"Analog sizes need confirming: Neodent's 2026 catalog lists 101.103 as Ø3.5/3.75 and 101.089 as Ø4.0/4.3 (as shown here), but its 2018 catalog lists them the other way round. Neither lists an analog for Ø7.0 implants (101.090 is Ø5.0/6.0). Confirm with Neodent before ordering.",
     items:[
-    ["Ø3.5/3.75mm","101.089"],["Ø4.0/4.3mm","101.103"],["Ø5.0/6.0/7.0mm","101.090"]
+    ["Ø3.5/3.75mm","101.103"],["Ø4.0/4.3mm","101.089"],["Ø5.0/6.0mm","101.090"]
   ]},
   {label:"Digital", material:"SST", items:[
     ["GM Implant Intraoral Scanbody","108.207"]
@@ -1207,7 +1210,7 @@ const CATALOG_NEODENT_GM = {
     ["Coping for Crown — Digital Workflow","118.362"],["Scanbody","108.220"],
     ["Protection Cylinder","106.221"],["Titanium Coping","118.300"]
   ]},
-  {label:"GM Micro Abutment (Ø3.5mm, incl. Neo Removable Screw)", material:"Titanium", items:[
+  {label:"GM Micro Abutment (Ø3.5mm, single/multi-unit screw-retained)", material:"Titanium", items:[
     ["GH 0.8mm","115.255"],["GH 1.5mm","115.256"],["GH 2.5mm","115.257"],
     ["GH 3.5mm","115.258"],["GH 4.5mm","115.259"],["GH 5.5mm","115.260"]
   ]},
@@ -1229,7 +1232,7 @@ const CATALOG_NEODENT_GM = {
     ["GH 1.5mm","115.278"],["GH 2.5mm","115.279"],["GH 3.5mm","115.280"]
   ]},
   {label:"GM Mini Conical Abutment — Accessories", material:"Titanium / SST", items:[
-    ["Analog","101.092"],["Scanbody, Regular","108.218"],["Scanbody, Long","118.410"],
+    ["Analog","101.092"],["Scanbody","108.218"],["One Step Hybrid Coping, Long","118.410"],
     ["Protection Cylinder, Regular","106.268"],["Protection Cylinder, Wide","106.278"],
     ["Polishing Protector","123.008"]
   ]}
@@ -1238,18 +1241,22 @@ const CATALOG_NEODENT_GM = {
   {label:"Neo GM Screw (restorative, abutment reseating)", material:"Titanium", items:[
     ["Short — for GH 0.8mm abutments","116.290"],["Standard — for GH 1.5–2.5mm abutments","116.291"],["Long — for GH 3.5–5.5mm abutments","116.292"]
   ]},
-  {label:"Neotorque® Replacement Coping Screw", material:"Titanium", items:[
-    ["For GM Abutment coping","116.266"],["For GM Abutment coping (alt.)","116.267"],
-    ["For GM Mini Conical Abutment coping","116.269"],["For GM Mini Conical Abutment coping (alt.)","116.270"]
+  {label:"Replacement Coping Screw", material:"Titanium", items:[
+    ["Titanium — for GM Abutment copings","116.266"],
+    ["Titanium — for Mini Conical / Micro Abutment copings","116.269"],
+    ["Neotorque® — for Mini Conical / Micro Abutment copings","116.270"]
+  ]},
+  {label:"Replacement Coping Screw, Neotorque® — GM Abutment", material:"Titanium",
+    caution:"Article number needs confirming: Neodent's 2026 catalog (p.18) prints 116.266 for both the titanium and the Neotorque GM Abutment coping screw, so the Neotorque number shown here (116.267) can't be confirmed from it. Confirm with Neodent before ordering.",
+    items:[
+    ["Neotorque® — for GM Abutment copings","116.267"]
   ]},
   {label:"DirectFit™ Screw", material:"Titanium", items:[
     ["Neodent DirectFit Screw","116.303"]
   ]}
 ],
 "Surgical Instruments": [
-  {label:"Screwdrivers", material:"SST",
-    caution:"Lengths and article numbers need confirming: Neodent's GM catalog (2018 edition, p.42) lists the Neo Screwdriver Torque Connection as Short 105.133 = 20mm, Medium 105.132 = 25mm, Long 105.134 = 38mm, and the Neo Manual Screwdriver as Short 104.058 = 20mm, Medium 104.060 = 25mm, Long 104.059 = 38mm. Confirm with Neodent before ordering.",
-    items:[
+  {label:"Screwdrivers", material:"SST", items:[
     ["Neo Screwdriver Torque Connection, Short (16.5mm)","105.133"],
     ["Neo Screwdriver Torque Connection, Medium (22mm)","105.132"],
     ["Neo Screwdriver Torque Connection, Long (32mm)","105.157"],
@@ -1258,13 +1265,13 @@ const CATALOG_NEODENT_GM = {
     ["Neo Manual Screwdriver, Long (37mm)","104.070"]
   ]},
   {label:"Implant Drivers", material:"SST", items:[
-    ["GM Implant Driver — Contra-angle, max 35 N.cm","105.131"],
+    ["GM Implant Driver — Contra-angle, Regular, max 35 N.cm","105.168"],
     ["GM Implant Driver — Torque Wrench, Short (22mm)","105.129"],
     ["GM Implant Driver — Torque Wrench, Long (30mm)","105.130"]
   ]},
   {label:"Drills — Initial & Tapered (Helix GM®)", material:"SST", items:[
-    ["Initial Drill, Ø2.0mm","103.170"],["Tapered Drill Ø3.5mm","103.513"],["Tapered Drill Ø3.75mm","103.514"],
-    ["Tapered Drill Ø4.0mm","103.515"],["Tapered Drill Ø4.3mm","103.516"],["Tapered Drill Ø5.0mm","103.517"]
+    ["Initial Drill, Ø2.0mm","103.170"],["Tapered Drill Ø3.5mm (regular, 35mm)","103.561"],["Tapered Drill Ø3.75mm (regular, 35mm)","103.564"],
+    ["Tapered Drill Ø4.0mm (regular, 35mm)","103.567"],["Tapered Drill Ø4.3mm (regular, 35mm)","103.570"],["Tapered Drill Ø5.0mm (regular, 35mm)","103.573"]
   ]},
   {label:"Direction Indicators & Measurement", material:"Titanium", items:[
     ["Direction Indicator 2.8/3.5","128.019"],["Direction Indicator 3.0/3.75","128.020"],
@@ -1311,6 +1318,10 @@ CATALOG_NEODENT_GM["All-on-X Components"] = [
      marked as pending rather than excluded.
    - LiteSet trays are also FDA-pending but have no article number given in
      the brochure at all, so there's nothing to add as a catalog item.
+   - Article numbers re-checked (Oct 2026) against the S series brochure
+     MKT-6268 Rev 00 (Jan 2026), which says the whole S series was then
+     under FDA 510(k) and Health Canada review. Everything below matches
+     it except the Guided Surgical Components, which it doesn't list.
 
    IMPLANT LENGTH CAVEAT — stated directly in the brochure article-number
    tables and folded into each implant group's label below for visibility:
@@ -1457,7 +1468,7 @@ S_SERIES_SHARED["All-on-X Components"] = [
 const CATALOG_NAS = {
   ...S_SERIES_SHARED,
   "Implants": [
-    {label:"Ø3.5mm NP — TiUltra®", note:"Actual length runs 0.5mm shorter than the stated size.", material:"Roxolid-equiv. Ti / TiUltra®", items:[
+    {label:"Ø3.5mm NP — TiUltra®", note:"Actual length runs 0.5mm shorter than the stated size.", material:"TiUltra®", items:[
       ["8.5mm","302273"],["10mm","302274"],["11.5mm","302275"],["13mm","302276"],["15mm","302277"],["18mm","302278"]
     ]},
     {label:"Ø4.3mm NP — TiUltra®", note:"Actual length runs 0.5mm shorter than the stated size.", material:"TiUltra®", items:[
@@ -1964,21 +1975,21 @@ const SYSTEMS = {
   nas: {
     id:"nas", name:"NobelActive S", sub:"Nobel Biocare · S Series · NP conical connection",
     fullMeta:"Nobel Biocare S series brochure 96517 NA 2603, Rev 00 (03/26)",
-    caveat:"Some S series items are pending FDA/Health Canada clearance — flagged individually where it applies.",
+    caveat:"US availability needs confirming: Nobel's January 2026 S series brochure (MKT-6268) says all S series implants and components were under FDA 510(k) review and not for sale in the US; the March 2026 NA brochure (96517) lists implants and some components as available. Items still pending are flagged individually.",
     catalog: CATALOG_NAS, order: CATEGORY_ORDER_S_SERIES, surgical: SURGICAL_CATEGORIES_S_SERIES,
     prefix: { "Implants": "NobelActive® S Implant" }
   },
   nps: {
     id:"nps", name:"NobelParallel S", sub:"Nobel Biocare · S Series · NP conical connection",
     fullMeta:"Nobel Biocare S series brochure 96517 NA 2603, Rev 00 (03/26)",
-    caveat:"Some S series items are pending FDA/Health Canada clearance — flagged individually where it applies.",
+    caveat:"US availability needs confirming: Nobel's January 2026 S series brochure (MKT-6268) says all S series implants and components were under FDA 510(k) review and not for sale in the US; the March 2026 NA brochure (96517) lists implants and some components as available. Items still pending are flagged individually.",
     catalog: CATALOG_NPS, order: CATEGORY_ORDER_S_SERIES, surgical: SURGICAL_CATEGORIES_S_SERIES,
     prefix: { "Implants": "NobelParallel™ S Implant" }
   },
   nrs: {
     id:"nrs", name:"NobelReplace S", sub:"Nobel Biocare · S Series · NP conical connection",
     fullMeta:"Nobel Biocare S series brochure 96517 NA 2603, Rev 00 (03/26)",
-    caveat:"Some S series items are pending FDA/Health Canada clearance — flagged individually where it applies.",
+    caveat:"US availability needs confirming: Nobel's January 2026 S series brochure (MKT-6268) says all S series implants and components were under FDA 510(k) review and not for sale in the US; the March 2026 NA brochure (96517) lists implants and some components as available. Items still pending are flagged individually.",
     catalog: CATALOG_NRS, order: CATEGORY_ORDER_S_SERIES, surgical: SURGICAL_CATEGORIES_S_SERIES,
     prefix: { "Implants": "NobelReplace® S Implant" }
   },
@@ -1996,7 +2007,7 @@ const SYSTEMS = {
   },
   gm: {
     id:"gm", name:"Neodent GM Helix Acqua", sub:"Straumann Group · Grand Morse®",
-    fullMeta:"Neodent® GM Product Catalog 2026, Global Edition (Straumann Group)",
+    fullMeta:"Neodent 2026 Product Catalog (CALIT.2040, 6/2026)",
     catalog: CATALOG_NEODENT_GM, order: CATEGORY_ORDER_NEODENT, surgical: SURGICAL_CATEGORIES_NEODENT,
     prefix: { "Implants — Helix GM®": "" }
   }

@@ -184,12 +184,14 @@ test('NobelZygoma: TiUltra and TiUnite implants each get their own abutment line
 });
 
 test('Neodent GM: implant analogs match the implant diameter', () => {
+  // Numbering per the Neodent 2026 catalog (the 2018 edition swaps 101.089/101.103 — see FOLLOW-UP.md).
   const analogs = 'Impression Components & Analogs';
-  assert.ok(fits('gm', analogs, '101.089', implant('gm', '140.943'))); // Ø3.5 -> Ø3.5/3.75 analog
-  assert.ok(!fits('gm', analogs, '101.103', implant('gm', '140.943'))); // Ø4.0/4.3 analog
-  assert.ok(fits('gm', analogs, '101.103', implant('gm', '140.948'))); // Ø4.3
+  assert.ok(fits('gm', analogs, '101.103', implant('gm', '140.943'))); // Ø3.5 -> Ø3.5/3.75 analog
+  assert.ok(!fits('gm', analogs, '101.089', implant('gm', '140.943'))); // Ø4.0/4.3 analog
+  assert.ok(fits('gm', analogs, '101.089', implant('gm', '140.948'))); // Ø4.3
+  assert.ok(fits('gm', analogs, '101.090', implant('gm', '140.1009'))); // Ø6.0 -> Ø5.0/6.0
   assert.ok(!fits('gm', analogs, '101.090', implant('gm', '140.943')));
-  assert.ok(fits('gm', analogs, '101.090', implant('gm', '140.1059'))); // Ø7.0 -> Ø5.0/6.0/7.0 analog
+  assert.ok(!fits('gm', analogs, '101.090', implant('gm', '140.1059'))); // no listed analog for Ø7.0
 });
 
 test('the Multi-unit Abutment step offers only abutments', () => {
@@ -229,13 +231,18 @@ test('catalog-verified article numbers', () => {
     ['nact', 'Locator R-Tx® Abutments', 'REF30015-01', 'Ø4.0mm (4/pkg)'],
     ['nact', 'Locator R-Tx® Abutments', 'REF08530-20', 'Ø4.0mm (20/pkg)'],
     ['blc', 'Novaloc® Abutments', '2010.703-NOV', 'Matrix Housing, Extended (4 pcs)'],
-    ['gm', 'Impression Components & Analogs', '101.089', 'Ø3.5/3.75mm'],
-    ['gm', 'Impression Components & Analogs', '101.103', 'Ø4.0/4.3mm'],
+    ['gm', 'Impression Components & Analogs', '101.103', 'Ø3.5/3.75mm'], // Neodent 2026 p.23
+    ['gm', 'Impression Components & Analogs', '101.089', 'Ø4.0/4.3mm'],
+    ['gm', 'Impression Components & Analogs', '101.090', 'Ø5.0/6.0mm'],
     ['gm', 'Impression Components & Analogs', '108.161', 'Closed Tray, Long'],
     ['gm', 'Impression Components & Analogs', '108.162', 'Open Tray, Regular'],
-    ['gm', 'Surgical Instruments', '105.131', 'GM Implant Driver — Contra-angle, max 35 N.cm'],
+    ['gm', 'Surgical Instruments', '105.168', 'GM Implant Driver — Contra-angle'], // Neodent 2026 p.46
     ['gm', 'Surgical Instruments', '105.129', 'GM Implant Driver — Torque Wrench, Short (22mm)'],
     ['gm', 'Surgical Instruments', '105.130', 'GM Implant Driver — Torque Wrench, Long (30mm)'],
+    ['gm', 'Surgical Instruments', '103.561', 'Tapered Drill Ø3.5mm'], // 103.513 is the pilot drill (p.44)
+    ['gm', 'GM Healing Abutments', '106.228', 'Profile 2.5mm'], // Ø7.0 customizable starts at 2.5
+    ['gm', 'GM Healing Abutments', '106.232', 'Profile 6.5mm'],
+    ['gm', 'GM Mini Conical Abutments (Multi-unit)', '118.410', 'One Step Hybrid Coping, Long'],
     ['nact', 'Esthetic Abutments & Universal Base', '301101', 'NP, H1.5mm'], // US numbers
     ['nact', 'Esthetic Abutments & Universal Base', '301106', 'WP, H3.0mm'],
     ['blc', 'Healing Abutments — Crown', '064.8511S', 'GH 1.5 / AH 2mm (3.5mm)'],
@@ -274,11 +281,13 @@ test('parts awaiting manufacturer confirmation carry a caution', () => {
     ['nact', 'Locator R-Tx® Abutments', 'REF30506-06'], // NP 6mm
     ['nzcc', 'Surgical Instruments & Sets', '301602'], // zygoma TiUltra drills
     ['nzeh', 'Surgical Instruments & Sets', '301606'],
-    ['gm', 'Surgical Instruments', '105.133'], // Neodent screwdrivers
+    ['gm', 'Impression Components & Analogs', '101.103'], // analog numbering differs 2018 vs 2026
+    ['gm', 'Replacement Screws', '116.267'], // Neotorque GM Abutment coping screw misprinted
   ];
   for (const [sid, category, ref] of awaiting) {
     const { group } = find(sid, category, ref);
     assert.ok(group.caution && group.caution.length > 40, `${sid} ${ref}: no caution`);
   }
   assert.ok(!find('nact', 'Locator R-Tx® Abutments', 'REF30506-05').group.caution); // only the 6mm one
+  assert.ok(!find('gm', 'Surgical Instruments', '105.133').group.caution); // confirmed by the 2026 catalog
 });
