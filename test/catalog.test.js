@@ -293,6 +293,20 @@ test('catalog-verified article numbers', () => {
   assert.ok(!fits('nact', 'Clinical & Laboratory Screws', '37894', implant('nact', '34131')));
 });
 
+test('order output catalog pages: each line gets its group\'s page, or the unverified note', () => {
+  const src = (sid, category, ref) => JSON.parse(JSON.stringify($('catalogSourceFor')(orderLine(sid, category, ref))));
+  assert.deepEqual(src('blc', 'Implants', '035.9010S'), { source: 'Straumann iEXCEL 2026 p.5' });
+  assert.deepEqual(src('nact', 'Clinical & Laboratory Screws', '29285'), { source: 'Nobel 2024/2025 pp.79, 128' });
+  assert.deepEqual(src('nact', 'Clinical & Laboratory Screws', '38420'), { unverified: '38420 is not in Nobel 2024/2025' });
+  assert.ok(src('nzcc', 'Surgical Instruments & Sets', '301606').unverified);
+  assert.deepEqual(src('nzcc', 'Surgical Instruments & Sets', '301602'), { source: 'Nobel 2024/2025 p.46' });
+  assert.ok(src('gm', 'Replacement Screws', '116.303').unverified);
+  // A line added from the All-on-X tab finds its group's page too.
+  const allOnX = SYSTEMS.blc.catalog['All-on-X Components'][0];
+  const line = { system: 'blc', category: 'All-on-X Components', group: allOnX.label, name: allOnX.items[0][0], ref: allOnX.items[0][1] };
+  assert.equal($('catalogSourceFor')(line).source, allOnX.source);
+});
+
 test('the order check flags parts that fit none of the implants, and nothing else', () => {
   const order = {};
   for (const line of [

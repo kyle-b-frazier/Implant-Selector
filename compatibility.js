@@ -441,3 +441,22 @@ function mismatchReason(sid, it, implants){
 function formatMismatchLine(w){
   return `${SYSTEMS[w.system].name} — "${w.item.name}" (${w.item.group}): ${w.reason}`;
 }
+
+/* Catalog citation for one order line, for the "catalog pages" switch on
+   the order output: the catalog page its group cites, or the group's
+   `unverified` note when this item's number is one the catalogs don't
+   list. Looks in the line's own category first, then the rest (Favorites
+   and All-on-X lines can carry a copy's category). */
+function catalogSourceFor(it){
+  const cat = SYSTEMS[it.system].catalog;
+  const cats = [it.category, ...Object.keys(cat).filter(c=>c!==it.category)];
+  for(const c of cats){
+    const group = (cat[c]||[]).find(g=>g.label===it.group && g.items.some(([,r])=>r===it.ref));
+    if(!group) continue;
+    if(group.unverified && (!group.source || group.unverified.includes(it.ref.replace(/^REF\s*/,'')))){
+      return { unverified: group.unverified };
+    }
+    return { source: group.source };
+  }
+  return { unverified: 'Not found in the catalog data' };
+}

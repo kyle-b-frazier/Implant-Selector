@@ -116,7 +116,6 @@
   .home-card:hover .hc-icon{background:#DCEFC4; transform:scale(1.06);}
   .home-card .hc-icon svg{width:24px; height:24px;}
   .home-card .hc-txt h3{margin:0 0 3px; font-size:15px; color:var(--ink); font-weight:700;}
-  .home-card .hc-txt p{margin:0; font-size:12.5px; color:var(--ink-soft);}
   .home-card .hc-arrow{margin-left:auto; color:#9AA3AF; font-size:18px; transition:transform .18s ease;}
   .home-card:hover .hc-arrow{transform:translateX(3px); color:var(--green-deep);}
   @keyframes homeFadeDown{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
@@ -196,7 +195,6 @@
     white-space:nowrap;
   }
   .systembar button.sysbtn .sysname{font-size:12.5px; font-weight:700;}
-  .systembar button.sysbtn .syssub{font-size:9.5px; color:#8493B8; letter-spacing:.02em;}
   .systembar button.sysbtn:hover{border-color:var(--green); color:#fff;}
   .systembar button.sysbtn.active{
     background:var(--green);
@@ -204,7 +202,6 @@
     color:#0E2B00;
   }
   .systembar button.sysbtn.active .sysname{color:#0E2B00;}
-  .systembar button.sysbtn.active .syssub{color:#274600;}
   .systembar button.favtab .sysname{color:var(--green);}
   .systembar button.favtab:hover{border-color:var(--green);}
   .systembar button.favtab:hover .sysname{color:#fff;}
@@ -213,7 +210,6 @@
     border-color:var(--green);
   }
   .systembar button.favtab.active .sysname{color:#0E2B00;}
-  .systembar button.favtab.active .syssub{color:#274600;}
   .systembar button.first-system-tab{
     margin-left:10px;
     padding-left:18px;
@@ -815,6 +811,42 @@
     line-height:1.6;
     box-shadow:inset 0 1px 3px rgba(0,0,0,.04);
   }
+  .out-toggle{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:8px;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink-soft);
+    cursor:pointer;
+    user-select:none;
+  }
+  .out-toggle input{position:absolute; opacity:0; width:1px; height:1px;}
+  .out-toggle .switch{
+    position:relative;
+    width:32px;
+    height:18px;
+    border-radius:9px;
+    background:#C9CED8;
+    transition:background .15s;
+    flex:0 0 auto;
+  }
+  .out-toggle .switch::after{
+    content:"";
+    position:absolute;
+    top:2px;
+    left:2px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 1px 2px rgba(0,0,0,.25);
+    transition:transform .15s;
+  }
+  .out-toggle input:checked + .switch{background:var(--green);}
+  .out-toggle input:checked + .switch::after{transform:translateX(14px);}
+  .out-toggle input:focus-visible + .switch{outline:2px solid var(--green); outline-offset:2px;}
   textarea#outputText:focus{outline:2px solid var(--green); border-color:var(--green);}
   .copybtn{
     width:100%;
@@ -907,6 +939,11 @@
       <div class="empty-order">No items selected yet.<br>Choose components from the catalog to build your order.</div>
     </div>
     <div class="out-block">
+      <label class="out-toggle">
+        <input type="checkbox" id="catalogPagesToggle" onchange="setShowCatalogPages(this.checked)">
+        <span class="switch" aria-hidden="true"></span>
+        <span>Include catalog pages</span>
+      </label>
       <textarea id="outputText" readonly>No items selected.</textarea>
       <button class="copybtn" onclick="copyText()">📋 Copy Order to Clipboard</button>
       <button class="clearbtn" onclick="clearAll()">Clear all selections</button>
@@ -958,7 +995,7 @@ function buildSystemBar(){
 
   const geiBtn = document.createElement('button');
   geiBtn.className = 'sysbtn favtab' + (viewMode==='favorites' ? ' active':'');
-  geiBtn.innerHTML = `<span class="sysname">⭐ Favorites</span><span class="syssub">Curated 3–5mm preset</span>`;
+  geiBtn.innerHTML = `<span class="sysname">⭐ Favorites</span>`;
   geiBtn.onclick = ()=>{
     navigateWithFade(()=>{
       viewMode = 'favorites';
@@ -974,7 +1011,7 @@ function buildSystemBar(){
     const sys = SYSTEMS[id];
     const btn = document.createElement('button');
     btn.className = 'sysbtn' + (idx===0 ? ' first-system-tab' : '') + (id===activeSystemId && viewMode==='category' ? ' active':'');
-    btn.innerHTML = `<span class="sysname">${sys.name}</span><span class="syssub">${sys.sub}</span>`;
+    btn.innerHTML = `<span class="sysname">${sys.name}</span>`;
     btn.onclick = ()=>{
       navigateWithFade(()=>{
         activeSystemId = id;
@@ -1137,10 +1174,10 @@ function navigateWithFade(fn){
   }, 140);
 }
 
-async function pickSystemAndGo(promptTitle, systemIds){
+async function pickSystemAndGo(promptTitle, systemIds, message){
   return await showModal({
-    type:'select', title:promptTitle, message:'Which implant system?',
-    options: systemIds.map(id => ({ value:id, label: SYSTEMS[id].name, sublabel: SYSTEMS[id].sub }))
+    type:'select', title:promptTitle, message,
+    options: systemIds.map(id => ({ value:id, label: SYSTEMS[id].name }))
   });
 }
 
@@ -1168,8 +1205,8 @@ async function startSingleOrBridgeWizard(){
   const treatType = await showModal({
     type:'select', title:'What are you treating?',
     options:[
-      {value:'single', label:'Single Implant Crown(s)', sublabel:'One or more independent implants, each its own crown — no shared prosthesis'},
-      {value:'bridge', label:'Implant-Supported Bridge', sublabel:'Multiple implants supporting one connected prosthesis, may include pontics'}
+      {value:'single', label:'Single Implant Crown(s)'},
+      {value:'bridge', label:'Implant-Supported Bridge'}
     ]
   });
   if(!treatType) return;
@@ -1241,7 +1278,7 @@ async function startSingleOrBridgeWizard(){
 
 async function goToAllOnX(){
   const eligible = SYSTEM_IDS.filter(id => (SYSTEMS[id].catalog['All-on-X Components']||[]).length>0);
-  const id = await pickSystemAndGo('All-on-X Wizard', eligible);
+  const id = await pickSystemAndGo('All-on-X Wizard', eligible, 'Which implant system?');
   if(!id) return;
   navigateWithFade(()=>{
     activeSystemId = id;
@@ -1275,17 +1312,17 @@ function renderHomeView(){
       <div class="home-btn-row">
         <button class="home-card" id="homeCardWizard" type="button">
           <div class="hc-icon">${ICON_IMPLANT}</div>
-          <div class="hc-txt"><h3>Single Implant / Bridge Wizard</h3><p>Guided part selection for one implant site</p></div>
+          <div class="hc-txt"><h3>Single Implant / Bridge Wizard</h3></div>
           <div class="hc-arrow">&rsaquo;</div>
         </button>
         <button class="home-card" id="homeCardAllOnX" type="button">
           <div class="hc-icon">${ICON_ARCH}</div>
-          <div class="hc-txt"><h3>All-on-X Wizard</h3><p>Full-arch case, start to finish</p></div>
+          <div class="hc-txt"><h3>All-on-X Wizard</h3></div>
           <div class="hc-arrow">&rsaquo;</div>
         </button>
         <button class="home-card" id="homeCardCatalog" type="button">
           <div class="hc-icon">${ICON_BOOK}</div>
-          <div class="hc-txt"><h3>Full Catalog</h3><p>Browse every system and part manually</p></div>
+          <div class="hc-txt"><h3>Full Catalog</h3></div>
           <div class="hc-arrow">&rsaquo;</div>
         </button>
       </div>
@@ -1649,7 +1686,7 @@ async function runWizardStep(systemId, step, implantPlatform, defaultQty, stepLa
       const choice = await showModal({
         type:'select', progress: stepLabel, title: step.label,
         message: `${state.chosenOption.label} — which diameter / platform variant do you need?`,
-        options: groups.map((g,i)=>({value:i, label:g.label, sublabel:g.material||''})),
+        options: groups.map((g,i)=>({value:i, label:g.label})),
         showBack: history.length>0 || canBackFurther
       });
       if(choice==='__WIZARD_BACK__'){ const esc = handleBack(); if(esc) return esc; continue; }
@@ -2366,6 +2403,15 @@ function describeItem(it){
   return `${sys.name} — ${it.category}: ${it.group}, ${it.name}`;
 }
 
+/* "Catalog pages" switch above the order output. Remembered per browser. */
+let showCatalogPages = false;
+try{ showCatalogPages = localStorage.getItem('showCatalogPages') === '1'; }catch(e){}
+function setShowCatalogPages(on){
+  showCatalogPages = on;
+  try{ localStorage.setItem('showCatalogPages', on ? '1' : '0'); }catch(e){}
+  updateOutput();
+}
+
 function updateOutput(){
   const keys = Object.keys(selected);
   const ta = document.getElementById('outputText');
@@ -2398,6 +2444,10 @@ function updateOutput(){
       counter++;
       lines.push(`${counter}. ${describeItem(it)}`);
       lines.push(`    REF ${it.ref}  ·  Qty: ${it.qty}`);
+      if(showCatalogPages){
+        const c = catalogSourceFor(it);
+        lines.push(c.source ? `    Catalog: ${c.source}` : `    Catalog: not verified — ${c.unverified}`);
+      }
       lines.push('');
     });
   });
@@ -2760,6 +2810,7 @@ document.getElementById('searchBox').addEventListener('input', render);
 document.getElementById('homeBtn').addEventListener('click', ()=> navigateWithFade(()=>{ viewMode='home'; render(); }));
 
 /* ---------- Init ---------- */
+document.getElementById('catalogPagesToggle').checked = showCatalogPages;
 render();
 renderOrder();
 </script>
