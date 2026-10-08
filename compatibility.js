@@ -2,7 +2,7 @@
    COMPATIBILITY RULES — which catalog parts fit which implants. Platform,
    surface-generation and diameter matching, the per-system wizard steps,
    the multi-unit healing cap / temporary coping links, and the order
-   mismatch check. Pure functions over the catalog data in catalog.js (no
+   mismatch check. Pure functions over the catalog data in catalog/*.js (no
    page or DOM access), so test/catalog.test.js can run them in Node.
    ========================================================================= */
 /* ---------- Platform cross-check ----------

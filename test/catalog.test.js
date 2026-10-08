@@ -6,11 +6,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-// Load the two browser scripts into one shared global scope, exactly as
-// index.html's <script> tags do.
+// Load the browser scripts into one shared global scope, exactly as
+// index.html's <script src> tags do, in the same order.
+const root = path.join(__dirname, '..');
+const scripts = [...fs.readFileSync(path.join(root, 'index.html'), 'utf8').matchAll(/<script src="([^"]+)"><\/script>/g)].map((m) => m[1]);
 const ctx = vm.createContext({});
-for (const file of ['catalog.js', 'compatibility.js']) {
-  const src = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+for (const file of scripts) {
+  const src = fs.readFileSync(path.join(root, file), 'utf8');
   vm.runInContext(src, ctx, { filename: file });
 }
 const $ = (name) => vm.runInContext(name, ctx);
