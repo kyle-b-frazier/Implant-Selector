@@ -328,6 +328,20 @@
     gap:8px;
     min-width:0;
   }
+  .group-source{
+    padding:4px 16px;
+    background:#F8F9FB;
+    border-bottom:1px solid var(--line);
+    font-size:10.5px;
+    color:#6B7280;
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px 12px;
+  }
+  .group-source .unverified{
+    color:#7A4A0E;
+    font-weight:700;
+  }
   .group-head .headright{
     display:flex;
     align-items:center;
@@ -1075,6 +1089,26 @@ function renderGroupHead(container, systemId, category, group, labelPrefix){
   headEl.appendChild(right);
 
   container.appendChild(headEl);
+
+  // Where the article numbers come from, so whoever orders can check the
+  // catalog page. Hover shows the full catalog title.
+  if(group.source || group.unverified){
+    const src = document.createElement('div');
+    src.className = 'group-source';
+    if(group.source){
+      const s = document.createElement('span');
+      s.textContent = 'Source: ' + group.source;
+      s.title = Object.keys(CATALOG_SOURCES).filter(k=>group.source.includes(k)).map(k=>CATALOG_SOURCES[k]).join('\n');
+      src.appendChild(s);
+    }
+    if(group.unverified){
+      const u = document.createElement('span');
+      u.className = 'unverified';
+      u.textContent = '⚠ ' + group.unverified + ' — confirm before ordering';
+      src.appendChild(u);
+    }
+    container.appendChild(src);
+  }
 }
 
 /* ---------- Render category / search view ---------- */

@@ -127,6 +127,39 @@ test('the Favorites preset only reuses parts that are in the catalog', () => {
   }
 });
 
+test('every group cites its catalog page, or says what is unverified', () => {
+  const names = Object.keys($('CATALOG_SOURCES'));
+  const cite = new RegExp(`^(${names.map((n) => n.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')).join('|')}) (p\\.\\d+|pp\\.\\d+(–\\d+)?(, \\d+(–\\d+)?)*)$`);
+  const unverified = new Set();
+  const check = (where, group) => {
+    assert.ok(group.source || group.unverified, `${where}: "${group.label}" has no source`);
+    if (group.source) {
+      for (const part of group.source.split('; ')) assert.match(part, cite, `${where}: "${group.label}"`);
+    }
+    if (group.unverified) unverified.add(group.label);
+  };
+  for (const sid of SYSTEM_IDS) {
+    for (const [cat, groups] of Object.entries(SYSTEMS[sid].catalog)) {
+      for (const group of groups) check(`${sid} > ${cat}`, group);
+    }
+  }
+  for (const [sid, tabs] of Object.entries($('FAVORITES_PRESET'))) {
+    for (const groups of Object.values(tabs)) for (const group of groups) check(`${sid} Favorites`, group);
+  }
+  // Every one of these is on FOLLOW-UP.md. Settle it there before removing it here.
+  assert.deepEqual([...unverified].sort(), [
+    'DirectFit™ Screw',
+    'For Multi-unit Abutment restorations',
+    'Guided Implant Mount — CC S (NobelParallel S / NobelReplace S)',
+    'Guided Implant Mount — NobelActive S',
+    'Guided Template Abutment w/Screw — CC S',
+    'Healing Abutment — for TiUnite® 45°/60° multi-unit abutments',
+    'NP (6mm)',
+    'Replacement Coping Screw, Neotorque® — GM Abutment',
+    'TiUltra® Twist & Pilot Drills',
+  ]);
+});
+
 /* ---------- Implant-to-part pairing ---------- */
 
 test('Straumann BLC/BLX: RB and WB parts only fit their own base', () => {

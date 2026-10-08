@@ -2,6 +2,8 @@
 
 Open questions from the October 2026 catalog check. Each one needs a manufacturer rep (or a newer catalog) to settle. Items marked ⚠ show a "Please confirm before adding" prompt in the app until they're resolved. When one is settled, update `catalog.js`, delete its `caution`, and tick it off here.
 
+Every part group in the app shows the catalog page its article numbers come from ("Source: …"). Groups with a number that isn't in any of these catalogs also show "⚠ … confirm before ordering"; there are nine such groups, all covered below. The test suite lists them too, so a new unsourced part fails `npm test`.
+
 Catalogs used: Straumann iEXCEL Product Catalog 2026 (450.036), Straumann Product Catalog 2022/2023 Special Edition (452.201), Nobel Biocare Product Catalog 2024/2025, Nobel S series brochure MKT-6268 Rev 00 (Jan 2026), Neodent 2026 Product Catalog (CALIT.2040), and Neodent Grand Morse Catalog 2018. Page numbers are the catalog's own.
 
 ## Straumann
