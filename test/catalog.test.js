@@ -34,6 +34,9 @@ function fits(sid, category, ref, profile) {
   const { group, name } = find(sid, category, ref);
   return $('partFits')(sid, category, group, name, profile);
 }
+function has(sid, category, ref) {
+  return (SYSTEMS[sid].catalog[category] || []).some((g) => g.items.some(([, r]) => r === ref));
+}
 function orderLine(sid, category, ref) {
   const { group, name } = find(sid, category, ref);
   return { name, group: group.label, category, qty: 1, system: sid, ref };
@@ -181,9 +184,66 @@ test('NobelZygoma: TiUltra and TiUnite implants each get their own abutment line
 
 test('Neodent GM: implant analogs match the implant diameter', () => {
   const analogs = 'Impression Components & Analogs';
-  assert.ok(fits('gm', analogs, '101.103', implant('gm', '140.943'))); // Ø3.5 -> Ø3.5/3.75 analog
+  assert.ok(fits('gm', analogs, '101.089', implant('gm', '140.943'))); // Ø3.5 -> Ø3.5/3.75 analog
+  assert.ok(!fits('gm', analogs, '101.103', implant('gm', '140.943'))); // Ø4.0/4.3 analog
+  assert.ok(fits('gm', analogs, '101.103', implant('gm', '140.948'))); // Ø4.3
   assert.ok(!fits('gm', analogs, '101.090', implant('gm', '140.943')));
   assert.ok(fits('gm', analogs, '101.090', implant('gm', '140.1059'))); // Ø7.0 -> Ø5.0/6.0/7.0 analog
+});
+
+test('the Multi-unit Abutment step offers only abutments', () => {
+  const notAnAbutment = /\bcaps?\b|coping|analog|\bscrews?\b(?!-)|impression|healing|polish|guide|\bplan\b|\bpins?\b|\baids?\b|accessor/i;
+  for (const [sid, steps] of Object.entries($('WIZARD_CONFIG'))) {
+    const step = steps.find((s) => s.label === 'Multi-unit Abutment');
+    if (!step) continue;
+    const opt = step.options[0];
+    const groups = $('applyOptionLabelFilters')(SYSTEMS[sid].catalog[opt.category], opt);
+    assert.ok(groups.length, sid);
+    for (const g of groups) assert.doesNotMatch(g.label, notAnAbutment, `${sid}: ${g.label}`);
+  }
+});
+
+test('multi-unit temporary copings: Nobel MUA Plus never gets the Xeal-only snap coping', () => {
+  const cfg = $('MULTI_UNIT_TEMP_COPING_CONFIG').nact;
+  const group = SYSTEMS.nact.catalog[cfg.category].find((g) => g.label === cfg.groupLabel);
+  const offered = Array.from(group.items.filter(([name]) => name.includes(cfg.nameFilter)), ([, ref]) => ref);
+  assert.deepEqual(offered, ['29046']);
+});
+
+// Article numbers corrected against the uploaded manufacturer catalogs
+// (Nobel Biocare 2024/2025, Straumann iEXCEL 2026, Neodent GM 2018).
+test('catalog-verified article numbers', () => {
+  const expected = [
+    ['nact', 'Surgical Instruments', '87294', 'NobelActive® PureSet'],
+    ['npcc', 'Surgical Instruments', '87295', 'NobelParallel® CC PureSet'],
+    ['nrcc', 'Surgical Instruments', '87296', 'NobelReplace® CC PureSet'],
+    ['nact', 'Surgical Instruments', '31278', 'Ø1.5mm, 7–15mm'],
+    ['nact', 'Surgical Instruments', '37875', 'Ø4.2/5.0mm, 7–10mm'],
+    ['nact', 'Surgical Instruments', '37876', 'Ø4.2/5.0mm, 7–15mm'],
+    ['npcc', 'Surgical Instruments', '37991', 'Ø3.75mm, 7–18mm'],
+    ['npcc', 'Surgical Instruments', '37996', 'Ø5.5mm, 7–10mm'],
+    ['nact', 'Clinical & Laboratory Screws', '37894', 'Laboratory Screw, NP'],
+    ['nact', 'Clinical & Laboratory Screws', '37895', 'Laboratory Screw, RP/WP (5/pkg)'],
+    ['nact', 'Clinical & Laboratory Screws', '37367', 'Omnigrip Clinical Screw, NP'],
+    ['nact', 'Locator R-Tx® Abutments', 'REF30015-01', 'Ø4.0mm (4/pkg)'],
+    ['nact', 'Locator R-Tx® Abutments', 'REF08530-20', 'Ø4.0mm (20/pkg)'],
+    ['blc', 'Novaloc® Abutments', '2010.703-NOV', 'Matrix Housing, Extended (4 pcs)'],
+    ['gm', 'Impression Components & Analogs', '101.089', 'Ø3.5/3.75mm'],
+    ['gm', 'Impression Components & Analogs', '101.103', 'Ø4.0/4.3mm'],
+    ['gm', 'Impression Components & Analogs', '108.161', 'Closed Tray, Long'],
+    ['gm', 'Impression Components & Analogs', '108.162', 'Open Tray, Regular'],
+    ['gm', 'Surgical Instruments', '105.131', 'GM Implant Driver — Contra-angle, max 35 N.cm'],
+    ['gm', 'Surgical Instruments', '105.129', 'GM Implant Driver — Torque Wrench, Short (22mm)'],
+    ['gm', 'Surgical Instruments', '105.130', 'GM Implant Driver — Torque Wrench, Long (30mm)'],
+  ];
+  for (const [sid, category, ref, name] of expected) {
+    assert.ok(find(sid, category, ref).name.startsWith(name), `${sid} ${ref}: "${find(sid, category, ref).name}"`);
+  }
+  // Instruments for platforms a system doesn't have are not listed under it.
+  for (const ref of ['36773', '36774', '37861', '37862', '31278']) assert.ok(!has('npcc', 'Surgical Instruments', ref), `npcc ${ref}`);
+  for (const ref of ['36773', '36774', '37859', '37860', '37861', '37862', '37869', '37870']) assert.ok(!has('nrcc', 'Surgical Instruments', ref), `nrcc ${ref}`);
+  // Lab screw 37894 is NP only.
+  assert.ok(!fits('nact', 'Clinical & Laboratory Screws', '37894', implant('nact', '34131')));
 });
 
 test('the order check flags parts that fit none of the implants, and nothing else', () => {

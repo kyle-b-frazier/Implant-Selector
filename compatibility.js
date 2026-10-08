@@ -199,7 +199,10 @@ const WIZARD_CONFIG = {
     {label:"Impression Coping", options:[{label:"Impression Component", category:"Impression Components"}]},
     {label:"Temporary Abutment", options:[{label:"Temporary Abutment", category:"Temporary Abutments"}]},
     {label:"Analog", options:[{label:"Analog / Digital Impression", category:"Analogs & Digital Impression"}]},
-    {label:"Multi-unit Abutment", options:[{label:"Screw-retained / Multi-unit Abutment", category:"Screw-retained / Multi-unit Abutments"}]},
+    // Only the abutments themselves — the same category also holds their
+    // impression posts, analogs, protective caps, copings and lab parts.
+    {label:"Multi-unit Abutment", options:[{label:"Screw-retained / Multi-unit Abutment", category:"Screw-retained / Multi-unit Abutments",
+      labelMustInclude:["Straight, angulation 0°", "Angled 17°", "Angled 30°"]}]},
     {label:"Final Abutment", options:[
       {label:"Anatomic (cementable)", category:"Anatomic Abutments"},
       {label:"Variobase® (screw-retained crown)", category:"Variobase® for Crown"},
@@ -264,7 +267,7 @@ WIZARD_CONFIG.nas = [
   {label:"Impression Coping", options:[{label:"Impression Coping", category:"Impression Copings"}]},
   {label:"Temporary Abutment", options:[{label:"Temporary Abutment", category:"Temporary Abutments"}]},
   {label:"Scan Body", options:[{label:"Scan Body", category:"Scan Bodies"}]},
-  {label:"Multi-unit Abutment", options:[{label:"Multi-unit Abutment Xeal", category:"Multi-unit Abutments"}]},
+  {label:"Multi-unit Abutment", options:[{label:"Multi-unit Abutment Xeal", category:"Multi-unit Abutments", labelMustExclude:"Healing Cap"}]},
   {label:"Final Abutment", options:[
     {label:"Esthetic Abutment, straight", category:"Esthetic Abutments", labelMustExclude:"15°"},
     {label:"Esthetic Abutment, 15°", category:"Esthetic Abutments", labelMustInclude:"15°"},
@@ -278,18 +281,26 @@ WIZARD_CONFIG.nrs = WIZARD_CONFIG.nas;
 // catalogs are structured identically, just different category contents).
 WIZARD_CONFIG.nzcc = [
   {label:"Cover Screw", options:[{label:"Cover Screw", category:"Cover Screws"}]},
-  {label:"Multi-unit Abutment", options:[{label:"Multi-unit Abutment", category:"Multi-unit Abutments", labelMustExclude:"Screw"}]},
+  {label:"Multi-unit Abutment", options:[{label:"Multi-unit Abutment", category:"Multi-unit Abutments", labelMustExclude:["Screw", "Healing Abutment", "Impression Coping"]}]},
   {label:"Multi-unit Abutment Screw", options:[{label:"Multi-unit Abutment Screw", category:"Multi-unit Abutments", labelMustInclude:"Screw"}]},
   {label:"Impression / Position Locator", options:[{label:"Impression or Position Locator", category:"Impression & Position Locators"}]}
 ];
 WIZARD_CONFIG.nzeh = WIZARD_CONFIG.nzcc;
 
 /* Option-level group filters: labelMustInclude / labelMustExclude narrow a
-   category down to the groups a wizard step is about. */
+   category down to the groups a wizard step is about. Each takes a string
+   or a list: a group is kept if its label contains any of the includes and
+   none of the excludes. */
 function applyOptionLabelFilters(groups, option){
   let out = groups;
-  if(option && option.labelMustInclude) out = out.filter(g=>g.label.includes(option.labelMustInclude));
-  if(option && option.labelMustExclude) out = out.filter(g=>!g.label.includes(option.labelMustExclude));
+  if(option && option.labelMustInclude){
+    const inc = [].concat(option.labelMustInclude);
+    out = out.filter(g=>inc.some(s=>g.label.includes(s)));
+  }
+  if(option && option.labelMustExclude){
+    const exc = [].concat(option.labelMustExclude);
+    out = out.filter(g=>!exc.some(s=>g.label.includes(s)));
+  }
   return out;
 }
 
@@ -365,7 +376,9 @@ const MULTI_UNIT_TEMP_COPING_CONFIG = {
     category: "Multi-unit Abutments Plus",
     label: "Temporary Coping",
     groupLabel: "Multi-unit Accessories",
-    nameFilter: "Temporary"
+    // Not the Temporary Snap Coping: Nobel lists it as compatible with
+    // Multi-unit Abutment Xeal only, and this line's abutments are MUA Plus.
+    nameFilter: "Temporary Coping"
   }
 };
 MULTI_UNIT_TEMP_COPING_CONFIG.blx = MULTI_UNIT_TEMP_COPING_CONFIG.blc;

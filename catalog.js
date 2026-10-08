@@ -223,7 +223,7 @@ const CATALOG_BLC = {
     ["GH 1.5 / AH 3.5mm","062.4961"]
   ]},
   {label:"Burn-out Coping", material:"POM", items:[
-    ["∅4.5mm, AH 3.5mm — single","065.0017"],["∅4.5mm, AH 3.5mm — 4 pack","065.0017V4"]
+    ["∅4.5mm, AH 3.5mm — single","065.0017"],["∅4.5mm, AH 3.5mm (4 pack)","065.0017V4"]
   ]}
 ],
 
@@ -374,9 +374,9 @@ const CATALOG_BLC = {
   ]},
   {label:"Matrix Housings", material:"Ti / POM / PEEK", items:[
     ["Matrix Housing, Titanium (4 pcs)","2010.701-NOV"],["Matrix Housing, PEEK (4 pcs)","2010.702-NOV"],
-    ["Matrix Housing, Extended","2010.703-NOV"]
+    ["Matrix Housing, Extended (4 pcs)","2010.703-NOV"]
   ]},
-  {label:"Retention Inserts (PEEK, 4 pcs)", material:"PEEK", items:[
+  {label:"Retention Inserts (4 pcs)", material:"PEEK", items:[
     ["Red — extra-light, ~300g","2010.710-NOV"],["White — light, ~750g","2010.711-NOV"],
     ["Yellow — medium, ~1200g","2010.712-NOV"],["Green — strong, ~1650g","2010.713-NOV"],
     ["Blue — extra-strong, ~2050g","2010.714-NOV"],["Black — ultra-strong, ~2450g","2010.715-NOV"]
@@ -523,9 +523,11 @@ const CATALOG_BLX = {
    Source: Straumann Product Catalog 2022/2023 International Edition
    (452.200-en), Bone Level Implants + Bone Level Tapered SC/NC/RC
    prosthetics sections, cross-checked against individual product pages
-   on shop.straumann.com. NOTE: BLT's edentulous/multi-unit ("Prosthetics
-   for Edentulous RC") line exists in Straumann's catalog but wasn't
-   verified in enough depth to include here with confidence — no
+   on shop.straumann.com. Every article below was re-checked against the
+   Product Catalog 2022/2023 Special Edition (452.201/en) in Oct 2026.
+   NOTE: BLT's edentulous/multi-unit ("Prosthetics for Edentulous RC")
+   line exists in Straumann's catalog but wasn't verified in enough
+   depth to include here with confidence — no
    All-on-X Components section for BLT yet. RC-platform coverage below is
    solid for Screw-retained/Variobase basics but thinner than NC; verify
    any RC restorative item against the current catalog before ordering. */
@@ -857,7 +859,7 @@ const NOBEL_CONICAL_SHARED = {
     ["Impression Coping, Open Tray","29089"],["Impression Coping, Closed Tray","38924"],
     ["Healing Cap Ø5.0, H4.1mm (2/pkg)","300162"],["Healing Cap Ø6.0, H4.1mm (2/pkg)","300164"],["Healing Cap Wide, H4.1mm (2/pkg)","300166"],
     ["Healing Cap Ø5.0, H5.5mm (2/pkg)","300163"],["Healing Cap Ø6.0, H5.5mm (2/pkg)","300165"],["Healing Cap Wide, H5.5mm (2/pkg)","300167"],
-    ["Multi-unit Aligning Instrument","300161"],["Temporary Snap Coping","38915"],["Temporary Coping","29046"],
+    ["Multi-unit Aligning Instrument","300161"],["Temporary Snap Coping (Multi-unit Abutment Xeal only)","38915"],["Temporary Coping","29046"],
     ["Drill Guide, Multi-unit","38917"],["Protection Analog, Multi-unit (5/pkg)","29123"]
   ]}
 ],
@@ -873,23 +875,26 @@ const NOBEL_CONICAL_SHARED = {
   ]},
   {label:"Processing Components (4/pkg)", material:"Various", items:[
     ["Processing Insert","REF30012-01"],["Denture Attachment Processing Assembly","REF30013-01"],
-    ["Processing Spacer","REF30018-01"],["Zero Retention Insert","REF30001-01"],["Low Retention Insert","REF30002-01"],
-    ["Medium Retention Insert","REF30003-01"],["High Retention Insert","REF30004-01"],["Impression Coping","REF30017-01"],
+    ["Processing Spacer","REF30018-01"],["Impression Coping","REF30017-01"],
     ["Block Out Spacer (20/pkg)","REF08514"]
   ]},
-  {label:"Replicas", material:"Ti", items:[
-    ["Ø3.35mm (1/pkg)","REF30014-01"],["Ø4.0mm (1/pkg)","REF30015-01"],["Ø4.0mm (5/pkg)","REF08530-20"],
-    ["Ø5.0mm (1/pkg)","REF30016-01"],["Ø5.0mm (5/pkg)","REF08516-20"]
+  {label:"Retention Inserts (4/pkg)", material:"Various", items:[
+    ["Zero Retention Insert","REF30001-01"],["Low Retention Insert","REF30002-01"],
+    ["Medium Retention Insert","REF30003-01"],["High Retention Insert","REF30004-01"]
+  ]},
+  {label:"Female Analogs", material:"Ti", items:[
+    ["Ø3.35mm (4/pkg)","REF30014-01"],["Ø4.0mm (4/pkg)","REF30015-01"],["Ø4.0mm (20/pkg)","REF08530-20"],
+    ["Ø5.0mm (4/pkg)","REF30016-01"],["Ø5.0mm (20/pkg)","REF08516-20"]
   ]}
 ],
 "Clinical & Laboratory Screws": [
   {label:"For Esthetic Abutment, Universal Base, Temporary Abutments, NobelProcera Ti Abutments/Bars", material:"Ti", items:[
     ["Clinical Screw, 3.0","37890"],["Clinical Screw, NP","37891"],["Clinical Screw, RP/WP","37892"],
-    ["Laboratory Screw, 3.0","36805"],["Laboratory Screw, NP/RP/WP","37894"],["Laboratory Screw (5/pkg)","37895"]
+    ["Laboratory Screw, 3.0","36805"],["Laboratory Screw, NP","37894"],["Laboratory Screw, RP/WP (5/pkg)","37895"]
   ]},
   {label:"For NobelProcera Zirconia ASC (Angulated Screw Channel)", material:"Ti", items:[
-    ["Omnigrip Clinical Screw, 3.0/NP","37367"],["Omnigrip Clinical Screw, RP/WP","37606"],
-    ["Omnigrip Laboratory Screw, 3.0/NP","37374"],["Omnigrip Laboratory Screw, RP/WP","37607"]
+    ["Omnigrip Clinical Screw, NP","37367"],["Omnigrip Clinical Screw, RP/WP","37606"],
+    ["Omnigrip Laboratory Screw, NP","37374"],["Omnigrip Laboratory Screw, RP/WP","37607"]
   ]},
   {label:"For Multi-unit Abutment restorations", material:"Ti", items:[
     ["Screw, Angled Abutment (NP)","36892"],["Screw, Angled Abutment (RP/WP)","37893"],
@@ -941,15 +946,15 @@ const CATALOG_NOBEL_RC = {
   ]}
 ],
 "Surgical Instruments": [
+  /* NobelReplace CC comes in NP and RP only: its catalog pages (2024/2025
+     ed. p.20-21) list just NP/RP drivers and bone mills. */
   {label:"Implant Drivers", material:"SST", items:[
-    ["3.0, 28mm","36773"],["3.0, 37mm","36774"],["NP, 28mm","36718"],["NP, 37mm","36719"],
-    ["RP, 28mm","36720"],["RP, 37mm","36721"],["WP, 28mm","37859"],["WP, 37mm","37860"]
+    ["NP, 28mm","36718"],["NP, 37mm","36719"],
+    ["RP, 28mm","36720"],["RP, 37mm","36721"]
   ]},
   {label:"Bone Mills & Guides", material:"SST", items:[
-    ["3.0 Ø4.0mm, Bone Mill with Guide","37861"],["3.0, Bone Mill Guide","37862"],
     ["NP Ø4.4mm, Bone Mill with Guide","37863"],["NP Ø5.2mm, Bone Mill with Guide","37864"],["NP, Bone Mill Guide","37865"],
-    ["RP Ø5.2mm, Bone Mill with Guide","37866"],["RP Ø6.2mm, Bone Mill with Guide","37867"],["RP, Bone Mill Guide","37868"],
-    ["WP Ø6.7mm, Bone Mill with Guide","37869"],["WP, Bone Mill Guide","37870"]
+    ["RP Ø5.2mm, Bone Mill with Guide","37866"],["RP Ø6.2mm, Bone Mill with Guide","37867"],["RP, Bone Mill Guide","37868"]
   ]},
   {label:"Drills", material:"SST", items:[
     ["NP Ø3.5mm, 8mm","32075"],["NP Ø3.5mm, 10mm","29367"],["NP Ø3.5mm, 11.5mm","36113"],["NP Ø3.5mm, 13mm","29368"],["NP Ø3.5mm, 16mm","29369"],
@@ -966,7 +971,7 @@ const CATALOG_NOBEL_RC = {
   ]},
   {label:"Additional Drills & Sets", material:"SST", items:[
     ["Drill with Tip Tapered, Ø2.0mm","36117"],["Precision Drill","36118"],["Guide Drill","35426"],
-    ["NobelReplace® CC PureSet (instruments + drills, all NobelReplace CC)","300546"]
+    ["NobelReplace® CC PureSet (instruments + drills, all NobelReplace CC)","87296"]
   ]}
 ],
 ...NOBEL_CONICAL_SHARED
@@ -1005,7 +1010,7 @@ const CATALOG_NOBEL_NA = {
     ["RP, 28mm","36720"],["RP, 37mm","36721"],["WP, 28mm","37859"],["WP, 37mm","37860"]
   ]},
   {label:"Twist Drills", material:"SST", items:[
-    ["Ø1.5mm, 7–10mm","31278"],["Ø2.0mm, 7–10mm","32296"],["Ø2.0mm, 7–15mm","32297"],["Ø2.0mm, 10–18mm","32299"]
+    ["Ø1.5mm, 7–15mm","31278"],["Ø2.0mm, 7–10mm","32296"],["Ø2.0mm, 7–15mm","32297"],["Ø2.0mm, 10–18mm","32299"]
   ]},
   {label:"Twist Step Drills", material:"SST", items:[
     ["Ø2.4/2.8mm, 7–10mm","32260"],["Ø2.4/2.8mm, 7–15mm","32261"],["Ø2.4/2.8mm, 10–18mm","32262"],
@@ -1013,14 +1018,14 @@ const CATALOG_NOBEL_NA = {
     ["Ø3.2/3.6mm, 7–10mm","32263"],["Ø3.2/3.6mm, 7–15mm","32264"],["Ø3.2/3.6mm, 10–18mm","32265"],
     ["Ø3.8/4.2mm, 7–10mm","32275"],["Ø3.8/4.2mm, 7–15mm","32276"],["Ø3.8/4.2mm, 10–18mm","32277"],
     ["Ø4.2/4.6mm, 7–10mm","37874"],["Ø4.2/4.6mm, 7–15mm","34582"],["Ø4.2/4.6mm, 10–18mm","34583"],
-    ["Ø4.2/5.0mm, 7–15mm","37875"],["Ø4.2/5.0mm, 10–18mm","37876"]
+    ["Ø4.2/5.0mm, 7–10mm","37875"],["Ø4.2/5.0mm, 7–15mm","37876"]
   ]},
   {label:"Screw Taps", material:"SST", items:[
     ["Ø3.0mm","36816"],["Ø3.5mm","36236"],["Ø4.3mm","36237"],["Ø5.0mm","36238"],
     ["Ø5.5mm, 7–10mm","37871"],["Ø5.5mm, 11.5–15mm","37872"]
   ]},
   {label:"Sets", material:"—", items:[
-    ["NobelActive® PureSet (instruments, all NobelActive implants)","300402"]
+    ["NobelActive® PureSet (instruments, all NobelActive implants)","87294"]
   ]}
 ],
 ...NOBEL_CONICAL_SHARED
@@ -1055,18 +1060,20 @@ const CATALOG_NOBEL_PARALLEL = {
   ]}
 ],
 "Surgical Instruments": [
+  /* NobelParallel CC has no 3.0 implant: its catalog pages (2024/2025 ed.
+     p.16-17) list NP/RP/WP drivers and bone mills, and twist drills from
+     Ø2.0 (the Ø1.5 drill is NobelActive only). */
   {label:"Implant Drivers", material:"SST", items:[
-    ["3.0, 28mm","36773"],["3.0, 37mm","36774"],["NP, 28mm","36718"],["NP, 37mm","36719"],
+    ["NP, 28mm","36718"],["NP, 37mm","36719"],
     ["RP, 28mm","36720"],["RP, 37mm","36721"],["WP, 28mm","37859"],["WP, 37mm","37860"]
   ]},
   {label:"Bone Mills & Guides", material:"SST", items:[
-    ["3.0 Ø4.0mm, Bone Mill with Guide","37861"],["3.0, Bone Mill Guide","37862"],
     ["NP Ø4.4mm, Bone Mill with Guide","37863"],["NP Ø5.2mm, Bone Mill with Guide","37864"],["NP, Bone Mill Guide","37865"],
     ["RP Ø5.2mm, Bone Mill with Guide","37866"],["RP Ø6.2mm, Bone Mill with Guide","37867"],["RP, Bone Mill Guide","37868"],
     ["WP Ø6.7mm, Bone Mill with Guide","37869"],["WP, Bone Mill Guide","37870"]
   ]},
   {label:"Twist Drills (shared with NobelActive)", material:"SST", items:[
-    ["Ø1.5mm, 7–10mm","31278"],["Ø2.0mm, 7–10mm","32296"],["Ø2.0mm, 7–15mm","32297"],["Ø2.0mm, 10–18mm","32299"]
+    ["Ø2.0mm, 7–10mm","32296"],["Ø2.0mm, 7–15mm","32297"],["Ø2.0mm, 10–18mm","32299"]
   ]},
   {label:"Twist Step Drills (shared with NobelActive)", material:"SST", items:[
     ["Ø2.4/2.8mm, 7–10mm","32260"],["Ø2.4/2.8mm, 7–15mm","32261"],["Ø2.4/2.8mm, 10–18mm","32262"],
@@ -1074,19 +1081,19 @@ const CATALOG_NOBEL_PARALLEL = {
     ["Ø3.2/3.6mm, 7–10mm","32263"],["Ø3.2/3.6mm, 7–15mm","32264"],["Ø3.2/3.6mm, 10–18mm","32265"],
     ["Ø3.8/4.2mm, 7–10mm","32275"],["Ø3.8/4.2mm, 7–15mm","32276"],["Ø3.8/4.2mm, 10–18mm","32277"],
     ["Ø4.2/4.6mm, 7–10mm","37874"],["Ø4.2/4.6mm, 7–15mm","34582"],["Ø4.2/4.6mm, 10–18mm","34583"],
-    ["Ø4.2/5.0mm, 7–15mm","37875"],["Ø4.2/5.0mm, 10–18mm","37876"]
+    ["Ø4.2/5.0mm, 7–10mm","37875"],["Ø4.2/5.0mm, 7–15mm","37876"]
   ]},
   {label:"Cortical Drills (NobelParallel CC)", material:"SST", items:[
     ["Ø3.75mm","38000"],["Ø4.3mm","38001"],["Ø5.0mm","38002"],["Ø5.5mm","38003"]
   ]},
-  {label:"Screw Taps (NobelParallel CC)", note:"Length range as listed in the catalog — confirm the exact range before ordering.", material:"SST", items:[
-    ["Ø3.75mm, option A","37990"],["Ø3.75mm, option B","37991"],
-    ["Ø4.3mm, option A","37992"],["Ø4.3mm, option B","37993"],
-    ["Ø5.0mm, option A","37994"],["Ø5.0mm, option B","37995"],
-    ["Ø5.5mm, option A","37996"],["Ø5.5mm, option B","37997"]
+  {label:"Screw Taps (NobelParallel CC)", material:"SST", items:[
+    ["Ø3.75mm, 7–13mm","37990"],["Ø3.75mm, 7–18mm","37991"],
+    ["Ø4.3mm, 7–13mm","37992"],["Ø4.3mm, 7–18mm","37993"],
+    ["Ø5.0mm, 7–13mm","37994"],["Ø5.0mm, 7–18mm","37995"],
+    ["Ø5.5mm, 7–10mm","37996"],["Ø5.5mm, 7–15mm","37997"]
   ]},
   {label:"Sets", material:"—", items:[
-    ["NobelParallel® CC PureSet (instruments, all NobelParallel CC implants)","300403"]
+    ["NobelParallel® CC PureSet (instruments, all NobelParallel CC implants)","87295"]
   ]}
 ],
 ...NOBEL_CONICAL_SHARED
@@ -1172,13 +1179,13 @@ const CATALOG_NEODENT_GM = {
 ],
 "Impression Components & Analogs": [
   {label:"GM Implant Exact Impression Coping", material:"Titanium", items:[
-    ["Closed Tray, Regular","108.160"],["Open Tray, Regular","108.161"],
-    ["Closed Tray, Long","108.162"],["Open Tray, Long","108.163"]
+    ["Closed Tray, Regular","108.160"],["Closed Tray, Long","108.161"],
+    ["Open Tray, Regular","108.162"],["Open Tray, Long","108.163"]
   ]},
   {label:"GM Implant Analog (hybrid repositionable, conventional/digital)", material:"Titanium",
     fitsImplantDiameters: true, // each analog only matches the implant diameters in its name
     items:[
-    ["Ø3.5/3.75mm","101.103"],["Ø4.0/4.3mm","101.089"],["Ø5.0/6.0/7.0mm","101.090"]
+    ["Ø3.5/3.75mm","101.089"],["Ø4.0/4.3mm","101.103"],["Ø5.0/6.0/7.0mm","101.090"]
   ]},
   {label:"Digital", material:"SST", items:[
     ["GM Implant Intraoral Scanbody","108.207"]
@@ -1242,9 +1249,9 @@ const CATALOG_NEODENT_GM = {
     ["Neo Manual Screwdriver, Long (37mm)","104.070"]
   ]},
   {label:"Implant Drivers", material:"SST", items:[
-    ["GM Implant Driver — Contra-angle, max 35 N.cm","105.129"],
-    ["GM Implant Driver — Torque Wrench, Short (22mm)","105.130"],
-    ["GM Implant Driver — Torque Wrench, Long (30mm)","105.160"]
+    ["GM Implant Driver — Contra-angle, max 35 N.cm","105.131"],
+    ["GM Implant Driver — Torque Wrench, Short (22mm)","105.129"],
+    ["GM Implant Driver — Torque Wrench, Long (30mm)","105.130"]
   ]},
   {label:"Drills — Initial & Tapered (Helix GM®)", material:"SST", items:[
     ["Initial Drill, Ø2.0mm","103.170"],["Tapered Drill Ø3.5mm","103.513"],["Tapered Drill Ø3.75mm","103.514"],
@@ -1918,26 +1925,26 @@ const SYSTEMS = {
   },
   blt: {
     id:"blt", name:"Straumann BLT", sub:"CrossFit® Connection (SC/NC/RC)",
-    fullMeta:"Straumann Product Catalog 2022/2023 Int'l Ed. (452.200-en)",
+    fullMeta:"Straumann Product Catalog 2022/2023 Special Edition (452.201/en)",
     caveat:"RC-platform prosthetic components run thinner than NC — confirm platform before ordering.",
     catalog: CATALOG_BLT, order: CATEGORY_ORDER_BLT, surgical: SURGICAL_CATEGORIES_BLT,
     prefix: { "Implants": "Straumann BLT™ Implant" }
   },
   nrcc: {
     id:"nrcc", name:"NobelReplace CC", sub:"Nobel Biocare · Conical Connection",
-    fullMeta:"",
+    fullMeta:"Nobel Biocare Product Catalog 2024/2025 (valid from Aug 1, 2024)",
     catalog: CATALOG_NOBEL_RC, order: CATEGORY_ORDER_NOBEL, surgical: SURGICAL_CATEGORIES_NOBEL,
     prefix: { "Implants": "" }
   },
   nact: {
     id:"nact", name:"NobelActive", sub:"Nobel Biocare · Conical Connection",
-    fullMeta:"",
+    fullMeta:"Nobel Biocare Product Catalog 2024/2025 (valid from Aug 1, 2024)",
     catalog: CATALOG_NOBEL_NA, order: CATEGORY_ORDER_NOBEL, surgical: SURGICAL_CATEGORIES_NOBEL,
     prefix: { "Implants": "" }
   },
   npcc: {
     id:"npcc", name:"NobelParallel CC", sub:"Nobel Biocare · Conical Connection",
-    fullMeta:"",
+    fullMeta:"Nobel Biocare Product Catalog 2024/2025 (valid from Aug 1, 2024)",
     catalog: CATALOG_NOBEL_PARALLEL, order: CATEGORY_ORDER_NOBEL, surgical: SURGICAL_CATEGORIES_NOBEL,
     prefix: { "Implants": "" }
   },
