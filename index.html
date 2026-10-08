@@ -937,7 +937,7 @@ const CATALOG_BLC = {
   {label:"Ø 4.0mm RB — SLA®, Roxolid®", material:"Roxolid®", items:[
     ["6mm","035.8306S"],["8mm","035.8308S"],["10mm","035.8310S"],["12mm","035.8312S"],["14mm","035.8314S"],["16mm","035.8316S"],["18mm","035.8318S"]
   ]},
-  {label:"Ø 4.5mm RB — SLA®, Roxolid®", material:"Roxolid®", items:[
+  {label:"Ø 4.5mm WB — SLA®, Roxolid®", material:"Roxolid®", items:[
     ["6mm","035.8406S"],["8mm","035.8408S"],["10mm","035.8410S"],["12mm","035.8412S"],["14mm","035.8414S"],["16mm","035.8416S"],["18mm","035.8418S"]
   ]},
   {label:"Ø 5.0mm WB — SLA®, Roxolid®", material:"Roxolid®", items:[
@@ -993,22 +993,26 @@ const CATALOG_BLC = {
 ],
 
 "Anatomic Healing Abutments XC": [
-  {label:"S shape, Ø3.8mm", material:"PEEK / TAN", items:[
+  {label:"RB/WB S shape, Ø3.8mm", material:"PEEK / TAN", items:[
     ["GH 1.5, H 4.5mm","064.4432S"],["GH 2.5, H 5.5mm","064.4433S"]
   ]},
-  {label:"S1 shape, Ø3.8mm", material:"PEEK / TAN", items:[
+  {label:"RB/WB S1 shape, Ø3.8mm", material:"PEEK / TAN", items:[
     ["GH 1.5, H 4.5mm","064.4514S"],["GH 2.5, H 5.5mm","064.4515S"]
   ]},
-  {label:"M shape, Ø3.8mm", material:"PEEK / TAN", items:[
+  {label:"RB/WB M shape, Ø3.8mm", material:"PEEK / TAN", items:[
     ["GH 1.5, H 4.5mm","064.4452S"],["GH 2.5, H 5.5mm","064.4453S"]
   ]},
-  {label:"XL shape, Ø4.5mm", material:"PEEK / TAN", items:[
+  {label:"RB/WB XL shape, Ø4.5mm", material:"PEEK / TAN", items:[
     ["GH 1.5, H 4.5mm","064.4482S"],["GH 2.5, H 5.5mm","064.4483S"]
   ]},
-  {label:"XL shape, Ø5.5mm", material:"PEEK / TAN", items:[
+  {label:"WB XL shape, Ø5.5mm", material:"PEEK / TAN",
+    note:"Wide Base (WB) implants only — on an RB implant the connection would overhang the implant shoulder.",
+    items:[
     ["GH 1.5, H 4.5mm","064.8482S"],["GH 2.5, H 5.5mm","064.4510S"]
   ]},
-  {label:"XL shape, Ø6.5mm", material:"PEEK / TAN", items:[
+  {label:"WB XL shape, Ø6.5mm", material:"PEEK / TAN",
+    note:"Wide Base (WB) implants only. Straumann recalled 2025 lots of 064.4522S/064.4523S whose blister labels wrongly read RB/WB — the outer carton is correct.",
+    items:[
     ["GH 1.5, H 4.5mm","064.4522S"],["GH 2.5, H 5.5mm","064.4523S"]
   ]}
 ],
@@ -1045,7 +1049,7 @@ const CATALOG_BLC = {
   {label:"For Crowns — RB/WB ∅4.5mm", material:"TAN", items:[
     ["GH 1.5mm","064.4372"],["GH 2.5mm","064.4373"],["GH 3.5mm","064.4374"]
   ]},
-  {label:"For Crowns — ∅6.0mm", material:"TAN", items:[
+  {label:"For Crowns — RB/WB ∅6.0mm", material:"TAN", items:[
     ["GH 2.5mm","064.4382"],["GH 3.5mm","064.4383"]
   ]},
   {label:"For Crowns — WB ∅5.5mm", material:"TAN", items:[
@@ -1532,7 +1536,7 @@ const CATALOG_BLT = {
   {label:"NC — Immediate Temporary Abutment", material:"TAN", items:[
     ["GH 1mm","022.0115S"],["GH 2mm","022.0116S"],["GH 3mm","022.0117S"]
   ]},
-  {label:"Accessories", material:"PMMA", items:[
+  {label:"Accessories (for NC Immediate Temporary Abutment)", material:"PMMA", items:[
     ["Plastic Coping for Immediate Temp. Abutment (2/pkg)","023.0033V2"]
   ]}
 ],
@@ -1608,11 +1612,12 @@ const CATALOG_BLT = {
    platform prosthetics). Source: Nobel Biocare "Conical connection implants
    & prosthetics" Product Overview (doc. 81657F, Rev.03) + 2024/25 Product
    Catalog. Some multi-platform tables in the source PDF list several
-   platform/diameter combinations in a single flattened row — the surgical
-   items (implants, cover screws, drivers, drills) are unambiguous and
-   REF-accurate; a few prosthetic crown/bridge component pairings were
-   reconstructed from column position and should be spot-checked against
-   your Nobel Biocare catalog or rep before first use. */
+   platform/diameter combinations in a single flattened row. The healing
+   abutment, bridge healing abutment and NobelActive implant tables below
+   were re-checked article by article against Nobel Biocare's online store
+   and the FDA GUDID database (Oct 2026), and corrected: each healing
+   abutment is single-platform (NP, RP or WP — none is shared RP/WP), and
+   the NobelActive length/article pairs had been shifted by one length. */
 const NOBEL_CONICAL_SHARED = {
 "Healing Abutments — Crown": [
   {label:"3.0 Platform, Ø3.2mm", material:"Ti", items:[
@@ -1627,37 +1632,33 @@ const NOBEL_CONICAL_SHARED = {
   {label:"NP, Ø5.0mm", material:"Ti", items:[
     ["H 3mm","36641"],["H 5mm","36642"],["H 7mm","36868"]
   ]},
-  {label:"RP/WP, Ø3.6mm (same part serves both platforms)", material:"Ti", items:[
+  {label:"RP, Ø3.6mm", material:"Ti", items:[
     ["H 3mm","36643"],["H 5mm","36644"],["H 7mm","36872"]
   ]},
-  {label:"RP/WP, Ø5.0mm (same part serves both platforms)", material:"Ti", items:[
+  {label:"RP, Ø5.0mm", material:"Ti", items:[
     ["H 3mm","36645"],["H 5mm","36646"],["H 7mm","36873"]
   ]},
-  {label:"RP/WP, Ø6.0mm (same part serves both platforms)", material:"Ti", items:[
+  {label:"RP, Ø6.0mm", material:"Ti", items:[
     ["H 3mm","36647"],["H 5mm","36648"],["H 7mm","36874"]
   ]},
-  {label:"WP, Ø6.5mm", material:"Ti",
-    note:"Doesn't match the confirmed RP/WP shared diameter set above — tap an item for details.",
-    caution:"This Ø6.5mm size doesn't match the confirmed RP/WP shared diameter set found elsewhere in this catalog (3.6/5.0/6.0mm). It may be a genuine larger WP-only option, or it may need to be re-checked against your Nobel Biocare catalog. Confirm the REF before ordering.",
-    items:[
+  {label:"WP, Ø5.0mm", material:"Ti", items:[
+    ["H 3mm","37813"],["H 5mm","37814"]
+  ]},
+  {label:"WP, Ø6.5mm", material:"Ti", items:[
     ["H 3mm","37815"],["H 5mm","37816"]
   ]}
 ],
 "Healing Abutments — Bridge": [
-  /* UNVERIFIED PLATFORM ASSOCIATION: this section has no NP/RP/WP labeling
-     at all. Official Nobel product descriptions state NP bridge healing
-     abutments use a 3.5mm emergence profile and RP/WP bridge healing
-     abutments use a 3.9mm profile — neither matches the 4.0/5.0/6.0mm
-     diameters listed here, so which REF belongs to which platform could
-     not be confirmed this session. Don't assume the group order below
-     maps to NP→RP→WP — verify against your catalog or rep before use. */
-  {label:"Ø4.0mm", material:"Ti", items:[
+  /* Platform per Nobel's conical connection product overview and store
+     ("Healing Abutment Conical Connection WP Bridge Ø 6 x 3 mm" = 37817):
+     Ø4.0 is NP, Ø5.0 is RP, Ø6.0 is WP. Each fits only its own platform. */
+  {label:"NP, Ø4.0mm", material:"Ti", items:[
     ["H 3mm","36864"],["H 5mm","36865"],["H 7mm","36866"]
   ]},
-  {label:"Ø5.0mm", material:"Ti", items:[
+  {label:"RP, Ø5.0mm", material:"Ti", items:[
     ["H 3mm","36869"],["H 5mm","36870"],["H 7mm","36871"]
   ]},
-  {label:"Ø6.0mm", material:"Ti", items:[
+  {label:"WP, Ø6.0mm", material:"Ti", items:[
     ["H 3mm","37817"],["H 5mm","37818"]
   ]}
 ],
@@ -1730,7 +1731,9 @@ const NOBEL_CONICAL_SHARED = {
     ["NP, H1.5mm","36667"],["NP, H3.0mm","36668"],["NP, H4.5mm","36250"],
     ["RP, H1.5mm","36672"],["RP, H3.0mm","36673"],["RP, H4.5mm","36252"]
   ]},
-  {label:"Universal Base (incl. burn-out coping + clinical screw)", material:"Ti / POM", items:[
+  {label:"Universal Base (incl. burn-out coping + clinical screw)", material:"Ti / POM",
+    note:"International article numbers. Nobel's US catalog lists the Universal Base under newer 3011xx numbers (e.g. NP 1.5mm engaging = 301101) — confirm with your Nobel rep when ordering in the US.",
+    items:[
     ["NP, H1.5mm","38213"],["NP, H3.0mm","38216"],
     ["RP, H1.5mm","38214"],["RP, H3.0mm","38217"],
     ["WP, H1.5mm","38215"],["WP, H3.0mm","38218"]
@@ -1871,20 +1874,24 @@ const CATALOG_NOBEL_RC = {
 
 const CATALOG_NOBEL_NA = {
 "Implants": [
+  /* Article/length pairs re-verified against Nobel Biocare's store and the
+     FDA GUDID (e.g. 36769 = 3.0 x 10mm, 35221 = NP 3.5 x 8.5mm, 34125 =
+     NP 3.5 x 10mm, 35225 = RP 5.0 x 8.5mm, 37806 = WP 5.5 x 7mm, 37808 =
+     WP 5.5 x 10mm). The previous table had every length shifted by one. */
   {label:"NobelActive® — Ø3.0mm", material:"TiUnite®", items:[
-    ["8.5mm","36769"],["10mm","36770"],["11.5mm","36771"],["13mm","36772"]
+    ["10mm","36769"],["11.5mm","36770"],["13mm","36771"],["15mm","36772"]
   ]},
   {label:"NobelActive® — Ø3.5mm", material:"TiUnite®", items:[
-    ["7mm","35221"],["8.5mm","34125"],["10mm","34126"],["11.5mm","34127"],["13mm","34128"],["15mm","35215"]
+    ["8.5mm","35221"],["10mm","34125"],["11.5mm","34126"],["13mm","34127"],["15mm","34128"],["18mm","35215"]
   ]},
   {label:"NobelActive® — Ø4.3mm", material:"TiUnite®", items:[
-    ["7mm","35223"],["8.5mm","34131"],["10mm","34132"],["11.5mm","34133"],["13mm","34134"],["15mm","35219"]
+    ["8.5mm","35223"],["10mm","34131"],["11.5mm","34132"],["13mm","34133"],["15mm","34134"],["18mm","35219"]
   ]},
   {label:"NobelActive® — Ø5.0mm", material:"TiUnite®", items:[
-    ["7mm","35225"],["8.5mm","34137"],["10mm","34138"],["11.5mm","34139"],["13mm","34140"],["15mm","35220"]
+    ["8.5mm","35225"],["10mm","34137"],["11.5mm","34138"],["13mm","34139"],["15mm","34140"],["18mm","35220"]
   ]},
   {label:"NobelActive® — Ø5.5mm", material:"TiUnite®", items:[
-    ["8.5mm","37806"],["10mm","37807"],["11.5mm","37808"],["13mm","37809"],["15mm","37810"],["18mm","37811"]
+    ["7mm","37806"],["8.5mm","37807"],["10mm","37808"],["11.5mm","37809"],["13mm","37810"],["15mm","37811"]
   ]}
 ],
 "Cover Screws": [
@@ -2068,8 +2075,10 @@ const CATALOG_NEODENT_GM = {
     ["Closed Tray, Regular","108.160"],["Open Tray, Regular","108.161"],
     ["Closed Tray, Long","108.162"],["Open Tray, Long","108.163"]
   ]},
-  {label:"GM Implant Analog (hybrid repositionable, conventional/digital)", material:"Titanium", items:[
-    ["Ø3.5/3.75mm","101.103"],["Ø4.0/4.3mm","101.089"],["Ø5.0/6.0mm","101.090"]
+  {label:"GM Implant Analog (hybrid repositionable, conventional/digital)", material:"Titanium",
+    fitsImplantDiameters: true, // each analog only matches the implant diameters in its name
+    items:[
+    ["Ø3.5/3.75mm","101.103"],["Ø4.0/4.3mm","101.089"],["Ø5.0/6.0/7.0mm","101.090"]
   ]},
   {label:"Digital", material:"SST", items:[
     ["GM Implant Intraoral Scanbody","108.207"]
@@ -2414,8 +2423,12 @@ const CATALOG_NRS = {
 };
 
 /* =========================================================================
-   NOBEL ZYGOMA — two systems, split by connection type (Conical Connection
-   vs External Hex), matching how BLC/BLT are split in this tool. Source:
+   NOBEL ZYGOMA — two systems, split by implant head angle (0° and 45°).
+   NOTE: the 0° system's TiUltra implants use the Conical Connection, but
+   its TiUnite implants (38275-38282) are External Hex — verified against
+   Nobel Biocare's store, as are their 45°/60° External Hex multi-unit
+   abutments (37624 etc.), which Nobel lists specifically for NobelZygoma
+   0° implants. The generation filter keeps each implant on its own line. Source:
    Nobel Biocare Product Catalog 2024/2025 (valid from Aug 1, 2024),
    Implant systems pp. 42 (implants) and Prosthetics pp. 122–124 —
    transcribed directly from the official catalog.
@@ -2455,7 +2468,7 @@ const CATALOG_NZCC = {
     ["52.5mm (actual 54mm)","301550"],["55mm (actual 56.5mm)","301551"],["57.5mm (actual 59mm)","301552"],
     ["60mm (actual 61.5mm)","301553"]
   ]},
-  {label:"0° CC RP — TiUnite®", note:"Length shown is nominal; each option lists its actual total length / narrow-diameter portion length in parentheses.", material:"TiUnite®", items:[
+  {label:"0° Ext Hex RP, Ø4.4mm — TiUnite®", note:"External hex connection (not conical). Length shown is nominal; each option lists its actual total length / narrow-diameter portion length in parentheses.", material:"TiUnite®", items:[
     ["30mm (total 31mm)","38275"],
     ["35mm (total 36.7mm, narrow-Ø portion 8.5mm)","38276"],
     ["37.5mm (total 38.5mm, narrow-Ø portion 11mm)","38277"],
@@ -2484,10 +2497,10 @@ const CATALOG_NZCC = {
   {label:"Multi-unit Abutment Xeal Zygoma Screw, 45°/60°, all sizes", material:"Ti", items:[
     ["Screw","301759"]
   ]},
-  {label:"Multi-unit Abutment RP, 45° (for TiUnite® implants)", material:"Ti", items:[
+  {label:"Multi-unit Abutment External Hex RP, 45° (for 0° TiUnite® implants)", material:"Ti", items:[
     ["H6mm","37624"],["H8mm","37625"],["H10mm","37626"]
   ]},
-  {label:"Multi-unit Abutment RP, 60° (for TiUnite® implants)", material:"Ti", items:[
+  {label:"Multi-unit Abutment External Hex RP, 60° (for 0° TiUnite® implants)", material:"Ti", items:[
     ["H6mm","37774"],["H8mm","37775"]
   ]},
   {label:"Multi-unit Abutment Screw — for TiUnite® 45°/60° abutments", material:"Ti", items:[
@@ -2498,13 +2511,13 @@ const CATALOG_NZCC = {
   ]}
 ],
 "Impression & Position Locators": [
-  {label:"Impression Coping (compatible with all multi-unit abutments except Brånemark WP external hex)", material:"POM / Ti", items:[
+  {label:"Impression Coping (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", material:"POM / Ti", items:[
     ["Open Tray (15mm guide pin incl.)","29089"],["Closed Tray","38924"]
   ]},
-  {label:"Elos Accurate® Intra-oral Position Locator (compatible with all multi-unit abutments except Brånemark WP external hex)", material:"Ti", items:[
+  {label:"Elos Accurate® Intra-oral Position Locator (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", material:"Ti", items:[
     ["Multi-unit, IO 2C-A","IO 2C-A"],["Kit","IO 2C KIT"]
   ]},
-  {label:"Position Locator, Desktop (compatible with all multi-unit abutments except Brånemark WP external hex)", material:"Ti", items:[
+  {label:"Position Locator, Desktop (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", material:"Ti", items:[
     ["Desktop Locator","300473"]
   ]}
 ],
@@ -2613,13 +2626,13 @@ const CATALOG_NZEH = {
   ]}
 ],
 "Impression & Position Locators": [
-  {label:"Impression Coping (compatible with all multi-unit abutments except Brånemark WP external hex)", material:"POM / Ti", items:[
+  {label:"Impression Coping (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", material:"POM / Ti", items:[
     ["Open Tray (15mm guide pin incl.)","29089"],["Closed Tray","38924"]
   ]},
-  {label:"Elos Accurate® Intra-oral Position Locator (compatible with all multi-unit abutments except Brånemark WP external hex)", material:"Ti", items:[
+  {label:"Elos Accurate® Intra-oral Position Locator (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", material:"Ti", items:[
     ["Multi-unit, IO 2C-A","IO 2C-A"],["Kit","IO 2C KIT"]
   ]},
-  {label:"Position Locator, Desktop (compatible with all multi-unit abutments except Brånemark WP external hex)", material:"Ti", items:[
+  {label:"Position Locator, Desktop (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", material:"Ti", items:[
     ["Desktop Locator","300473"]
   ]}
 ],
@@ -2850,13 +2863,13 @@ const SYSTEMS = {
     prefix: { "Implants": "NobelReplace® S Implant" }
   },
   nzcc: {
-    id:"nzcc", name:"NobelZygoma CC", sub:"Nobel Biocare · Zygoma · Conical Connection, RP",
+    id:"nzcc", name:"NobelZygoma 0°", sub:"Nobel Biocare · Zygoma 0° · TiUltra CC / TiUnite Ext Hex, RP",
     fullMeta:"Nobel Biocare Product Catalog 2024/2025 (valid from Aug 1, 2024) — Implant systems p.42, Prosthetics pp.122,124",
     catalog: CATALOG_NZCC, order: CATEGORY_ORDER_ZYGOMA, surgical: SURGICAL_CATEGORIES_ZYGOMA,
-    prefix: { "Implants": "NobelZygoma® 0° CC Implant" }
+    prefix: { "Implants": "NobelZygoma® 0° Implant" }
   },
   nzeh: {
-    id:"nzeh", name:"NobelZygoma Ext Hex", sub:"Nobel Biocare · Zygoma · External Hex, RP",
+    id:"nzeh", name:"NobelZygoma 45° Ext Hex", sub:"Nobel Biocare · Zygoma 45° · External Hex, RP",
     fullMeta:"Nobel Biocare Product Catalog 2024/2025 (valid from Aug 1, 2024) — Implant systems p.42, Prosthetics pp.123,124",
     catalog: CATALOG_NZEH, order: CATEGORY_ORDER_ZYGOMA, surgical: SURGICAL_CATEGORIES_ZYGOMA,
     prefix: { "Implants": "NobelZygoma® 45° Ext Hex Implant" }
@@ -3483,37 +3496,38 @@ async function clearAll(){
    contain multiple platforms (e.g. a 3.3mm RB implant for one site and a
    5.0mm WB implant for another), so this only flags a component whose
    platform doesn't match ANY implant platform present for that system in
-   the order. Neodent isn't checked (no comparable platform/connection
-   split in its catalog — the cover screw is universal across diameters). */
+   the order. Zygoma parts are also checked for implant surface generation
+   (TiUltra vs TiUnite), and Neodent implant analogs for implant diameter
+   (Neodent has one GM connection, so it has no platform check). */
 const PLATFORM_CHECK_CATEGORY_NAME = {
   blc:"Implants", blx:"Implants", blt:"Implants",
   nrcc:"Implants", nact:"Implants", npcc:"Implants",
   nas:"Implants", nps:"Implants", nrs:"Implants",
-  nzcc:"Implants", nzeh:"Implants"
+  nzcc:"Implants", nzeh:"Implants",
+  gm:"Implants — Helix GM®" // no platforms, but its implant analogs are diameter-specific
 };
-function derivePlatform(systemId, text){
+/* Every platform a label names. A part labelled for two platforms
+   ("RB/WB", "RP/WP", "NC/RC") fits exactly those two — never a third one,
+   so this returns all of them rather than collapsing to "unspecified".
+   An empty list means the label doesn't name a platform at all. */
+const NOBEL_PLATFORM_SYSTEMS = new Set(['nrcc','nact','npcc','nas','nps','nrs','nzcc','nzeh']);
+function platformTokens(systemId, text){
+  const t = text || '';
+  const tokens = [];
   if(systemId==='blc' || systemId==='blx'){
-    const hasRB = /\bRB\b/.test(text), hasWB = /\bWB\b/.test(text);
-    if(hasRB && !hasWB) return 'RB';
-    if(hasWB && !hasRB) return 'WB';
-    return null;
+    if(/\bRB\b/.test(t)) tokens.push('RB');
+    if(/\bWB\b/.test(t)) tokens.push('WB');
+  } else if(NOBEL_PLATFORM_SYSTEMS.has(systemId)){
+    if(/\bNP\b/.test(t)) tokens.push('NP');
+    if(/\bRP\b/.test(t)) tokens.push('RP');
+    if(/\bWP\b/.test(t)) tokens.push('WP');
+    if(/\b3\.0(?![\d.])/.test(t)) tokens.push('3.0'); // e.g. "3.0 Platform" — not "3.0mm" mid-number
+  } else if(systemId==='blt'){
+    if(/\bSC\b/.test(t)) tokens.push('SC');
+    if(/\bNC\b/.test(t)) tokens.push('NC');
+    if(/\bRC\b/.test(t)) tokens.push('RC');
   }
-  if(systemId==='nrcc' || systemId==='nact' || systemId==='npcc' || systemId==='nas' || systemId==='nps' || systemId==='nrs' || systemId==='nzcc' || systemId==='nzeh'){
-    const tokens = [];
-    if(/\bNP\b/.test(text)) tokens.push('NP');
-    if(/\bRP\b/.test(text)) tokens.push('RP');
-    if(/\bWP\b/.test(text)) tokens.push('WP');
-    if(/\b3\.0(?![\d.])/.test(text)) tokens.push('3.0'); // e.g. "3.0 Platform" — not "3.0mm" mid-number
-    return tokens.length===1 ? tokens[0] : null;
-  }
-  if(systemId==='blt'){
-    const tokens = [];
-    if(/\bSC\b/.test(text)) tokens.push('SC');
-    if(/\bNC\b/.test(text)) tokens.push('NC');
-    if(/\bRC\b/.test(text)) tokens.push('RC');
-    return tokens.length===1 ? tokens[0] : null;
-  }
-  return null; // Neodent (gm) and anything else: not checked
+  return tokens; // Neodent (gm): one GM connection for every diameter, nothing to check
 }
 
 /* NobelActive and NobelParallel CC implant groups are labeled only by
@@ -3533,18 +3547,108 @@ function diameterPlatformFallback(text){
   return found ? found[1] : null;
 }
 
-/* The single entry point everything else should use to find an item's
-   platform: checks the group label, then the item's own name (many Nobel
-   groups bundle multiple platforms as separate items rather than separate
-   groups — e.g. Cover Screws' one group holds "3.0 Platform"/"NP"/"RP"/"WP"
-   as four items), then — for NobelActive/NobelParallel CC implants only —
-   falls back to diameter. */
-function deriveItemPlatform(systemId, category, groupLabel, itemName){
-  let p = derivePlatform(systemId, groupLabel || '') || derivePlatform(systemId, itemName || '');
-  if(!p && (systemId==='nact' || systemId==='npcc') && WIZARD_IMPLANTS_CATEGORY_NAME[systemId] === category){
-    p = diameterPlatformFallback((groupLabel||'') + ' ' + (itemName||''));
+/* The single entry point everything else should use to find the set of
+   platforms an item fits: checks the group label, then the item's own name
+   (many Nobel groups bundle multiple platforms as separate items rather
+   than separate groups — e.g. Cover Screws' one group holds "3.0 Platform"/
+   "NP"/"RP"/"WP" as four items), then — for NobelActive/NobelParallel CC
+   implants only — falls back to diameter. An empty set means the item
+   names no platform and fits any implant in its system. */
+function deriveItemPlatforms(systemId, category, groupLabel, itemName){
+  let tokens = platformTokens(systemId, groupLabel);
+  if(!tokens.length) tokens = platformTokens(systemId, itemName);
+  if(!tokens.length && (systemId==='nact' || systemId==='npcc') && WIZARD_IMPLANTS_CATEGORY_NAME[systemId] === category){
+    const p = diameterPlatformFallback((groupLabel||'') + ' ' + (itemName||''));
+    if(p) tokens = [p];
   }
+  return new Set(tokens);
+}
+function platformLabel(platforms){ return [...platforms].join('/'); }
+
+/* Implant surface generation (TiUltra® vs TiUnite®). Only NobelZygoma
+   pairs each surface generation with its own abutment line (TiUltra with
+   the Xeal Zygoma abutments, TiUnite with the older external-hex ones), so
+   only those two systems are filtered on it. Elsewhere — e.g. the S series
+   and the conical-connection line — Xeal multi-unit abutments fit both
+   TiUltra and TiUnite implants, so generation must not narrow anything. */
+const GENERATION_SYSTEMS = new Set(['nzcc','nzeh']);
+function generationTokens(systemId, text){
+  if(!GENERATION_SYSTEMS.has(systemId)) return [];
+  const t = text || '';
+  const tokens = [];
+  if(/TiUltra/i.test(t) || /\bXeal\b/i.test(t)) tokens.push('TiUltra');
+  if(/TiUnite/i.test(t)) tokens.push('TiUnite');
+  return tokens;
+}
+function deriveItemGenerations(systemId, groupLabel, itemName){
+  let tokens = generationTokens(systemId, groupLabel);
+  if(!tokens.length) tokens = generationTokens(systemId, itemName);
+  return new Set(tokens);
+}
+
+/* Diameters listed in an item name such as "Ø3.5/3.75mm" or "Ø5.0/6.0/7.0mm"
+   (Neodent's implant analogs are matched to implant diameter this way). */
+function nameDiameters(text){
+  const m = (text||'').match(/Ø\s*([\d.\/]+)\s*mm/);
+  return m ? m[1].split('/').map(parseFloat).filter(n=>!isNaN(n)) : [];
+}
+
+/* An implant "profile" — every platform, surface generation and diameter
+   a case's implants have. A single implant yields one of each; the
+   All-on-X wizard accumulates them across every implant picked. */
+function makeProfile(){ return {platforms:new Set(), generations:new Set(), diameters:new Set()}; }
+function cloneProfile(p){ return {platforms:new Set(p.platforms), generations:new Set(p.generations), diameters:new Set(p.diameters)}; }
+function mergeProfile(into, from){
+  from.platforms.forEach(x=>into.platforms.add(x));
+  from.generations.forEach(x=>into.generations.add(x));
+  from.diameters.forEach(x=>into.diameters.add(x));
+}
+function implantProfileFor(systemId, category, groupLabel, itemName){
+  const p = makeProfile();
+  deriveItemPlatforms(systemId, category, groupLabel, itemName).forEach(x=>p.platforms.add(x));
+  deriveItemGenerations(systemId, groupLabel, itemName).forEach(x=>p.generations.add(x));
+  const d = nameDiameters(groupLabel)[0] || nameDiameters(itemName)[0];
+  if(d) p.diameters.add(d);
   return p;
+}
+/* Accepts a profile, a platform string, or a Set of platforms (plus an
+   optional generation) and always returns a profile. */
+function toProfile(implantPlatform, implantGeneration){
+  if(implantPlatform && implantPlatform.platforms instanceof Set) return implantPlatform;
+  const p = makeProfile();
+  if(implantPlatform instanceof Set) implantPlatform.forEach(x=>p.platforms.add(x));
+  else if(implantPlatform) p.platforms.add(implantPlatform);
+  if(implantGeneration instanceof Set) implantGeneration.forEach(x=>p.generations.add(x));
+  else if(implantGeneration) p.generations.add(implantGeneration);
+  return p;
+}
+
+/* Records a just-picked implant into a tracker — either a full profile
+   (All-on-X case wizard) or a bare Set of platforms. */
+function trackImplantProfile(tracker, systemId, category, groupLabel, itemName){
+  if(!tracker) return;
+  const picked = implantProfileFor(systemId, category, groupLabel, itemName);
+  if(tracker.platforms instanceof Set) mergeProfile(tracker, picked);
+  else if(tracker instanceof Set) picked.platforms.forEach(x=>tracker.add(x));
+}
+
+/* Whether one catalog item fits the implant(s) described by `profile`.
+   A part that names platforms must share one with the implants; a part
+   that names no platform fits any. Same for surface generation (zygoma
+   only) and, for groups flagged `fitsImplantDiameters`, implant diameter.
+   Never "falls back" to showing everything when nothing fits — offering
+   another platform's part is exactly the mistake this exists to prevent. */
+function partFits(systemId, category, group, itemName, profile){
+  if(!profile) return true;
+  const plats = deriveItemPlatforms(systemId, category, group.label, itemName);
+  if(plats.size && profile.platforms.size && ![...plats].some(x=>profile.platforms.has(x))) return false;
+  const gens = deriveItemGenerations(systemId, group.label, itemName);
+  if(gens.size && profile.generations.size && ![...gens].some(x=>profile.generations.has(x))) return false;
+  if(group.fitsImplantDiameters && profile.diameters.size){
+    const ds = nameDiameters(itemName);
+    if(ds.length && !ds.some(d=>[...profile.diameters].some(x=>Math.abs(x-d)<0.01))) return false;
+  }
+  return true;
 }
 /* Every system's Implants category, including Neodent (excluded from the
    platform mismatch check above since it has no platform system, but the
@@ -3664,81 +3768,33 @@ WIZARD_CONFIG.nzcc = [
 ];
 WIZARD_CONFIG.nzeh = WIZARD_CONFIG.nzcc;
 
-/* Filters a category's groups down to those matching the implant's platform.
-   Falls back to the full unfiltered list if nothing matches (rather than a
-   dead end), and applies any option-level label include/exclude filter. */
-/* Normalizes a platform filter argument, which can be a single platform
-   string (the per-implant wizard) or a Set of platforms accumulated across
-   every implant picked so far (the All-on-X case wizard, so mixing e.g.
-   RP and WP implants correctly widens what's offered downstream). */
-function normalizePlatformSet(implantPlatform){
-  if(!implantPlatform) return null;
-  if(implantPlatform instanceof Set) return implantPlatform.size ? implantPlatform : null;
-  return new Set([implantPlatform]);
+/* Option-level group filters: labelMustInclude / labelMustExclude narrow a
+   category down to the groups a wizard step is about. */
+function applyOptionLabelFilters(groups, option){
+  let out = groups;
+  if(option && option.labelMustInclude) out = out.filter(g=>g.label.includes(option.labelMustInclude));
+  if(option && option.labelMustExclude) out = out.filter(g=>!g.label.includes(option.labelMustExclude));
+  return out;
 }
 
-/* Detects implant surface generation (TiUltra® vs TiUnite®) from a label —
-   universal across every Nobel system, since these are the same brand
-   names everywhere they appear, unlike platform tokens which are
-   system-specific. Used to keep the wizard from offering a part meant for
-   the other surface generation once a specific implant has been picked
-   (e.g. a TiUnite-paired healing abutment after choosing a TiUltra
-   implant) — the same problem platform filtering already solves for
-   NP/RP/WP, just for surface generation instead. */
-function deriveGeneration(text){
-  if(!text) return null;
-  if(/TiUltra/i.test(text) || /\bXeal\b/i.test(text)) return 'TiUltra'; // Xeal-branded parts consistently pair with TiUltra implants
-  if(/TiUnite/i.test(text)) return 'TiUnite';
-  return null;
-}
-function deriveItemGeneration(groupLabel, itemName){
-  return deriveGeneration(groupLabel) || deriveGeneration(itemName);
-}
-
+/* A category's groups that hold at least one item fitting the implant(s).
+   `implantPlatform` may be a platform string, a Set of platforms, or a full
+   implant profile (see toProfile). If nothing fits, the result is empty —
+   the caller tells the person so, rather than offering other platforms'
+   parts. */
 function wizardCandidateGroups(systemId, categoryName, implantPlatform, option, implantGeneration){
   const sys = SYSTEMS[systemId];
-  let groups = (sys.catalog[categoryName] || []).slice();
-  if(option.labelMustInclude) groups = groups.filter(g=>g.label.includes(option.labelMustInclude));
-  if(option.labelMustExclude) groups = groups.filter(g=>!g.label.includes(option.labelMustExclude));
-  const platformSet = normalizePlatformSet(implantPlatform);
-  if(platformSet){
-    const filtered = groups.filter(g=>{
-      const p = deriveItemPlatform(systemId, categoryName, g.label, '');
-      return !p || platformSet.has(p);
-    });
-    if(filtered.length>0) groups = filtered;
-  }
-  if(implantGeneration){
-    const filtered = groups.filter(g=>{
-      const gen = deriveItemGeneration(g.label, '');
-      return !gen || gen === implantGeneration;
-    });
-    if(filtered.length>0) groups = filtered;
-  }
-  return groups;
+  const profile = toProfile(implantPlatform, implantGeneration);
+  const groups = applyOptionLabelFilters((sys.catalog[categoryName] || []).slice(), option);
+  return groups.filter(g=>wizardCandidateItems(systemId, categoryName, g, g.items, profile).length>0);
 }
 
-/* Narrows a group's items to the implant's platform(s) when the platform is
-   encoded per-item rather than per-group (e.g. Nobel's Cover Screws holds
+/* The items in one group that fit the implant(s). Handles platforms
+   encoded per item as well as per group (e.g. Nobel's Cover Screws holds
    one group with "3.0 Platform"/"NP"/"RP"/"WP" as four separate items). */
-function wizardCandidateItems(systemId, categoryName, groupLabel, items, implantPlatform, implantGeneration){
-  const platformSet = normalizePlatformSet(implantPlatform);
-  let out = items;
-  if(platformSet){
-    const filtered = out.filter(([name])=>{
-      const p = deriveItemPlatform(systemId, categoryName, groupLabel, name);
-      return !p || platformSet.has(p);
-    });
-    if(filtered.length>0) out = filtered;
-  }
-  if(implantGeneration){
-    const filtered = out.filter(([name])=>{
-      const gen = deriveItemGeneration(groupLabel, name);
-      return !gen || gen === implantGeneration;
-    });
-    if(filtered.length>0) out = filtered;
-  }
-  return out;
+function wizardCandidateItems(systemId, categoryName, group, items, implantPlatform, implantGeneration){
+  const profile = toProfile(implantPlatform, implantGeneration);
+  return items.filter(([name])=>partFits(systemId, categoryName, group, name, profile));
 }
 
 /* Runs one part-type step of the wizard: pick subtype (if >1 option), pick
@@ -3823,7 +3879,9 @@ async function runWizardStep(systemId, step, implantPlatform, defaultQty, stepLa
     if(phase === 'group'){
       const groups = wizardCandidateGroups(systemId, state.chosenOption.category, implantPlatform, state.chosenOption, implantGeneration);
       if(groups.length===0){
-        await showModal({type:'alert', title:step.label, message:`No ${step.label.toLowerCase()} options found for this implant's system.`});
+        const prof = toProfile(implantPlatform, implantGeneration);
+        const plat = prof.platforms.size ? ` (${platformLabel(prof.platforms)} platform)` : '';
+        await showModal({type:'alert', title:step.label, message:`None of the ${state.chosenOption.label.toLowerCase()} options in this catalog fit this implant${plat}. If you need one, order it directly from the manufacturer's catalog or your rep.`});
         return null;
       }
       if(groups.length === 1){
@@ -3856,7 +3914,7 @@ async function runWizardStep(systemId, step, implantPlatform, defaultQty, stepLa
         if(!ok){ const esc = handleBack(); if(esc) return esc; continue; }
         state.cautionConfirmed = true;
       }
-      const candidateItems = wizardCandidateItems(systemId, state.chosenOption.category, state.chosenGroup.label, state.chosenGroup.items, implantPlatform, implantGeneration);
+      const candidateItems = wizardCandidateItems(systemId, state.chosenOption.category, state.chosenGroup, state.chosenGroup.items, implantPlatform, implantGeneration);
       const parsed = candidateItems.map(([nm,rf])=>({nm, rf, ghah: parseGHAH(nm)}));
       const allParsed = parsed.length>0 && parsed.every(p=>p.ghah);
       const uniqueGH = allParsed ? [...new Set(parsed.map(p=>p.ghah.gh))] : [];
@@ -3953,10 +4011,7 @@ async function runWizardStep(systemId, step, implantPlatform, defaultQty, stepLa
   const existingTeeth = selected[key] ? selected[key].teeth : undefined;
   selected[key] = {name:state.chosenItem[0], group:state.chosenGroup.label, category:trueCat, qty: existingQty + state.qty, system:systemId, ref:state.chosenItem[1]};
   if(existingTeeth) selected[key].teeth = existingTeeth;
-  if(platformTracker instanceof Set){
-    const p = deriveItemPlatform(systemId, trueCat, state.chosenGroup.label, state.chosenItem[0]);
-    if(p) platformTracker.add(p);
-  }
+  trackImplantProfile(platformTracker, systemId, trueCat, state.chosenGroup.label, state.chosenItem[0]);
   render();
   renderOrder();
   await maybeOfferMultiUnitCap(systemId, trueCat, state.chosenGroup.label);
@@ -4011,8 +4066,11 @@ async function maybeRunTreatmentWizard(systemId, groupLabel, category, defaultQt
     });
     if(!chosenSteps || chosenSteps.length===0) return;
 
-    const implantPlatform = deriveItemPlatform(systemId, category, groupLabel, '');
-    const implantGeneration = deriveItemGeneration(groupLabel, '');
+    // Everything the wizard offers below is filtered against this implant's
+    // platform (and, for zygoma, surface generation; for Neodent analogs,
+    // diameter).
+    const implantPlatform = implantProfileFor(systemId, category, groupLabel, '');
+    const implantGeneration = null;
     let added = 0;
     const snapshots = []; // snapshot of the order right before each part started
     let n = 0;
@@ -4151,6 +4209,7 @@ async function maybeOfferMultiUnitCap(systemId, category, groupLabel){
   const trigger = MULTI_UNIT_CAP_TRIGGER[systemId];
   if(!trigger) return;
   if(resolveTrueCategory(systemId, category, groupLabel) !== trigger.category) return;
+  if(groupLabel === trigger.capGroupLabel) return; // the item just added IS a cap
 
   const wants = await showModal({
     type:'confirm', title:`Add a ${trigger.capLabel}?`,
@@ -4173,13 +4232,9 @@ async function pickFromFilteredGroup(systemId, category, groupLabel, nameFilter,
   const group = (sys.catalog[category] || []).find(g=>g.label===groupLabel);
   let items = group ? group.items : [];
   if(nameFilter) items = items.filter(([nm])=>nm.includes(nameFilter));
-  const platformSet = normalizePlatformSet(implantPlatform);
-  if(platformSet){
-    const filtered = items.filter(([nm])=>{
-      const p = deriveItemPlatform(systemId, category, groupLabel, nm);
-      return !p || platformSet.has(p);
-    });
-    if(filtered.length>0) items = filtered;
+  if(group){
+    const profile = toProfile(implantPlatform, null);
+    items = items.filter(([nm])=>partFits(systemId, category, group, nm, profile));
   }
   if(!group || items.length===0){
     await showModal({type:'alert', title:promptLabel, message:`No ${promptLabel.toLowerCase()} options found.`});
@@ -4249,42 +4304,18 @@ async function runChecklistQtyPick(systemId, category, implantPlatform, implantG
   opts = opts || {};
   const sys = SYSTEMS[systemId];
   let groups = opts.groups || (sys.catalog[category] || []).slice();
-  if(!opts.groups){
-    if(opts.labelMustInclude) groups = groups.filter(g=>g.label.includes(opts.labelMustInclude));
-    if(opts.labelMustExclude) groups = groups.filter(g=>!g.label.includes(opts.labelMustExclude));
-    const platformSet = normalizePlatformSet(implantPlatform);
-    if(platformSet){
-      const filtered = groups.filter(g=>{
-        const p = deriveItemPlatform(systemId, category, g.label, '');
-        return !p || platformSet.has(p);
-      });
-      if(filtered.length>0) groups = filtered;
-    }
-    if(implantGeneration){
-      const filtered = groups.filter(g=>{
-        const gen = deriveItemGeneration(g.label, '');
-        return !gen || gen === implantGeneration;
-      });
-      if(filtered.length>0) groups = filtered;
-    }
-  }
+  if(!opts.groups) groups = applyOptionLabelFilters(groups, opts);
 
-  const platformSet = normalizePlatformSet(implantPlatform);
+  const profile = toProfile(implantPlatform, implantGeneration);
   const rows = [];
   groups.forEach(g=>{
     let items = g.items;
     if(opts.itemNameFilter) items = items.filter(([nm])=>nm.includes(opts.itemNameFilter));
-    if(platformSet){
-      const filtered = items.filter(([nm])=>{
-        const p = deriveItemPlatform(systemId, category, g.label, nm);
-        return !p || platformSet.has(p);
-      });
-      if(filtered.length>0) items = filtered;
-    }
+    items = items.filter(([nm])=>partFits(systemId, category, g, nm, profile));
     items.forEach(([nm, rf])=>{
       const packSize = parsePackSize(nm, g.label);
-      const platform = deriveItemPlatform(systemId, category, g.label, nm);
-      const generation = deriveItemGeneration(g.label, nm);
+      const platform = platformLabel(deriveItemPlatforms(systemId, category, g.label, nm));
+      const generation = [...deriveItemGenerations(systemId, g.label, nm)].join('/');
       rows.push({
         label: friendlyItemLabel(nm),
         sublabel: (groups.length>1 ? `${g.label} · ` : '') + `REF ${rf}` + (packSize>1 ? ` · ships ${packSize}/pkg` : ''),
@@ -4294,7 +4325,8 @@ async function runChecklistQtyPick(systemId, category, implantPlatform, implantG
   });
 
   if(rows.length === 0){
-    await showModal({type:'alert', title, message:`No ${title.toLowerCase()} options found for this implant.`});
+    const plat = profile.platforms.size ? ` (${platformLabel(profile.platforms)} platform)` : '';
+    await showModal({type:'alert', title, message:`None of the ${title.toLowerCase()} in this catalog fit this implant${plat}. If you need one, order it directly from the manufacturer's catalog or your rep.`});
     return null;
   }
 
@@ -4309,7 +4341,7 @@ async function runChecklistQtyPick(systemId, category, implantPlatform, implantG
     ? (r => r.platform)
     : (r => r.generation);
 
-  const picked = await showModal({
+  let picked = await showModal({
     type:'checklist_qty', progress, title,
     message:'Check everything you need and set quantities, then continue.',
     options: rows.map((r,i)=>({value:String(i), label:r.label, sublabel:r.sublabel, defaultQty: opts.defaultQty||1, section: sectionOf(r)||undefined})),
@@ -4339,10 +4371,7 @@ async function runChecklistQtyPick(systemId, category, implantPlatform, implantG
     const existingTeeth = selected[key] ? selected[key].teeth : undefined;
     selected[key] = {name:row.name, group:row.group.label, category, qty: existingQty + packages, system:systemId, ref:row.ref};
     if(existingTeeth) selected[key].teeth = existingTeeth;
-    if(platformTracker instanceof Set){
-      const pl = deriveItemPlatform(systemId, category, row.group.label, row.name);
-      if(pl) platformTracker.add(pl);
-    }
+    trackImplantProfile(platformTracker, systemId, category, row.group.label, row.name);
     touchedGroups.add(row.group.label);
     added++;
   });
@@ -4405,12 +4434,13 @@ async function runAllOnXWizard(systemId){
 async function runAllOnXWizardInner(systemId){
   const sys = SYSTEMS[systemId];
   const implantsCat = WIZARD_IMPLANTS_CATEGORY_NAME[systemId];
-  // Accumulates every platform (e.g. RP, WP) actually picked across primary
-  // and backup implants, so every later step only offers components that
-  // match — a single platform stays locked to it; mixing platforms widens
-  // what's offered downstream to match all of them. Snapshotted/restored
-  // alongside the order itself so Back can cleanly undo a whole phase.
-  const casePlatforms = new Set();
+  // Accumulates every platform (e.g. RP, WP), surface generation (zygoma)
+  // and diameter actually picked across primary and backup implants, so
+  // every later step only offers components that match — a single platform
+  // stays locked to it; mixing platforms widens what's offered downstream
+  // to match all of them. Snapshotted/restored alongside the order itself
+  // so Back can cleanly undo a whole phase.
+  const caseProfile = makeProfile();
 
   const start = await showModal({
     type:'confirm', title:'All-on-X Case Wizard',
@@ -4428,6 +4458,15 @@ async function runAllOnXWizardInner(systemId){
   const capCfg = MULTI_UNIT_CAP_TRIGGER[systemId];
   const coverStep = (WIZARD_CONFIG[systemId]||[]).find(s=>s.label==='Cover Screw');
   const extraLabels = ['Impression Coping','Analog','Implant Replica / Analog','Replacement Screw','Temporary Abutment','Impression / Analog','Healing Abutment'];
+  // Copings and healing caps sit on multi-unit abutments, so those two
+  // steps only make sense once the case actually has one (e.g. a 3.0
+  // platform case has no multi-unit abutment that fits at all).
+  const caseHasMultiUnit = () => !!muStep && Object.values(selected).some(it=>{
+    if(it.system !== systemId) return false;
+    const opt = muStep.options[0];
+    if(resolveTrueCategory(systemId, it.category, it.group) !== opt.category) return false;
+    return applyOptionLabelFilters([{label: it.group}], opt).length > 0 && !(capCfg && it.group === capCfg.capGroupLabel);
+  });
   const extraOptions = (WIZARD_CONFIG[systemId]||[]).filter(s=>extraLabels.includes(s.label));
 
   // Each phase returns the count of items it added, or '__PART_BACK__' if
@@ -4437,7 +4476,7 @@ async function runAllOnXWizardInner(systemId){
   const phases = [
     { // 1. Primary implants — no previous phase, so no Back offered here
       run: async () => {
-        return await pickImplantsForCase(systemId, implantsCat, 'Primary Implants', casePlatforms, false);
+        return await pickImplantsForCase(systemId, implantsCat, 'Primary Implants', caseProfile, false);
       }
     },
     { // 2. Backup implants
@@ -4449,7 +4488,7 @@ async function runAllOnXWizardInner(systemId){
         });
         if(wantsBackup==='__WIZARD_BACK__') return '__PART_BACK__';
         if(!wantsBackup) return 0;
-        return await pickImplantsForCase(systemId, implantsCat, 'Backup Implants', casePlatforms, true);
+        return await pickImplantsForCase(systemId, implantsCat, 'Backup Implants', caseProfile, true);
       }
     },
     { // 3. Multi-unit abutments
@@ -4459,13 +4498,13 @@ async function runAllOnXWizardInner(systemId){
         if(wantsMU==='__WIZARD_BACK__') return '__PART_BACK__';
         if(!wantsMU) return 0;
         const opt = muStep.options[0];
-        return await runChecklistQtyPick(systemId, opt.category, casePlatforms, null, null, 'Multi-unit Abutments', 'Multi-unit Abutments',
+        return await runChecklistQtyPick(systemId, opt.category, caseProfile, null, null, 'Multi-unit Abutments', 'Multi-unit Abutments',
           {labelMustInclude: opt.labelMustInclude, labelMustExclude: opt.labelMustExclude, showBack:true});
       }
     },
     { // 4. Multi-unit temporary / pick-up copings
       run: async (canBack) => {
-        if(!copingCfg) return 0;
+        if(!copingCfg || !caseHasMultiUnit()) return 0;
         const wantsCoping = await showModal({
           type:'confirm', title:'Temporary Copings',
           message:'Add pick-up/temporary copings for the multi-unit abutments, for the immediate provisional?',
@@ -4473,13 +4512,13 @@ async function runAllOnXWizardInner(systemId){
         });
         if(wantsCoping==='__WIZARD_BACK__') return '__PART_BACK__';
         if(!wantsCoping) return 0;
-        return await runChecklistQtyPick(systemId, copingCfg.category, casePlatforms, null, null, 'Temporary Copings', copingCfg.label,
+        return await runChecklistQtyPick(systemId, copingCfg.category, caseProfile, null, null, 'Temporary Copings', copingCfg.label,
           {labelMustInclude: copingCfg.groupLabel, itemNameFilter: copingCfg.nameFilter, showBack:true});
       }
     },
     { // 5. Healing caps
       run: async (canBack) => {
-        if(!capCfg) return 0;
+        if(!capCfg || !caseHasMultiUnit()) return 0;
         const wantsCaps = await showModal({
           type:'confirm', title:`${capCfg.capLabel}s`,
           message:`Multi-unit abutments typically need a healing cap placed over them unless you're going straight to a temporary the same visit. Add ${capCfg.capLabel.toLowerCase()}s?`,
@@ -4487,7 +4526,7 @@ async function runAllOnXWizardInner(systemId){
         });
         if(wantsCaps==='__WIZARD_BACK__') return '__PART_BACK__';
         if(!wantsCaps) return 0;
-        return await runChecklistQtyPick(systemId, capCfg.category, casePlatforms, null, null, `${capCfg.capLabel}s`, capCfg.capLabel,
+        return await runChecklistQtyPick(systemId, capCfg.category, caseProfile, null, null, `${capCfg.capLabel}s`, capCfg.capLabel,
           {labelMustInclude: capCfg.capGroupLabel, itemNameFilter: capCfg.capNameFilter, showBack:true});
       }
     },
@@ -4502,7 +4541,7 @@ async function runAllOnXWizardInner(systemId){
         if(wantsCover==='__WIZARD_BACK__') return '__PART_BACK__';
         if(!wantsCover) return 0;
         const opt = coverStep.options[0];
-        return await runChecklistQtyPick(systemId, opt.category, casePlatforms, null, null, 'Cover Screws', 'Cover Screws',
+        return await runChecklistQtyPick(systemId, opt.category, caseProfile, null, null, 'Cover Screws', 'Cover Screws',
           {labelMustInclude: opt.labelMustInclude, labelMustExclude: opt.labelMustExclude, showBack:true});
       }
     },
@@ -4519,7 +4558,7 @@ async function runAllOnXWizardInner(systemId){
         let added = 0;
         for(const idx of chosenExtras){
           const step = extraOptions[parseInt(idx,10)];
-          const ok = await runWizardStep(systemId, step, casePlatforms, 1, step.label);
+          const ok = await runWizardStep(systemId, step, caseProfile, 1, step.label);
           if(ok) added++;
         }
         return added;
@@ -4533,15 +4572,15 @@ async function runAllOnXWizardInner(systemId){
   let idx = 0;
   while(idx < phases.length){
     if(wizardAborted) break;
-    snapshots[idx] = { selected: snapshotSelected(), platforms: new Set(casePlatforms) };
+    snapshots[idx] = { selected: snapshotSelected(), profile: cloneProfile(caseProfile) };
     const result = await phases[idx].run(idx > 0);
     if(wizardAborted) break;
     if(result === '__PART_BACK__'){
       if(idx === 0){ continue; } // nothing before phase 0 — just retry it
       const prev = snapshots[idx-1];
       restoreSelected(prev.selected);
-      casePlatforms.clear();
-      prev.platforms.forEach(p=>casePlatforms.add(p));
+      const restored = prev.profile;
+      ['platforms','generations','diameters'].forEach(k=>{ caseProfile[k].clear(); restored[k].forEach(x=>caseProfile[k].add(x)); });
       addedCount -= (phaseAdds[idx-1] || 0);
       phaseAdds[idx-1] = undefined;
       idx = idx - 1;
@@ -4558,6 +4597,9 @@ async function runAllOnXWizardInner(systemId){
   if(!wizardAborted && addedCount>0) showToast(`All-on-X case: added ${addedCount} item${addedCount===1?'':'s'}`);
 }
 
+function findGroup(sid, category, groupLabel){
+  return ((SYSTEMS[sid].catalog[category]) || []).find(g=>g.label===groupLabel) || {label: groupLabel};
+}
 function detectPlatformMismatches(){
   const warnings = [];
   const bySystem = {};
@@ -4568,27 +4610,38 @@ function detectPlatformMismatches(){
     if(!implantsCat) return;
     const items = bySystem[sid];
 
-    const implantPlatforms = new Set();
+    const implants = makeProfile();
+    let anyImplant = false;
     items.forEach(it=>{
       if(it.category === implantsCat){
-        const p = deriveItemPlatform(sid, it.category, it.group, it.name);
-        if(p) implantPlatforms.add(p);
+        anyImplant = true;
+        mergeProfile(implants, implantProfileFor(sid, it.category, it.group, it.name));
       }
     });
-    if(implantPlatforms.size===0) return; // no implants in this system's order — nothing to check against
+    if(!anyImplant) return; // no implants in this system's order — nothing to check against
 
     items.forEach(it=>{
       if(it.category === implantsCat) return;
-      const p = deriveItemPlatform(sid, it.category, it.group, it.name);
-      if(p && !implantPlatforms.has(p)){
-        warnings.push({ system: sid, item: it, itemPlatform: p, implantPlatforms: [...implantPlatforms] });
-      }
+      const group = findGroup(sid, it.category, it.group);
+      if(partFits(sid, it.category, group, it.name, implants)) return;
+      warnings.push({ system: sid, item: it, reason: mismatchReason(sid, it, implants) });
     });
   });
   return warnings;
 }
+function mismatchReason(sid, it, implants){
+  const plats = deriveItemPlatforms(sid, it.category, it.group, it.name);
+  if(plats.size && implants.platforms.size && ![...plats].some(x=>implants.platforms.has(x))){
+    return `${platformLabel(plats)}-platform part, but this order's implants are ${platformLabel(implants.platforms)}-platform`;
+  }
+  const gens = deriveItemGenerations(sid, it.group, it.name);
+  if(gens.size && implants.generations.size && ![...gens].some(x=>implants.generations.has(x))){
+    return `${[...gens].join('/')} part, but this order's implants are ${[...implants.generations].join('/')}`;
+  }
+  return `sized for Ø${nameDiameters(it.name).join('/')}mm implants, but this order's implants are Ø${[...implants.diameters].join('/')}mm`;
+}
 function formatMismatchLine(w){
-  return `${SYSTEMS[w.system].name} — ${w.itemPlatform}-platform "${w.item.name}" (${w.item.group}), but this order's implants are ${w.implantPlatforms.join('/')}-platform`;
+  return `${SYSTEMS[w.system].name} — "${w.item.name}" (${w.item.group}): ${w.reason}`;
 }
 
 function renderOrder(){
