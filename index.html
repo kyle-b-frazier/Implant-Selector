@@ -253,22 +253,12 @@
     border-left:3px solid transparent;
     transition:background .12s, color .12s;
   }
-  .sidebar button.catbtn .count{
-    margin-left:auto;
-    font-size:10px;
-    background:rgba(255,255,255,.08);
-    color:#9FADCE;
-    border-radius:10px;
-    padding:1px 7px;
-    font-family:var(--mono);
-  }
   .sidebar button.catbtn:hover{background:rgba(255,255,255,.06); color:#fff;}
   .sidebar button.catbtn.active{
     background:rgba(120,190,33,.14);
     color:#fff;
     border-left-color:var(--green);
   }
-  .sidebar button.catbtn.active .count{background:var(--green); color:var(--navy-deep);}
 
   /* ---- Main content ---- */
   .content{
@@ -1046,14 +1036,9 @@ function buildSidebar(){
 
   if(viewMode==='favorites'){
     FAVORITES_PRESET_CATEGORIES.forEach(pc=>{
-      const idsForCount = pc === "All-on-X Components" ? FAVORITES_ALLONX_SYSTEM_IDS : SYSTEM_IDS;
-      const count = idsForCount.reduce((n,sid)=>{
-        const groups = (FAVORITES_PRESET[sid] && FAVORITES_PRESET[sid][pc]) || [];
-        return n + groups.reduce((m,g)=>m+g.items.length, 0);
-      }, 0);
       const btn = document.createElement('button');
       btn.className = 'catbtn' + (pc===activeFavoritesCategory ? ' active':'');
-      btn.innerHTML = `<span>${pc}</span><span class="count">${count}</span>`;
+      btn.innerHTML = `<span>${pc}</span>`;
       btn.onclick = ()=>{ activeFavoritesCategory = pc; resetFavoritesSystemIfInvalidForCategory(); document.getElementById('searchBox').value=''; render(); };
       sb.appendChild(btn);
     });
@@ -1071,10 +1056,9 @@ function buildSidebar(){
       sb.appendChild(div);
       lastSection = section;
     }
-    const count = sys.catalog[cat].reduce((n,g)=>n+g.items.length,0);
     const btn = document.createElement('button');
     btn.className = 'catbtn' + (cat===activeCategory ? ' active':'');
-    btn.innerHTML = `<span>${cat}</span><span class="count">${count}</span>`;
+    btn.innerHTML = `<span>${cat}</span>`;
     btn.onclick = ()=>{ activeCategory = cat; viewMode = 'category'; document.getElementById('searchBox').value=''; render(); };
     sb.appendChild(btn);
   });
