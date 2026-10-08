@@ -16,7 +16,8 @@ const CATALOG_BLC = {
   {label:"Ø 4.0mm RB — SLActive®, Roxolid®", material:"Roxolid®", items:[
     ["6mm","035.9306S"],["8mm","035.9308S"],["10mm","035.9310S"],["12mm","035.9312S"],["14mm","035.9314S"],["16mm","035.9316S"],["18mm","035.9318S"]
   ]},
-  {label:"Ø 4.5mm WB — SLActive®, Roxolid®", material:"Roxolid®", items:[
+  {label:"Ø 4.5mm WB — SLActive®, Roxolid®", material:"Roxolid®",
+    caution:"Platform needs confirming: Straumann's 2026 iEXCEL catalog lists the BLC Ø4.5mm implant as WB on its SLActive page (p.5) but RB on its SLA page (p.7). This app treats both as WB, so it pairs them with WB closure caps, healing abutments and impression posts. Confirm the platform with Straumann before ordering.", items:[
     ["6mm","035.9406S"],["8mm","035.9408S"],["10mm","035.9410S"],["12mm","035.9412S"],["14mm","035.9414S"],["16mm","035.9416S"],["18mm","035.9418S"]
   ]},
   {label:"Ø 5.0mm WB — SLActive®, Roxolid®", material:"Roxolid®", items:[
@@ -37,7 +38,8 @@ const CATALOG_BLC = {
   {label:"Ø 4.0mm RB — SLA®, Roxolid®", material:"Roxolid®", items:[
     ["6mm","035.8306S"],["8mm","035.8308S"],["10mm","035.8310S"],["12mm","035.8312S"],["14mm","035.8314S"],["16mm","035.8316S"],["18mm","035.8318S"]
   ]},
-  {label:"Ø 4.5mm WB — SLA®, Roxolid®", material:"Roxolid®", items:[
+  {label:"Ø 4.5mm WB — SLA®, Roxolid®", material:"Roxolid®",
+    caution:"Platform needs confirming: Straumann's 2026 iEXCEL catalog lists the BLC Ø4.5mm implant as WB on its SLActive page (p.5) but RB on its SLA page (p.7). This app treats both as WB, so it pairs them with WB closure caps, healing abutments and impression posts. Confirm the platform with Straumann before ordering.", items:[
     ["6mm","035.8406S"],["8mm","035.8408S"],["10mm","035.8410S"],["12mm","035.8412S"],["14mm","035.8414S"],["16mm","035.8416S"],["18mm","035.8418S"]
   ]},
   {label:"Ø 5.0mm WB — SLA®, Roxolid®", material:"Roxolid®", items:[
@@ -76,13 +78,13 @@ const CATALOG_BLC = {
     ["GH 2.5 / AH 2mm (4.5mm)","064.4224S"],["GH 2.5 / AH 4mm (6.5mm)","064.4225S"],
     ["GH 3.5 / AH 2mm (5.5mm)","064.4226S"],["GH 3.5 / AH 4mm (7.5mm)","064.4227S"]
   ]},
-  {label:"WB, Wide Profile ∅6.0mm (wide molar crown)", material:"TAN", items:[
+  {label:"WB, ∅6.0mm (for final abutments ∅5.5mm)", material:"TAN", items:[
     ["GH 0.75 / AH 2mm (2.75mm)","064.8201S"],["GH 0.75 / AH 4mm (4.75mm)","064.8202S"],
     ["GH 1.5 / AH 2mm (3.5mm)","064.8212S"],["GH 1.5 / AH 4mm (5.5mm)","064.8213S"]
   ]},
-  {label:"WB, Wide Profile ∅7.5mm (wide molar crown)", material:"TAN", items:[
-    ["GH 0.75 / AH 2mm (2.75mm)","064.8203S"],["GH 0.75 / AH 4mm (4.75mm)","064.8204S"],
-    ["GH 1.5 / AH 2mm (3.5mm)","064.8214S"],["GH 1.5 / AH 4mm (5.5mm)","064.8215S"]
+  {label:"WB, ∅7.0mm (for final abutments ∅6.5mm)", material:"TAN", items:[
+    ["GH 1.5 / AH 2mm (3.5mm)","064.8511S"],["GH 1.5 / AH 4mm (5.5mm)","064.8512S"],
+    ["GH 2.5 / AH 2mm (4.5mm)","064.8513S"],["GH 2.5 / AH 4mm (6.5mm)","064.8514S"]
   ]}
 ],
 
@@ -105,13 +107,13 @@ const CATALOG_BLC = {
   {label:"RB/WB XL shape, Ø4.5mm", material:"PEEK / TAN", items:[
     ["GH 1.5, H 4.5mm","064.4482S"],["GH 2.5, H 5.5mm","064.4483S"]
   ]},
-  {label:"WB XL shape, Ø5.5mm", material:"PEEK / TAN",
-    note:"Wide Base (WB) implants only — on an RB implant the connection would overhang the implant shoulder.",
+  {label:"RB/WB XL shape, Ø5.5mm", material:"PEEK / TAN",
+    note:"Straumann's 2026 iEXCEL catalog (p.28) lists the XL shape as RB/WB in every size; this is being confirmed with Straumann.",
     items:[
     ["GH 1.5, H 4.5mm","064.8482S"],["GH 2.5, H 5.5mm","064.4510S"]
   ]},
-  {label:"WB XL shape, Ø6.5mm", material:"PEEK / TAN",
-    note:"Wide Base (WB) implants only. Straumann recalled 2025 lots of 064.4522S/064.4523S whose blister labels wrongly read RB/WB — the outer carton is correct.",
+  {label:"RB/WB XL shape, Ø6.5mm", material:"PEEK / TAN",
+    note:"Straumann's 2026 iEXCEL catalog (p.28) lists the XL shape as RB/WB in every size; this is being confirmed with Straumann.",
     items:[
     ["GH 1.5, H 4.5mm","064.4522S"],["GH 2.5, H 5.5mm","064.4523S"]
   ]}
@@ -833,12 +835,12 @@ const NOBEL_CONICAL_SHARED = {
     ["NP, H1.5mm","36667"],["NP, H3.0mm","36668"],["NP, H4.5mm","36250"],
     ["RP, H1.5mm","36672"],["RP, H3.0mm","36673"],["RP, H4.5mm","36252"]
   ]},
-  {label:"Universal Base (incl. burn-out coping + clinical screw)", material:"Ti / POM",
-    note:"International article numbers. Nobel's US catalog lists the Universal Base under newer 3011xx numbers (e.g. NP 1.5mm engaging = 301101) — confirm with your Nobel rep when ordering in the US.",
+  {label:"Universal Base, engaging (incl. clinical screw)", material:"Ti",
+    note:"US article numbers. Outside the US the same bases are 38213–38218 and also include a burn-out coping (Nobel Biocare 2024/2025 catalog p.74).",
     items:[
-    ["NP, H1.5mm","38213"],["NP, H3.0mm","38216"],
-    ["RP, H1.5mm","38214"],["RP, H3.0mm","38217"],
-    ["WP, H1.5mm","38215"],["WP, H3.0mm","38218"]
+    ["NP, H1.5mm","301101"],["NP, H3.0mm","301104"],
+    ["RP, H1.5mm","301102"],["RP, H3.0mm","301105"],
+    ["WP, H1.5mm","301103"],["WP, H3.0mm","301106"]
   ]}
 ],
 "Multi-unit Abutments Plus": [
@@ -865,7 +867,12 @@ const NOBEL_CONICAL_SHARED = {
 ],
 "Locator R-Tx® Abutments": [
   {label:"NP", material:"Ti", items:[
-    ["H1.0mm","REF30506-01"],["H2.0mm","REF30506-02"],["H3.0mm","REF30506-03"],["H4.0mm","REF30506-04"],["H5.0mm","REF30506-05"],["H6.0mm","REF30506-06"]
+    ["H1.0mm","REF30506-01"],["H2.0mm","REF30506-02"],["H3.0mm","REF30506-03"],["H4.0mm","REF30506-04"],["H5.0mm","REF30506-05"]
+  ]},
+  {label:"NP (6mm)", material:"Ti",
+    caution:"Article number needs confirming: Nobel's 2024/2025 catalog (p.77) lists the NP 6mm Locator R-Tx abutment as REF30506-07, not REF30506-06 as shown here. Confirm with Nobel before ordering.",
+    items:[
+    ["H6.0mm","REF30506-06"]
   ]},
   {label:"RP", material:"Ti", items:[
     ["H1.0mm","REF30507-01"],["H2.0mm","REF30507-02"],["H3.0mm","REF30507-03"],["H4.0mm","REF30507-04"],["H5.0mm","REF30507-05"],["H6.0mm","REF30507-06"]
@@ -1240,7 +1247,9 @@ const CATALOG_NEODENT_GM = {
   ]}
 ],
 "Surgical Instruments": [
-  {label:"Screwdrivers", material:"SST", items:[
+  {label:"Screwdrivers", material:"SST",
+    caution:"Lengths and article numbers need confirming: Neodent's GM catalog (2018 edition, p.42) lists the Neo Screwdriver Torque Connection as Short 105.133 = 20mm, Medium 105.132 = 25mm, Long 105.134 = 38mm, and the Neo Manual Screwdriver as Short 104.058 = 20mm, Medium 104.060 = 25mm, Long 104.059 = 38mm. Confirm with Neodent before ordering.",
+    items:[
     ["Neo Screwdriver Torque Connection, Short (16.5mm)","105.133"],
     ["Neo Screwdriver Torque Connection, Medium (22mm)","105.132"],
     ["Neo Screwdriver Torque Connection, Long (32mm)","105.157"],
@@ -1634,7 +1643,11 @@ const CATALOG_NZCC = {
     ["TiUltra PureSet Wallchart EU","301981"],["TiUltra PureSet Wallchart US","301982"]
   ]},
   {label:"TiUltra® Drills", material:"SST", items:[
-    ["Precision Drill","301585"],["Round Bur","301601"],["Lateral Bur Coarse","301586"],["Lateral Bur Fine","301694"],
+    ["Precision Drill","301585"],["Round Bur","301601"],["Lateral Bur Coarse","301586"],["Lateral Bur Fine","301694"]
+  ]},
+  {label:"TiUltra® Twist & Pilot Drills", material:"SST",
+    caution:"Article numbers need confirming: Nobel's 2024/2025 catalog (p.46) lists Twist Drill Ø2.9mm as Regular 301603 / Short 301602 (the reverse of this list) and Twist Drill Ø3.5mm as Regular 301604 / Short 301605. Its Pilot Drill row repeats numbers used elsewhere, so that page has a misprint, and 301606/301607 don't appear in it. Confirm with Nobel before ordering.",
+    items:[
     ["Twist Drill Ø2.9mm, Regular","301602"],["Twist Drill Ø2.9mm, Short","301603"],
     ["Twist Drill Ø3.5mm, Regular","301606"],["Twist Drill Ø3.5mm, Short","301607"],
     ["Pilot Drill Ø3.5mm, Regular","301604"],["Pilot Drill Ø3.5mm, Short","301605"]

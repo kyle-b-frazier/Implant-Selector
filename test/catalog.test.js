@@ -137,7 +137,8 @@ test('Straumann BLC/BLX: RB and WB parts only fit their own base', () => {
   assert.ok(fits('blc', 'Closure Caps', '064.8102S', wb));
   assert.ok(fits('blc', 'Healing Abutments — Crown', '064.4202S', rb)); // RB/WB fits both
   assert.ok(fits('blc', 'Healing Abutments — Crown', '064.4202S', wb));
-  assert.ok(!fits('blc', 'Anatomic Healing Abutments XC', '064.8482S', rb)); // WB-only XL
+  assert.ok(!fits('blc', 'Healing Abutments — Crown', '064.8511S', rb)); // WB-only ∅7
+  assert.ok(fits('blc', 'Anatomic Healing Abutments XC', '064.4522S', rb)); // XL Ø6.5 is RB/WB (iEXCEL 2026 p.28)
   assert.ok(fits('blx', 'Closure Caps', '064.4100S', implant('blx', '061.3310'))); // BLX Ø3.5 RB
 });
 
@@ -235,6 +236,10 @@ test('catalog-verified article numbers', () => {
     ['gm', 'Surgical Instruments', '105.131', 'GM Implant Driver — Contra-angle, max 35 N.cm'],
     ['gm', 'Surgical Instruments', '105.129', 'GM Implant Driver — Torque Wrench, Short (22mm)'],
     ['gm', 'Surgical Instruments', '105.130', 'GM Implant Driver — Torque Wrench, Long (30mm)'],
+    ['nact', 'Esthetic Abutments & Universal Base', '301101', 'NP, H1.5mm'], // US numbers
+    ['nact', 'Esthetic Abutments & Universal Base', '301106', 'WP, H3.0mm'],
+    ['blc', 'Healing Abutments — Crown', '064.8511S', 'GH 1.5 / AH 2mm (3.5mm)'],
+    ['blc', 'Healing Abutments — Crown', '064.8514S', 'GH 2.5 / AH 4mm (6.5mm)'],
   ];
   for (const [sid, category, ref, name] of expected) {
     assert.ok(find(sid, category, ref).name.startsWith(name), `${sid} ${ref}: "${find(sid, category, ref).name}"`);
@@ -258,4 +263,22 @@ test('the order check flags parts that fit none of the implants, and nothing els
   const warnings = $('detectPlatformMismatches')(order);
   // Array.from: the sandbox's arrays have their own prototype, which deepEqual rejects.
   assert.deepEqual(Array.from(warnings, (w) => `${w.system} ${w.item.ref}`), ['blc 064.8102S']);
+});
+
+// Open questions (see FOLLOW-UP.md): the catalogs contradict these, so the
+// app asks for confirmation before adding them until the reps confirm.
+test('parts awaiting manufacturer confirmation carry a caution', () => {
+  const awaiting = [
+    ['blc', 'Implants', '035.9410S'], // BLC Ø4.5 platform
+    ['blc', 'Implants', '035.8410S'],
+    ['nact', 'Locator R-Tx® Abutments', 'REF30506-06'], // NP 6mm
+    ['nzcc', 'Surgical Instruments & Sets', '301602'], // zygoma TiUltra drills
+    ['nzeh', 'Surgical Instruments & Sets', '301606'],
+    ['gm', 'Surgical Instruments', '105.133'], // Neodent screwdrivers
+  ];
+  for (const [sid, category, ref] of awaiting) {
+    const { group } = find(sid, category, ref);
+    assert.ok(group.caution && group.caution.length > 40, `${sid} ${ref}: no caution`);
+  }
+  assert.ok(!find('nact', 'Locator R-Tx® Abutments', 'REF30506-05').group.caution); // only the 6mm one
 });
