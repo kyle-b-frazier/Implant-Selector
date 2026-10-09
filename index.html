@@ -59,7 +59,6 @@
   .topbar .brand{display:flex; flex-direction:column; gap:2px;}
   .topbar .brand h1{margin:0; font-size:20px; font-weight:700; letter-spacing:-.01em;}
   .topbar-right{display:flex; align-items:center; gap:14px;}
-  .topbar .meta{font-size:11px; color:#B9C3DD; text-align:right; line-height:1.5;}
   .topbar .homebtn{
     background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); color:#fff;
     width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center;
@@ -211,6 +210,7 @@
   .cb-summary b{display:block; color:var(--ink);}
   .cb-ref{display:block; font:12px var(--mono); color:var(--ink-soft); margin-top:2px;}
   .cb-warn{display:block; font-size:12.5px; color:var(--amber); margin-top:6px;}
+  .content p.sys-caveat{max-width:720px; margin:10px 0 14px;}
   p.cb-warn{background:#FFF6E8; border:1px solid #F1D3A3; border-radius:8px; padding:8px 10px; margin:8px 0 0;}
   .cb-sec{display:block; width:100%; text-align:left; border:none; border-top:1px solid var(--line); background:none; padding:10px 2px; font:700 13px var(--sans); color:var(--navy); cursor:pointer;}
   .cb-row{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px dashed var(--line);}
@@ -533,26 +533,6 @@
     cursor:help;
     flex:0 0 auto;
   }
-  /* Same "i" treatment, sized for the dark topbar next to pageMeta. */
-  .meta-note{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:14px;
-    height:14px;
-    border-radius:50%;
-    background:rgba(255,255,255,.14);
-    border:1px solid rgba(255,255,255,.4);
-    color:#fff;
-    font-size:9.5px;
-    font-weight:700;
-    font-style:italic;
-    font-family:Georgia,'Times New Roman',serif;
-    cursor:help;
-    margin-left:6px;
-    flex:0 0 auto;
-    vertical-align:middle;
-  }
   .modal-overlay{
     position:fixed;
     inset:0;
@@ -836,7 +816,6 @@
       </div>
     </div>
     <div class="topbar-right">
-      <div class="meta" id="pageMeta"></div>
       <button class="homebtn" id="homeBtn" title="Home" aria-label="Home">⌂</button>
     </div>
   </div>
@@ -920,18 +899,6 @@ function buildSystemBar(){
     };
     bar.appendChild(btn);
   });
-
-  const metaEl = document.getElementById('pageMeta');
-  metaEl.innerHTML = '';
-  const sys = SYSTEMS[activeSystemId];
-  metaEl.appendChild(document.createTextNode(sys.fullMeta));
-  if(sys.caveat){
-    const nb = document.createElement('span');
-    nb.className = 'meta-note';
-    nb.textContent = 'i';
-    nb.title = sys.caveat;
-    metaEl.appendChild(nb);
-  }
 }
 
 /* ---------- Build sidebar: the active system's categories ---------- */
@@ -1109,8 +1076,8 @@ function render(){
   appRoot.classList.toggle('home-mode', viewMode==='home');
   appRoot.classList.toggle('builder-mode', viewMode==='builder');
   document.getElementById('homeBtn').style.display = viewMode==='home' ? 'none' : 'flex';
-  if(viewMode==='home'){ document.getElementById('pageMeta').innerHTML = ''; renderHomeView(); return; }
-  if(viewMode==='builder'){ document.getElementById('pageMeta').innerHTML = ''; renderCaseBuilder(); return; }
+  if(viewMode==='home'){ renderHomeView(); return; }
+  if(viewMode==='builder'){ renderCaseBuilder(); return; }
 
   buildSystemBar();
   buildSidebar();
@@ -1128,7 +1095,7 @@ function render(){
     const allOnXNote = activeCategory === "All-on-X Components"
       ? ' — components already listed elsewhere in this catalog, grouped here for full-arch treatment planning'
       : '';
-    heading.innerHTML = `<h2>${activeCategory}</h2><p class="subtitle">${sys.name} — tap a component to add it to your order${allOnXNote}</p>`;
+    heading.innerHTML = `<h2>${activeCategory}</h2><p class="subtitle">${sys.name} — tap a component to add it to your order${allOnXNote}</p>${sys.caveat?`<p class="cb-warn sys-caveat">⚠ ${sys.caveat}</p>`:''}`;
   }
   container.appendChild(heading);
 

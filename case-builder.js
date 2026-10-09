@@ -432,7 +432,7 @@ function cbSystemCard(){
     ? SYSTEM_IDS.filter(id=>(SYSTEMS[id].catalog['All-on-X Components']||[]).length>0)
     : SYSTEM_IDS;
   if(cb.sys && !cb.editing.has(cbEditKey('sys'))) return cbDoneCard('cb-system', 'System', SYSTEMS[cb.sys].name, '', 'sys', false);
-  // Grouped by maker; Straumann and Neodent chips drop the repeated brand name.
+  // Grouped by maker; chips drop the brand name the heading already shows.
   // Nobel splits further into rows (conical, S series, zygoma), each ordered
   // Replace, Active, Parallel.
   const brands = [];
@@ -447,7 +447,7 @@ function cbSystemCard(){
   });
   const line = n => /Replace/.test(n) ? 0 : /Active/.test(n) ? 1 : /Parallel/.test(n) ? 2 : 3;
   const chips = ids => `<div class="cb-chips">${ids.slice().sort((a,b)=>line(SYSTEMS[a].name)-line(SYSTEMS[b].name))
-    .map(id=>cbChip(SYSTEMS[id].name.replace(/^(?:Straumann|Neodent) /, ''), cb.sys===id, 'sys', cbData({id}))).join('')}</div>`;
+    .map(id=>cbChip(SYSTEMS[id].name.replace(/^(?:Straumann|Neodent) |^Nobel(?=[A-Z])/, ''), cb.sys===id, 'sys', cbData({id}))).join('')}</div>`;
   return `<div class="cb-card"><div class="cb-lbl">System</div>${brands.map(b=>`<div class="cb-brand">${cbEsc(b.brand)}</div>${
     b.rows.map(r=>r.sub ? `<div class="cb-subgroup"><div class="cb-sublbl">${cbEsc(r.sub)}</div>${chips(r.ids)}</div>` : chips(r.ids)).join('')}`).join('')}</div>`;
 }
