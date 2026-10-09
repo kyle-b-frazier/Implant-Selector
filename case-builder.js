@@ -616,7 +616,7 @@ function cbPartCards(){
     }
     const missing = !c.item && cb.showMissing;
     const done = fromMemory
-      ? `<p class="cb-note cb-last">Picked the same as your last case. Tap it to confirm, or pick another.</p>`
+      ? `<p class="cb-note cb-last">Auto-picked from your last case. Review and change if needed.</p>`
       : c.item
       ? `<div class="cb-summary"><b>${cbEsc(c.group.label)}, ${cbEsc(c.item[0])}</b><span class="cb-ref">REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}</span>${c.group.caution?`<span class="cb-warn">⚠ ${cbEsc(c.group.caution)}</span>`:''}</div>`
       : '';
@@ -942,9 +942,8 @@ function cbOnClick(e){
         if(cb.fromLast) delete cb.fromLast[d.l];
         cb.lastDone = 'cb-part-' + d.l.replace(/\W+/g,'-');
       }
-      else if(cur.ref===d.r && cb.confirmed.has(cbConfKey(d.l))) picks[d.l] = { ...cur, ref:null };
+      else if(cur.ref===d.r) picks[d.l] = { ...cur, ref:null };
       else {
-        // A tap on a pre-picked (remembered) part confirms it.
         picks[d.l] = { ...cur, ref:d.r };
         cb.confirmed.add(cbConfKey(d.l));
         cb.editing.delete(cbEditKey(d.l));
