@@ -550,14 +550,14 @@ function cbChooser(pt, pick, profile, mode){
     const split = splitTypeLabels(labels);
     if(split){
       const cur = pick.group ? split.head(pick.group) : cb.narrow[cbNarrowKey(L, m)];
-      res.html += `<div class="cb-lbl">Type</div><div class="cb-chips">${split.heads.map(h=>cbChip(h, cur===h, 'gpre', cbData({l:L, p:h, m}))).join('')}</div>`;
+      res.html += `<div class="cb-lbl">${cbAxisName(split.heads, 'Type')}</div><div class="cb-chips">${split.heads.map(h=>cbChip(h, cur===h, 'gpre', cbData({l:L, p:h, m}))).join('')}</div>`;
       const inHead = labels.filter(l=>split.head(l)===cur);
       if(inHead.length>1){
-        res.html += `<div class="cb-lbl">Size</div><div class="cb-chips">${inHead.map(l=>cbChip(split.tail(l), pick.group===l, 'group', cbData({l:L, g:l, m}), hint(l))).join('')}</div>`;
+        res.html += `<div class="cb-lbl">${cbAxisName(inHead.map(split.tail), 'Size')}</div><div class="cb-chips">${inHead.map(l=>cbChip(split.tail(l), pick.group===l, 'group', cbData({l:L, g:l, m}), hint(l))).join('')}</div>`;
       }
     } else {
       const lead = commonLead(labels);
-      res.html += `<div class="cb-lbl">Type</div><div class="cb-chips">${labels.map(l=>cbChip(l.slice(lead.length), pick.group===l, 'group', cbData({l:L, g:l, m}), hint(l))).join('')}</div>`;
+      res.html += `<div class="cb-lbl">${cbAxisName(labels.map(l=>l.slice(lead.length)), 'Type')}</div><div class="cb-chips">${labels.map(l=>cbChip(l.slice(lead.length), pick.group===l, 'group', cbData({l:L, g:l, m}), hint(l))).join('')}</div>`;
     }
   }
   const g = groups.find(g=>g.group.label===pick.group);
@@ -581,10 +581,20 @@ function cbChooser(pt, pick, profile, mode){
         return `<td><button type="button" class="cb-cell${m?' txt':''}${on(it[1])?' on':''}" data-a="item"${cbData({l:L, r:it[1], m})} title="${cbEsc(it[0])}">${m?'+':''}</button></td>`;
       }).join('')}</tr>`).join('')}</tbody></table>`;
   } else if(g.items.length>1 || m){
-    res.html += `<div class="cb-lbl">${groups.length>1 ? 'Size / option' : 'Pick one'}</div><div class="cb-chips">${g.items.map(([nm,rf])=>cbChip(nm, on(rf), 'item', cbData({l:L, r:rf, m}))).join('')}</div>`;
+    res.html += `<div class="cb-lbl">${cbAxisName(g.items.map(([nm])=>nm), groups.length>1 ? 'Size / option' : 'Pick one')}</div><div class="cb-chips">${g.items.map(([nm,rf])=>cbChip(nm, on(rf), 'item', cbData({l:L, r:rf, m}))).join('')}</div>`;
   }
   if(!m) res.item = g.items.find(([,r])=>r===pick.ref) || null;
   return res;
+}
+/* Name a row of chips by what they share: "Ø5.0mm" chips are a diameter,
+   "H 3mm" chips a height. Anything mixed keeps the generic name. */
+function cbAxisName(values, fallback){
+  const all = re => values.length>0 && values.every(v=>re.test(v));
+  if(all(/^[Ø∅]\s?[\d.]+\s?mm( \(.*\))?$/)) return 'Diameter';
+  if(all(/^GH\s?[\d.]+\s?mm$/)) return 'Gingival height (GH)';
+  if(all(/^H\s?[\d.]+\s?mm$/)) return 'Height';
+  if(all(/^(Straight\b|\d+°)/) && values.some(v=>/^\d+°/.test(v))) return 'Angle';
+  return fallback;
 }
 /* Straumann's anatomic healing abutment (XC) shape for a tooth, by
    Universal number: S for upper centrals and canines, S1 for upper
