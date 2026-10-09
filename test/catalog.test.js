@@ -398,3 +398,22 @@ test('case builder: GH × AH table and pack sizes', () => {
   assert.equal($('parsePackSize')('Healing Cap (2/pkg)', ''), 2);
   assert.equal($('parsePackSize')('10mm', 'Ø 4.0mm RB'), 1);
 });
+
+test('explanatory drawings: each size naming gets the drawing that explains it', () => {
+  const kind = (sid, category, label) => $('diagramKindFor')(sid, category, SYSTEMS[sid].catalog[category].find((g) => g.label === label));
+  assert.equal(kind('blc', 'Implants', 'Ø 4.5mm WB — SLActive®, Roxolid®'), 'implant');
+  assert.equal(kind('blc', 'Healing Abutments — Crown', 'RB/WB, Ø3.8mm platform (Crown ∅4mm)'), 'ghah');
+  assert.equal(kind('blc', 'Anatomic Healing Abutments XC', 'RB/WB XL shape, Ø4.5mm'), 'gh-h');
+  assert.equal(kind('blc', 'Screw-retained / Multi-unit Abutments', 'Straight, angulation 0° (sterile)'), 'gh');
+  assert.equal(kind('blc', 'Screw-retained / Multi-unit Abutments', 'Angled 17° (sterile)'), 'gh-angled');
+  assert.equal(kind('nact', 'Healing Abutments — Crown', 'NP, Ø3.6mm'), 'h');
+  assert.equal(kind('nact', 'Multi-unit Abutments Plus', '30°'), 'collar-angled');
+  // Nobel's H on impression copings and healing caps is not a collar height.
+  assert.equal(kind('nrcc', 'Impression Copings', 'NP — Open Tray'), null);
+  assert.equal(kind('nas', 'Multi-unit Abutments', 'Multi-unit Healing Cap (2/pkg) — compatible with all Multi-unit Abutments'), null);
+  for (const k of ['ghah', 'gh-h', 'h', 'gh', 'gh-angled', 'collar', 'collar-angled', 'implant']) {
+    assert.match($('diagramHtml')(k), /<svg[\s\S]*<\/svg>/, k);
+    assert.ok($('DIAGRAM_BUTTON_LABELS')[k], k);
+  }
+  assert.deepEqual(plain($('diagramKindsToOffer')(['gh', 'gh-angled', null, 'ghah'])), ['gh-angled', 'ghah']);
+});

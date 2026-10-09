@@ -122,6 +122,19 @@
     .home-hero .art{width:110px; height:110px;}
   }
 
+  /* ---- Explanatory drawings (diagrams.js) ---- */
+  .dg-toggles{margin:-4px 0 14px;}
+  .dg-row{display:flex; flex-wrap:wrap; gap:6px;}
+  .dg-btn{border:1px solid #CFD8E6; background:#F4F7FC; color:var(--navy); border-radius:999px; padding:6px 12px; font:600 12.5px var(--sans); cursor:pointer;}
+  .dg-btn:hover{border-color:var(--navy);}
+  .dg-btn.on{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .dg{background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px 12px 8px; margin-top:8px; max-width:520px;}
+  .dg-svg{display:block; width:100%; height:auto; border-radius:6px;}
+  .dg-cap{font-size:13px; line-height:1.5; color:var(--ink); margin:8px 0 2px;}
+  .dg-note{font-size:11px; color:var(--ink-soft); margin:0;}
+  .cb-card .dg-btn{margin-bottom:10px;}
+  .cb-card .dg{margin:0 0 12px; border-color:#E6EAF0;}
+
   /* ---- Case builder (Single/Bridge and All-on-X) ---- */
   .app.builder-mode{grid-template-columns:1fr;}
   .app.builder-mode .systembar, .app.builder-mode .sidebar, .app.builder-mode .orderpanel, .app.builder-mode .content, .app.builder-mode #homeView{display:none;}
@@ -853,6 +866,7 @@
 <script src="catalog/neodent-gm.js"></script>
 <script src="catalog/systems.js"></script>
 <script src="compatibility.js"></script>
+<script src="diagrams.js"></script>
 <script src="case-builder.js"></script>
 <script>
 
@@ -1097,6 +1111,11 @@ function render(){
     container.appendChild(wizardBtn);
   }
 
+  if(!query){
+    const kinds = diagramKindsToOffer(sys.catalog[activeCategory].map(g=>diagramKindFor(activeSystemId, g.sourceCategory || activeCategory, g)));
+    if(kinds.length) container.appendChild(buildDiagramToggles(kinds));
+  }
+
   let anyResults = false;
 
   sys.order.forEach(cat=>{
@@ -1130,6 +1149,33 @@ function render(){
     p.textContent = 'No matching components found in this system.';
     container.appendChild(p);
   }
+}
+
+/* "ⓘ What do GH and AH mean?" buttons under a category heading, one per
+   kind of drawing its groups use; tapping one shows that drawing below,
+   tapping it again hides it. */
+function buildDiagramToggles(kinds){
+  const wrap = document.createElement('div');
+  wrap.className = 'dg-toggles';
+  const row = document.createElement('div');
+  row.className = 'dg-row';
+  const panel = document.createElement('div');
+  let open = null;
+  kinds.forEach(kind=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'dg-btn';
+    btn.textContent = 'ⓘ ' + DIAGRAM_BUTTON_LABELS[kind];
+    btn.onclick = ()=>{
+      open = open===kind ? null : kind;
+      row.querySelectorAll('.dg-btn').forEach(b=>b.classList.toggle('on', b===btn && open===kind));
+      panel.innerHTML = open ? diagramHtml(open) : '';
+    };
+    row.appendChild(btn);
+  });
+  wrap.appendChild(row);
+  wrap.appendChild(panel);
+  return wrap;
 }
 
 function escapeHtml(s){

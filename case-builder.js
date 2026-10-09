@@ -173,6 +173,7 @@ function newCase(kind){
     counts:{},            // allonx: part label -> { ref -> packages }
     implantCounts:{ 'Primary Implants':{}, 'Backup Implants':{} },
     openGroups:{},        // allonx: long part lists, which groups are expanded
+    dgOpen:null,          // which card's explanatory drawing is showing
     showMissing:false
   };
 }
@@ -302,6 +303,14 @@ function cbData(obj){
   return Object.entries(obj).map(([k,v])=>` data-${k}="${cbEsc(v)}"`).join('');
 }
 
+/* The "ⓘ" button for a card's explanatory drawing, and the drawing
+   itself when it is open. */
+function cbDiagram(key, kind){
+  if(!kind) return '';
+  const on = cb.dgOpen===key;
+  return `<button type="button" class="dg-btn${on?' on':''}" data-a="dg"${cbData({k:key})}>ⓘ ${cbEsc(DIAGRAM_BUTTON_LABELS[kind])}</button>${on?diagramHtml(kind):''}`;
+}
+
 function renderCaseBuilder(){
   const el = document.getElementById('builderView');
   if(!cb){ el.innerHTML = ''; return; }
@@ -398,7 +407,7 @@ function cbImplantCard(){
   const summary = selItem
     ? `<div class="cb-summary"><b>${cbEsc(g.label)}, ${cbEsc(selItem[0])}</b><span class="cb-ref">REF ${cbEsc(selItem[1])}</span>${g.caution?`<span class="cb-warn">⚠ ${cbEsc(g.caution)}</span>`:''}</div>`
     : `<p class="cb-note${cb.showMissing?' cb-missing':''}">Tap the diameter (row) and length (column).</p>`;
-  return `<div class="cb-card" id="cb-implant"><h3>Implant${cbImplantTeeth().length>1?` · #${cb.activeTooth}`:''}</h3>${variants}
+  return `<div class="cb-card" id="cb-implant"><h3>Implant${cbImplantTeeth().length>1?` · #${cb.activeTooth}`:''}</h3>${cbDiagram('implant','implant')}${variants}
     <div class="cb-gridwrap"><table class="cb-grid"><thead>${head}</thead><tbody>${body}</tbody></table></div>
     <p class="cb-note cb-axis">Rows: diameter · Columns: length (mm)</p>${summary}</div>`;
 }
@@ -423,9 +432,11 @@ function cbPartCards(){
     if(pt.options.length>1){
       html += `<div class="cb-chips">${pt.options.map((o,i)=>cbChip(o.label, pick.opt===i, 'opt', cbData({l:pt.label, i}))).join('')}</div>`;
     }
-    let ref = null, groupObj = null, itemName = null;
+    let ref = null, groupObj = null, itemName = null, kind = null;
     if(pick.opt!=null){
       const groups = optionGroups(cb.sys, pt.options[pick.opt], profile);
+      const shown = groups.find(g=>g.group.label===pick.group) || groups[0];
+      if(shown) kind = diagramKindFor(cb.sys, shown.group.sourceCategory || pt.options[pick.opt].category, shown.group);
       if(!groups.length){
         html += `<p class="cb-warn">None of these fit this implant. Order directly from the manufacturer's catalog or your rep if you need one.</p>`;
       } else {
@@ -455,7 +466,7 @@ function cbPartCards(){
     const done = ref
       ? `<div class="cb-summary"><b>${cbEsc(groupObj.label)}, ${cbEsc(itemName)}</b><span class="cb-ref">REF ${cbEsc(ref)}${parsePackSize(itemName, groupObj.label)>1?` · ships ${parsePackSize(itemName, groupObj.label)}/pkg`:''}</span>${groupObj.caution?`<span class="cb-warn">⚠ ${cbEsc(groupObj.caution)}</span>`:''}</div>`
       : '';
-    return `<div class="cb-card${missing?' cb-missing-card':''}" id="${id}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${html}${done}</div>`;
+    return `<div class="cb-card${missing?' cb-missing-card':''}" id="${id}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${cbDiagram(pt.label, kind)}${html}${done}</div>`;
   }).join('');
 }
 
@@ -489,7 +500,8 @@ function cbAllOnXCards(){
         : `<div class="cb-lbl">${cbEsc(s.title)}</div>`;
       if(shown) html += s.items.map(([nm,rf])=>cbCountRow(pt.label, nm, rf, counts[rf]||0, parsePackSize(nm, s.group.label), s.group.caution)).join('');
     });
-    out.push(`<div class="cb-card" id="cb-part-${pt.label.replace(/\W+/g,'-')}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${html}</div>`);
+    const kind = sections.length ? diagramKindFor(cb.sys, sections[0].group.sourceCategory || sections[0].category, sections[0].group) : null;
+    out.push(`<div class="cb-card" id="cb-part-${pt.label.replace(/\W+/g,'-')}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${cbDiagram(pt.label, kind)}${html}</div>`);
   });
   return out.join('');
 }
@@ -518,7 +530,7 @@ function cbCountImplantCard(role){
   (SYSTEMS[cb.sys].catalog[cat] || []).forEach(g=>g.items.forEach(([nm,rf])=>{
     if(counts[rf]) picked.push(cbCountRow('implant:'+role, `${g.label}, ${nm}`, rf, counts[rf], 1, g.caution));
   }));
-  return `<div class="cb-card" id="cb-part-${role.replace(/\W+/g,'-')}"><h3>${role}<button type="button" class="cb-x" data-a="need"${cbData({l:role})} title="Not needed">✕</button></h3>${variants}
+  return `<div class="cb-card" id="cb-part-${role.replace(/\W+/g,'-')}"><h3>${role}<button type="button" class="cb-x" data-a="need"${cbData({l:role})} title="Not needed">✕</button></h3>${cbDiagram(role,'implant')}${variants}
     <div class="cb-gridwrap"><table class="cb-grid"><thead>${head}</thead><tbody>${body}</tbody></table></div>
     <p class="cb-note cb-axis">Tap a cell once per implant · Rows: diameter · Columns: length (mm)</p>${picked.join('')}</div>`;
 }
@@ -741,6 +753,7 @@ function cbOnClick(e){
       open[d.k] = !open[d.k];
       break;
     }
+    case 'dg': cb.dgOpen = cb.dgOpen===d.k ? null : d.k; break;
     case 'add': cbAddToOrder(); return;
     case 'cancel': cbCancel(); return;
     default: return;
