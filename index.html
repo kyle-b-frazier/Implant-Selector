@@ -2,9 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- This site is hosted on Netlify. Anyone can build and deploy a site
-     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=948a75d3-5a7f-4882-a904-88dd1c560f41
-     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Implant Parts Selector</title>
 <style>
@@ -125,35 +122,86 @@
     .home-hero .art{width:110px; height:110px;}
   }
 
-  /* ---- Odontogram (tooth chart) ---- */
-  .odo-wrap{padding:4px 0 8px;}
-  .odo-legend{display:flex; gap:16px; margin-bottom:14px; font-size:11.5px; color:var(--ink-soft); flex-wrap:wrap;}
-  .odo-legend span{display:inline-flex; align-items:center; gap:5px;}
-  .odo-swatch{width:12px; height:12px; border-radius:3px; display:inline-block;}
-  .odo-arch{display:flex; justify-content:center; gap:4px; margin-bottom:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:2px;}
-  .odo-arch.lower{margin-bottom:0; margin-top:10px;}
-  .odo-tooth{
-    width:28px; height:36px; border-radius:6px 6px 9px 9px; border:1.5px solid var(--line);
-    background:#fff; color:var(--ink-soft); font-size:11px; font-weight:700;
-    display:flex; align-items:center; justify-content:center; cursor:pointer;
-    transition:transform .1s ease, background .12s ease, border-color .12s ease, color .12s ease;
-    flex:0 0 auto;
-  }
-  .odo-arch.upper .odo-tooth{align-self:flex-end;}
-  .odo-arch.lower .odo-tooth{align-self:flex-start; border-radius:9px 9px 6px 6px;}
-  .odo-tooth:hover{border-color:#9AA3AF;}
-  .odo-tooth:active{transform:scale(.92);}
-  .odo-tooth.implant{background:var(--green); border-color:var(--green-deep); color:#fff;}
-  .odo-tooth.pontic{background:#F3D48A; border-color:#C99A2E; color:#5A430E;}
-  .odo-arch-label{font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); text-align:center; margin:2px 0;}
-  .odo-summary{font-size:12.5px; color:var(--ink-soft); text-align:center; margin-top:14px; min-height:18px;}
-  .odo-summary b{color:var(--ink);}
+  /* ---- Case builder (Single/Bridge and All-on-X) ---- */
+  .app.builder-mode{grid-template-columns:1fr;}
+  .app.builder-mode .systembar, .app.builder-mode .sidebar, .app.builder-mode .orderpanel, .app.builder-mode .content, .app.builder-mode #homeView{display:none;}
+  #builderView{display:none;}
+  .app.builder-mode #builderView{display:block; grid-column:1/-1; background:#EDEEF0; min-height:calc(100vh - 76px);}
+  .cb-wrap{max-width:720px; margin:0 auto; padding:18px 16px 0;}
+  .cb-head{margin:4px 2px 4px;}
+  .cb-eyebrow{margin:0; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--green-deep); font-weight:700;}
+  .cb-head h2{margin:2px 0 0; font-size:22px; color:var(--navy);}
+  .cb-card{background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px; margin:10px 0;}
+  .cb-card h3{margin:0 0 10px; font-size:15px; color:var(--navy); display:flex; align-items:center; gap:8px;}
+  .cb-x{margin-left:auto; border:none; background:transparent; color:var(--ink-soft); font-size:15px; width:28px; height:28px; border-radius:6px; cursor:pointer;}
+  .cb-x:hover{background:#F1F2F4; color:var(--ink);}
+  .cb-lbl{font-size:11px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin:12px 0 6px;}
+  .cb-card > .cb-lbl:first-child{margin-top:0;}
+  .cb-chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .cb-chip{border:1px solid var(--line); background:#fff; border-radius:999px; padding:8px 13px; font-size:13.5px; font-weight:600; color:var(--ink); font-family:var(--sans); cursor:pointer; text-align:left; line-height:1.25;}
+  .cb-chip:hover{border-color:#9AA3AF;}
+  .cb-chip.on{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .cb-variants{margin-bottom:10px;}
+  .cb-seg{display:flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:12px;}
+  .cb-seg .cb-chip{flex:1; border:none; border-radius:0; text-align:center; border-right:1px solid var(--line);}
+  .cb-seg .cb-chip:last-child{border-right:none;}
+  .cb-arch{font-size:10px; color:var(--ink-soft); margin:4px 0 3px; letter-spacing:.06em; text-transform:uppercase;}
+  .cb-odo{display:grid; grid-template-columns:repeat(16,1fr); gap:3px; margin-bottom:3px;}
+  .cb-tooth{font:700 11px var(--sans); padding:8px 0; border:1.5px solid var(--line); border-radius:5px; color:var(--ink-soft); background:#fff; cursor:pointer; min-width:0;}
+  .cb-tooth.implant{background:var(--green); border-color:var(--green-deep); color:#fff;}
+  .cb-tooth.pontic{background:#F3D48A; border-color:#C99A2E; color:#5A430E;}
+  .cb-note{font-size:12.5px; color:var(--ink-soft); margin:8px 0 0; line-height:1.45;}
+  .cb-note b{color:var(--ink);}
+  .cb-note.cb-top{margin:-4px 0 10px;}
+  .cb-note.cb-axis{margin-top:6px; font-size:11.5px;}
+  .cb-note.cb-pad{padding:0 4px;}
+  .cb-missing{color:#B23 !important; font-weight:600;}
+  .cb-missing-card{border-color:#E3A3A3; box-shadow:0 0 0 2px #F6DADA;}
+  .cb-tabs{display:flex; gap:6px; overflow-x:auto; padding:4px 0 2px;}
+  .cb-tab{flex:0 0 auto; border:1px solid var(--line); background:#fff; border-radius:10px; padding:7px 12px; font-family:var(--sans); color:var(--ink); cursor:pointer; text-align:left;}
+  .cb-tab b{display:block; font-size:14px;}
+  .cb-tab small{display:block; font-size:11px; color:var(--ink-soft);}
+  .cb-tab.on{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .cb-tab.on small{color:#B9C3DD;}
+  .cb-link{border:none; background:none; color:var(--navy); font:600 13px var(--sans); text-decoration:underline; padding:6px 2px; cursor:pointer;}
+  .cb-gridwrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  table.cb-grid{border-collapse:separate; border-spacing:3px; width:100%;}
+  table.cb-grid th{font-size:11.5px; color:var(--ink-soft); font-weight:700; text-align:center; padding:2px; white-space:nowrap;}
+  table.cb-grid tbody th{text-align:right; padding-right:6px;}
+  table.cb-grid td{padding:0; height:34px; min-width:32px;}
+  table.cb-grid td.na{background:#F5F6F8; border-radius:7px;}
+  .cb-cell{display:block; width:100%; height:34px; border:1px solid var(--line); border-radius:7px; background:#fff; cursor:pointer; font:600 13px var(--sans); color:var(--ink); padding:0;}
+  .cb-cell:hover{border-color:#9AA3AF;}
+  .cb-cell.on{background:var(--navy); border-color:var(--navy); color:#fff;}
+  table.cb-ghah td{height:40px;} table.cb-ghah .cb-cell{height:40px;}
+  .cb-summary{margin-top:12px; padding:10px 12px; background:#F4F8EE; border:1px solid #D6E8BE; border-radius:10px; font-size:13.5px;}
+  .cb-summary b{display:block; color:var(--ink);}
+  .cb-ref{display:block; font:12px var(--mono); color:var(--ink-soft); margin-top:2px;}
+  .cb-warn{display:block; font-size:12.5px; color:var(--amber); margin-top:6px;}
+  p.cb-warn{background:#FFF6E8; border:1px solid #F1D3A3; border-radius:8px; padding:8px 10px; margin:8px 0 0;}
+  .cb-sec{display:block; width:100%; text-align:left; border:none; border-top:1px solid var(--line); background:none; padding:10px 2px; font:700 13px var(--sans); color:var(--navy); cursor:pointer;}
+  .cb-row{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px dashed var(--line);}
+  .cb-row:last-child{border-bottom:none;}
+  .cb-row .t{flex:1; min-width:0;}
+  .cb-row .t b{display:block; font-size:13.5px; font-weight:600;}
+  .cb-row .t small{font:11.5px var(--mono); color:var(--ink-soft);}
+  .cb-row.on .t b{color:var(--navy);}
+  .cb-step{display:flex; align-items:center; border:1px solid var(--line); border-radius:9px; overflow:hidden; flex:0 0 auto;}
+  .cb-step button{width:36px; height:34px; border:none; background:#F4F6F9; font:700 17px var(--sans); color:var(--navy); cursor:pointer;}
+  .cb-step button:disabled{color:#C3CAD3; cursor:default;}
+  .cb-step span{min-width:30px; text-align:center; font-weight:700; font-size:14px;}
+  .cb-row.on .cb-step span{color:var(--green-deep);}
+  .cb-foot{position:sticky; bottom:0; margin:14px -16px 0; padding:12px 16px 18px; background:#fff; border-top:1px solid var(--line); box-shadow:0 -4px 14px rgba(0,0,0,.06); display:flex; gap:10px; align-items:center;}
+  .cb-add{flex:1; background:var(--green); color:var(--navy-deep); border:none; border-radius:12px; padding:14px; font:800 15.5px var(--sans); cursor:pointer;}
+  .cb-add.wait{background:#E4E8EE; color:var(--ink-soft); font-weight:700;}
+  .cb-cancel{border:none; background:none; color:var(--ink-soft); font:600 14px var(--sans); padding:12px 6px; cursor:pointer;}
   @media (max-width:480px){
     .modal-overlay{padding:8px;}
-    .modal-box.modal-grouped{padding:10px;}
-    .odo-tooth{width:17px; height:27px; font-size:8.5px; border-radius:3px 3px 6px 6px;}
-    .odo-arch.lower .odo-tooth{border-radius:6px 6px 3px 3px;}
-    .odo-arch{gap:1px;}
+    .cb-wrap{padding:12px 12px 0;}
+    .cb-foot{margin:14px -12px 0;}
+    .cb-odo{gap:2px;}
+    .cb-tooth{font-size:9.5px; padding:7px 0; border-radius:4px;}
+    .cb-card{padding:12px;}
   }
 
   /* ---- Treatment plan summary (order panel) ---- */
@@ -489,24 +537,6 @@
     box-shadow:0 24px 60px rgba(0,0,0,.35);
     position:relative;
   }
-  .modal-exit-x{
-    position:absolute;
-    top:12px;
-    right:12px;
-    width:28px;
-    height:28px;
-    border:none;
-    background:transparent;
-    color:var(--ink-soft);
-    font-size:18px;
-    line-height:1;
-    cursor:pointer;
-    border-radius:6px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .modal-exit-x:hover{background:#F1F2F4; color:var(--ink);}
   .modal-box h3{
     margin:0 0 8px;
     color:var(--navy);
@@ -558,19 +588,6 @@
     border:1px solid var(--line);
     border-radius:8px;
   }
-  .modal-check-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:12px 14px;
-    border-bottom:1px solid var(--line);
-    cursor:pointer;
-    font-size:13px;
-    color:var(--ink);
-  }
-  .modal-check-row:last-child{border-bottom:none;}
-  .modal-check-row:hover{background:#F8F9FB;}
-  .modal-check-row input{width:18px; height:18px; flex:0 0 auto;}
   .modal-select-row{
     display:block;
     width:100%;
@@ -586,67 +603,6 @@
   .modal-select-row:hover{background:#EEF7E1;}
   .modal-select-row .msr-label{font-size:13px; font-weight:600; color:var(--ink); display:block;}
   .modal-select-row .msr-sub{font-size:11px; color:var(--ink-soft); font-family:var(--mono); display:block; margin-top:2px;}
-  .modal-checkqty-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:10px 14px;
-    border-bottom:1px solid var(--line);
-    font-size:13px;
-    color:var(--ink);
-  }
-  .modal-checkqty-row:last-child{border-bottom:none;}
-  .modal-checkqty-row:hover{background:#F8F9FB;}
-  .modal-checkqty-row input[type="checkbox"]{width:18px; height:18px; flex:0 0 auto; cursor:pointer;}
-  .modal-checkqty-row .cq-info{flex:1 1 auto; min-width:0; cursor:pointer;}
-  .modal-checkqty-row .cq-label{font-weight:600; display:block;}
-  .modal-checkqty-row .cq-sub{font-size:11px; color:var(--ink-soft); font-family:var(--mono); display:block; margin-top:2px;}
-  .modal-checkqty-row input.cq-qty{
-    width:56px;
-    flex:0 0 auto;
-    text-align:center;
-    padding:6px 4px;
-    border:1px solid var(--line);
-    border-radius:6px;
-    font-family:var(--sans);
-    font-size:13px;
-    margin-bottom:0;
-  }
-  .modal-checkqty-row input.cq-qty:focus{outline:2px solid var(--green); border-color:var(--green);}
-  .modal-checkqty-row .cq-qty:disabled{background:#F3F4F6; color:var(--ink-soft);}
-  .modal-box.modal-grouped{max-width:640px;}
-  .modal-checkqty-sections{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
-    gap:12px;
-    max-height:min(55vh, 460px);
-    overflow-y:auto;
-    margin-bottom:16px;
-  }
-  .modal-checkqty-section{
-    border:1px solid var(--line);
-    border-radius:8px;
-    overflow:hidden;
-    align-self:start;
-  }
-  .modal-checkqty-section-head{
-    background:#EEF1F5;
-    color:var(--navy);
-    font-weight:700;
-    font-size:11.5px;
-    letter-spacing:.03em;
-    text-transform:uppercase;
-    padding:8px 12px;
-    border-bottom:1px solid var(--line);
-  }
-  .wizard-progress{
-    font-size:11px;
-    color:var(--ink-soft);
-    text-transform:uppercase;
-    letter-spacing:.04em;
-    font-weight:700;
-    margin-bottom:4px;
-  }
   .no-results{
     color:var(--ink-soft);
     font-size:13px;
@@ -853,6 +809,8 @@
 
   <div id="homeView"></div>
 
+  <div id="builderView"></div>
+
   <div class="systembar" id="systembar"></div>
 
   <div class="sidebar" id="sidebar"></div>
@@ -895,6 +853,7 @@
 <script src="catalog/neodent-gm.js"></script>
 <script src="catalog/systems.js"></script>
 <script src="compatibility.js"></script>
+<script src="case-builder.js"></script>
 <script>
 
 function sectionOf(sys, cat){ return sys.surgical.has(cat) ? "SURGICAL" : "PROSTHETIC / RESTORATIVE"; }
@@ -902,7 +861,7 @@ function sectionOf(sys, cat){ return sys.surgical.has(cat) ? "SURGICAL" : "PROST
 /* ---------- State ---------- */
 let activeSystemId = "blc";
 let activeCategory = SYSTEMS[activeSystemId].order[0];
-let viewMode = "home";  // "home" | "category" — Home is the default landing screen
+let viewMode = "home";  // "home" | "category" | "builder" — Home is the default landing screen
 let selected = {};   // key `${systemId}::${ref}` -> {name, group, category, qty, system, ref}
 
 /* ---------- System switcher ---------- */
@@ -1058,120 +1017,7 @@ function navigateWithFade(fn){
   }, 140);
 }
 
-async function pickSystemAndGo(promptTitle, systemIds, message){
-  return await showModal({
-    type:'select', title:promptTitle, message,
-    options: systemIds.map(id => ({ value:id, label: SYSTEMS[id].name }))
-  });
-}
-
-/* Tags every order line whose quantity increased since `before` with the
-   given tooth number (deduped, new array each time — never mutated in
-   place — so snapshot/restore for Back navigation stays safe). Used by the
-   guided Single/Bridge wizard so a bridge case's order list can show which
-   tooth each part belongs to, even when two teeth end up needing the exact
-   same REF (their quantities just merge onto one line, tagged with both
-   tooth numbers, rather than the order gaining a duplicate row for
-   something you'd actually order as one combined quantity). */
-function tagTeethForNewAdditions(before, toothNumber){
-  Object.keys(selected).forEach(key=>{
-    const beforeQty = before[key] ? before[key].qty : 0;
-    if(selected[key].qty > beforeQty){
-      const existing = selected[key].teeth || [];
-      if(!existing.includes(toothNumber)) selected[key].teeth = [...existing, toothNumber];
-    }
-  });
-}
-
 let currentTreatmentPlan = null; // {type:'single'|'bridge', implants:[...], pontics:[...]} — shown atop the order panel
-
-async function startSingleOrBridgeWizard(){
-  const treatType = await showModal({
-    type:'select', title:'What are you treating?',
-    options:[
-      {value:'single', label:'Single Implant Crown(s)'},
-      {value:'bridge', label:'Implant-Supported Bridge'}
-    ]
-  });
-  if(!treatType) return;
-
-  const odoResult = await showModal({
-    type:'odontogram', title:'Where are you placing implants?', mode: treatType,
-    okText:'Continue'
-  });
-  if(!odoResult) return;
-
-  // One system for the whole case — placing several implants in the same
-  // visit means the same system almost always, so this is asked once up
-  // front rather than re-asked for every tooth.
-  const sysId = await pickSystemAndGo('Which Implant System?', SYSTEM_IDS);
-  if(!sysId) return;
-  const implantsCat = WIZARD_IMPLANTS_CATEGORY_NAME[sysId] || SYSTEMS[sysId].order[0];
-
-  wizardActive = true;
-  wizardAborted = false;
-  wizardExitSnapshot = snapshotSelected();
-  const previousTreatmentPlan = currentTreatmentPlan;
-  currentTreatmentPlan = {type:treatType, implants:odoResult.implants, pontics:odoResult.pontics};
-  renderOrder();
-
-  try {
-    const teeth = odoResult.implants;
-    const toothSnapshots = []; // state right before each tooth's turn — lets Back undo one tooth and redo it
-    let ti = 0;
-    while(ti < teeth.length){
-      if(wizardAborted) break;
-      const tooth = teeth[ti];
-      toothSnapshots[ti] = snapshotSelected();
-      const result = await pickImplantsForCase(sysId, implantsCat, `Tooth #${tooth} — Pick Implant`, null, ti>0, {
-        defaultQty: 1,
-        afterAdd: (groupLabel) => maybeRunTreatmentWizard(sysId, groupLabel, implantsCat, 1, /*skipConfirm*/ true)
-      });
-      if(wizardAborted) break;
-      if(result === '__PART_BACK__'){
-        // Nothing was added for this tooth yet — undo the previous tooth's
-        // picks instead and land back on it so it can be redone, exactly
-        // like backing out of one part in the per-implant treatment wizard.
-        restoreSelected(toothSnapshots[ti-1]);
-        ti = ti-1;
-        render();
-        renderOrder();
-        continue;
-      }
-      tagTeethForNewAdditions(toothSnapshots[ti], tooth);
-      render();
-      renderOrder();
-      ti++;
-    }
-  } finally {
-    if(wizardAborted){ currentTreatmentPlan = previousTreatmentPlan; renderOrder(); }
-    wizardActive = false;
-    wizardExitSnapshot = null;
-  }
-
-  if(!wizardAborted){
-    navigateWithFade(()=>{
-      activeSystemId = sysId;
-      activeCategory = implantsCat;
-      viewMode = 'category';
-      render();
-    });
-    showToast('Treatment plan complete — review your order');
-  }
-}
-
-async function goToAllOnX(){
-  const eligible = SYSTEM_IDS.filter(id => (SYSTEMS[id].catalog['All-on-X Components']||[]).length>0);
-  const id = await pickSystemAndGo('All-on-X Wizard', eligible, 'Which implant system?');
-  if(!id) return;
-  navigateWithFade(()=>{
-    activeSystemId = id;
-    activeCategory = 'All-on-X Components';
-    viewMode = 'category';
-    render();
-    setTimeout(()=> runAllOnXWizard(id), 220);
-  });
-}
 
 function goToFullCatalog(){
   navigateWithFade(()=>{
@@ -1210,16 +1056,18 @@ function renderHomeView(){
       </div>
     </div>
   `;
-  document.getElementById('homeCardWizard').onclick = startSingleOrBridgeWizard;
-  document.getElementById('homeCardAllOnX').onclick = goToAllOnX;
+  document.getElementById('homeCardWizard').onclick = ()=> openCaseBuilder({kind:'case'});
+  document.getElementById('homeCardAllOnX').onclick = ()=> openCaseBuilder({kind:'allonx'});
   document.getElementById('homeCardCatalog').onclick = goToFullCatalog;
 }
 
 function render(){
   const appRoot = document.getElementById('appRoot');
   appRoot.classList.toggle('home-mode', viewMode==='home');
+  appRoot.classList.toggle('builder-mode', viewMode==='builder');
   document.getElementById('homeBtn').style.display = viewMode==='home' ? 'none' : 'flex';
   if(viewMode==='home'){ document.getElementById('pageMeta').innerHTML = ''; renderHomeView(); return; }
+  if(viewMode==='builder'){ document.getElementById('pageMeta').innerHTML = ''; renderCaseBuilder(); return; }
 
   buildSystemBar();
   buildSidebar();
@@ -1244,8 +1092,8 @@ function render(){
   if(!query && activeCategory === "All-on-X Components"){
     const wizardBtn = document.createElement('button');
     wizardBtn.className = 'allonx-wizard-btn';
-    wizardBtn.innerHTML = '🦷 Launch All-on-X Case Wizard';
-    wizardBtn.onclick = ()=> runAllOnXWizard(activeSystemId);
+    wizardBtn.innerHTML = '🦷 Start an All-on-X case';
+    wizardBtn.onclick = ()=> openCaseBuilder({kind:'allonx', sys:activeSystemId});
     container.appendChild(wizardBtn);
   }
 
@@ -1292,7 +1140,7 @@ function escapeHtml(s){
 /* A "caution" on a catalog group (see e.g. the BLC Ø4.5mm implants, and
    FOLLOW-UP.md for the full list) means the data itself is a genuine open
    question, not a UI nice-to-have — so every path that can add an item
-   from that group (manual catalog tap, guided wizards, the case wizard)
+   from that group (manual catalog tap or the case builder)
    routes through this same confirm gate rather than each needing its
    own copy of the warning. Returns true if there's nothing to confirm,
    or if the person confirms; false means "don't add, go back." */
@@ -1326,8 +1174,21 @@ async function toggleItem(systemId, ref, name, groupLabel, category){
   render();
   renderOrder();
 
-  await maybeRunTreatmentWizard(systemId, groupLabel, category, qty);
+  await maybeOfferPartsForImplant(systemId, groupLabel, category, name, ref, qty);
   await maybeOfferMultiUnitCap(systemId, category, groupLabel);
+}
+
+/* After an implant is added straight from the catalog, offers the case
+   builder for its parts, with the implant already filled in. */
+async function maybeOfferPartsForImplant(systemId, groupLabel, category, name, ref, qty){
+  if(WIZARD_IMPLANTS_CATEGORY_NAME[systemId] !== category) return;
+  if(!(WIZARD_CONFIG[systemId] || []).length) return;
+  const wants = await showModal({
+    type:'confirm', title:'Add parts for this implant?',
+    message:'Pick its cover screw, healing abutment and other parts on one screen.',
+    okText:'Yes, pick parts', cancelText:'No, skip'
+  });
+  if(wants) openCaseBuilder({sys:systemId, fixedImplant:{group:groupLabel, name, ref, qty}});
 }
 
 function updateQty(key, val){
@@ -1355,347 +1216,7 @@ async function clearAll(){
 }
 
 /* ---------- Order panel ---------- */
-/* Runs one part-type step of the wizard: pick subtype (if >1 option), pick
-   diameter/platform variant (the group), pick size/gingival height (the
-   item), then quantity — adding the chosen item straight into the order.
-   `platformTracker`, if passed a Set, gets the picked item's platform
-   added to it (used by the case wizard to remember every implant platform
-   selected, so later steps can filter against all of them). */
-/* Detects the "GH 1.5 / AH 2mm (3.5mm)" pattern used throughout healing
-   abutment items — gingival height (GH, the portion within the soft
-   tissue) and abutment height (AH, the portion above the gumline the
-   restoration attaches to), with the combined total in parentheses. Only
-   items that actually use this two-part naming get the friendlier
-   two-question flow below; anything else (implant lengths, cover screw
-   names, etc.) falls back to the existing flat list untouched. */
-/* Detects "sold N per package" items — e.g. "Protective Caps (4 pack,
-   PEEK/TAN)" or "Burn-out Coping (4 pack)" or "(2/pkg)" or "(4 pcs)". The
-   pack size can live on the item's own name OR on its parent group's label
-   (Straumann's Protective Caps line only states "4 pack" on the group,
-   not on each individual item). Returns 1 (no packaging) if nothing matches.
-   Used everywhere quantity is asked for or displayed, so a person entering
-   "2" for a 4-per-package item is understood as 2 PACKAGES (= 8 pieces),
-   not 2 raw pieces — this is what the quantity-remaining math in the
-   wizards needs to stay correct. */
-function parsePackSize(name, groupLabel){
-  const re = /\((\d+)\s*(?:pack|pcs)\b|\((\d+)\/pkg\)/i;
-  let m = (name||'').match(re);
-  if(!m) m = (groupLabel||'').match(re);
-  if(!m) return 1;
-  const n = parseInt(m[1]||m[2],10);
-  return (n && n>1) ? n : 1;
-}
-
-function parseGHAH(name){
-  const m = name.match(/GH\s*([\d.]+)\s*\/\s*AH\s*([\d.]+)\s*mm(?:\s*\(([\d.]+)mm\))?/i);
-  if(!m) return null;
-  return { gh: m[1], ah: m[2], total: m[3] || null };
-}
-function friendlyItemLabel(name){
-  const p = parseGHAH(name);
-  if(!p) return name;
-  return `Gingival Height ${p.gh}mm, Abutment Height ${p.ah}mm` + (p.total ? ` (Total height: ${p.total}mm)` : '');
-}
-
-async function runWizardStep(systemId, step, implantPlatform, defaultQty, stepLabel, platformTracker, canBackFurther, implantGeneration){
-  const state = {};
-  const history = []; // phases that were actually shown as a choice — Back pops this
-  let phase = 'subtype';
-
-  // Pressing Back with no internal history left either does nothing (no
-  // previous phase to return to) or escalates out to the caller, which
-  // undoes the previous phase and re-runs it — this is what lets Back work
-  // seamlessly all the way from a deep GH/AH sub-question back out to
-  // "redo Backup Implants," not just within one part's own cascade.
-  function handleBack(){
-    if(history.length>0){ phase = history.pop(); return null; }
-    return canBackFurther ? '__PART_BACK__' : null;
-  }
-
-  while(true){
-    // --- Subtype (e.g. Regular vs Anatomic) ---
-    if(phase === 'subtype'){
-      if(step.options.length === 1){
-        state.chosenOption = step.options[0];
-        phase = 'group';
-        continue;
-      }
-      const choice = await showModal({
-        type:'select', progress: stepLabel, title:step.label, message:'Which kind?',
-        options: step.options.map((o,i)=>({value:i, label:o.label})),
-        showBack: history.length>0 || canBackFurther
-      });
-      if(choice==='__WIZARD_BACK__'){ const esc = handleBack(); if(esc) return esc; continue; }
-      if(choice===null) return null;
-      state.chosenOption = step.options[choice];
-      history.push('subtype');
-      phase = 'group';
-      continue;
-    }
-
-    // --- Diameter / platform variant (the group) ---
-    if(phase === 'group'){
-      const groups = wizardCandidateGroups(systemId, state.chosenOption.category, implantPlatform, state.chosenOption, implantGeneration);
-      if(groups.length===0){
-        const prof = toProfile(implantPlatform, implantGeneration);
-        const plat = prof.platforms.size ? ` (${platformLabel(prof.platforms)} platform)` : '';
-        await showModal({type:'alert', title:step.label, message:`None of the ${state.chosenOption.label.toLowerCase()} options in this catalog fit this implant${plat}. If you need one, order it directly from the manufacturer's catalog or your rep.`});
-        return null;
-      }
-      if(groups.length === 1){
-        state.chosenGroup = groups[0];
-        phase = 'items';
-        continue;
-      }
-      const choice = await showModal({
-        type:'select', progress: stepLabel, title: step.label,
-        message: `${state.chosenOption.label} — which diameter / platform variant do you need?`,
-        options: groups.map((g,i)=>({value:i, label:g.label})),
-        showBack: history.length>0 || canBackFurther
-      });
-      if(choice==='__WIZARD_BACK__'){ const esc = handleBack(); if(esc) return esc; continue; }
-      if(choice===null) return null;
-      state.chosenGroup = groups[choice];
-      history.push('group');
-      phase = 'items';
-      continue;
-    }
-
-    // --- Size / gingival height (the item) — split into two plain-language
-    //     questions (gingival height, then abutment height) whenever the
-    //     catalog names follow the "GH x / AH y" pattern, instead of a
-    //     single cryptic flat list. Falls back to the flat list otherwise. ---
-    if(phase === 'items'){
-      if(state.chosenGroup.caution && !state.cautionConfirmed){
-        const trueCat = state.chosenGroup.sourceCategory || state.chosenOption.category;
-        const ok = await confirmGroupCaution(systemId, trueCat, state.chosenGroup.label);
-        if(!ok){ const esc = handleBack(); if(esc) return esc; continue; }
-        state.cautionConfirmed = true;
-      }
-      const candidateItems = wizardCandidateItems(systemId, state.chosenOption.category, state.chosenGroup, state.chosenGroup.items, implantPlatform, implantGeneration);
-      const parsed = candidateItems.map(([nm,rf])=>({nm, rf, ghah: parseGHAH(nm)}));
-      const allParsed = parsed.length>0 && parsed.every(p=>p.ghah);
-      const uniqueGH = allParsed ? [...new Set(parsed.map(p=>p.ghah.gh))] : [];
-
-      if(allParsed && uniqueGH.length > 1){
-        state.parsedItems = parsed;
-        phase = 'gh';
-        continue;
-      }
-
-      const choice = await showModal({
-        type:'select', progress: stepLabel, title: step.label,
-        message: candidateItems.length===1
-          ? `Available ${step.label.toLowerCase()}s:`
-          : `${state.chosenGroup.label} — which size / gingival height do you need?`,
-        options: candidateItems.map(([nm,rf],i)=>({value:i, label:nm, sublabel:'REF '+rf})),
-        showBack: history.length>0 || canBackFurther
-      });
-      if(choice==='__WIZARD_BACK__'){ const esc = handleBack(); if(esc) return esc; continue; }
-      if(choice===null) return null;
-      state.chosenItem = candidateItems[choice];
-      history.push('items');
-      phase = 'quantity';
-      continue;
-    }
-
-    // --- Gingival height (first of the two GH/AH questions) ---
-    if(phase === 'gh'){
-      const uniqueGH = [...new Set(state.parsedItems.map(p=>p.ghah.gh))];
-      const choice = await showModal({
-        type:'select', progress: stepLabel, title: step.label,
-        message: `${state.chosenGroup.label} — what gingival height (GH) do you need? This is the portion that sits within the soft tissue, from the implant platform up to the gumline.`,
-        options: uniqueGH.map((gh,i)=>({value:i, label:`Gingival Height: ${gh}mm`})),
-        showBack: history.length>0 || canBackFurther
-      });
-      if(choice==='__WIZARD_BACK__'){ const esc = handleBack(); if(esc) return esc; continue; }
-      if(choice===null) return null;
-      state.chosenGH = uniqueGH[choice];
-      history.push('gh');
-      state.ghFilteredItems = state.parsedItems.filter(p=>p.ghah.gh===state.chosenGH);
-      phase = 'ah';
-      continue;
-    }
-
-    // --- Abutment height (second of the two GH/AH questions) ---
-    if(phase === 'ah'){
-      const remaining = state.ghFilteredItems;
-      const onlyOne = remaining.length === 1;
-      const choice = await showModal({
-        type:'select', progress: stepLabel, title: step.label,
-        message: onlyOne
-          ? `${state.chosenGroup.label} — only one abutment height is available at ${state.chosenGH}mm gingival height, tap to confirm:`
-          : `${state.chosenGroup.label} — what abutment height (AH) do you need? This is the portion above the gumline the crown or bridge attaches to. (Gingival height is set at ${state.chosenGH}mm.)`,
-        options: remaining.map((p,i)=>({
-          value:i, label:`Abutment Height: ${p.ghah.ah}mm`,
-          sublabel: p.ghah.total ? `Total height ${p.ghah.total}mm · REF ${p.rf}` : `REF ${p.rf}`
-        })),
-        showBack: true
-      });
-      if(choice==='__WIZARD_BACK__'){ const esc = handleBack(); if(esc) return esc; continue; }
-      if(choice===null) return null;
-      state.chosenItem = [remaining[choice].nm, remaining[choice].rf];
-      history.push('ah');
-      phase = 'quantity';
-      continue;
-    }
-
-    // --- Quantity ---
-    if(phase === 'quantity'){
-      const packSize = parsePackSize(state.chosenItem[0], state.chosenGroup.label);
-      const piecesNeeded = defaultQty||1;
-      const suggestedPackages = packSize>1 ? Math.max(1, Math.ceil(piecesNeeded/packSize)) : piecesNeeded;
-      const packNote = packSize>1
-        ? `\n\nThis item ships ${packSize} per package. You need ${piecesNeeded} piece${piecesNeeded===1?'':'s'} — enter the number of PACKAGES (suggested: ${suggestedPackages}).`
-        : '';
-      const qtyVal = await showModal({
-        type:'prompt', progress: stepLabel, title: packSize>1 ? 'Quantity (packages)' : 'Quantity',
-        message:`${friendlyItemLabel(state.chosenItem[0])}\n(${state.chosenGroup.label})\nREF ${state.chosenItem[1]}${packNote}`,
-        defaultValue:String(suggestedPackages||1), okText:'Add',
-        showBack: history.length>0 || canBackFurther
-      });
-      if(qtyVal==='__WIZARD_BACK__'){ const esc = handleBack(); if(esc) return esc; continue; }
-      if(qtyVal===null) return null;
-      let qty = parseInt(qtyVal,10); if(!qty||qty<1) qty=1;
-      state.qty = qty; // packages actually ordered — this is what goes in the order
-      state.packSize = packSize;
-      break;
-    }
-  }
-
-  const key = systemId+'::'+state.chosenItem[1];
-  const trueCat = state.chosenGroup.sourceCategory || state.chosenOption.category;
-  const existingQty = selected[key] ? selected[key].qty : 0;
-  const existingTeeth = selected[key] ? selected[key].teeth : undefined;
-  selected[key] = {name:state.chosenItem[0], group:state.chosenGroup.label, category:trueCat, qty: existingQty + state.qty, system:systemId, ref:state.chosenItem[1]};
-  if(existingTeeth) selected[key].teeth = existingTeeth;
-  trackImplantProfile(platformTracker, systemId, trueCat, state.chosenGroup.label, state.chosenItem[0]);
-  render();
-  renderOrder();
-  await maybeOfferMultiUnitCap(systemId, trueCat, state.chosenGroup.label);
-  return state.qty * (state.packSize||1); // pieces fulfilled, for the caller's remaining-quantity math
-}
-
-/* Entry point: offered right after an implant is added to the order. */
-/* Snapshot/restore the order — used to cleanly undo "the previous phase"
-   when Back is pressed at the start of a new one, without touching
-   anything from earlier phases or added outside the wizard. */
-function snapshotSelected(){
-  const copy = {};
-  for(const k in selected) copy[k] = {...selected[k]};
-  return copy;
-}
-function restoreSelected(snapshot){
-  selected = snapshot;
-  render();
-  renderOrder();
-}
-
-async function maybeRunTreatmentWizard(systemId, groupLabel, category, defaultQty, skipConfirm){
-  if(WIZARD_IMPLANTS_CATEGORY_NAME[systemId] !== category) return;
-  const config = WIZARD_CONFIG[systemId];
-  if(!config || config.length===0) return;
-
-  if(!skipConfirm){
-    const wantsWizard = await showModal({
-      type:'confirm', title:'Add parts for this implant?',
-      message:'Want help selecting related parts — cover screw, healing abutment, and so on?',
-      okText:'Yes, guide me', cancelText:'No, skip'
-    });
-    if(!wantsWizard) return;
-  }
-
-  // If this is being run standalone (from manually clicking an implant in
-  // the catalog), it owns its own wizard-exit session. If it's being run
-  // nested inside an already-active guided flow (the Home-screen Single/
-  // Bridge wizard, one call per tooth), leave that outer session's state
-  // alone — otherwise finishing this implant's parts would prematurely
-  // end the X-exit session for the whole multi-tooth flow.
-  const nestedInOuterWizard = wizardActive;
-  if(!nestedInOuterWizard){
-    wizardActive = true;
-    wizardAborted = false;
-    wizardExitSnapshot = snapshotSelected(); // nothing from this wizard has been added yet
-  }
-  try {
-    const chosenSteps = await showModal({
-      type:'checklist', title:'Which parts do you need?', message:'Select all that apply, then continue.',
-      options: config.map((step,i)=>({value:String(i), label:step.label})), okText:'Continue'
-    });
-    if(!chosenSteps || chosenSteps.length===0) return;
-
-    // Everything the wizard offers below is filtered against this implant's
-    // platform (and, for zygoma, surface generation; for Neodent analogs,
-    // diameter).
-    const implantPlatform = implantProfileFor(systemId, category, groupLabel, '');
-    const implantGeneration = null;
-    let added = 0;
-    const snapshots = []; // snapshot of the order right before each part started
-    let n = 0;
-    while(n < chosenSteps.length){
-      if(wizardAborted) break;
-      snapshots[n] = snapshotSelected();
-      const step = config[parseInt(chosenSteps[n],10)];
-      // Multi-unit Abutment gets the checklist+quantity treatment — a single
-      // implant can carry several multi-unit abutments needing different
-      // sizes/angulations, so letting several be picked with quantities in
-      // one screen (rather than the full pick-one cascade per size) matches
-      // how it's actually used. Falls back to the normal cascade if a system
-      // ever defines this step with multiple subtype options.
-      const useChecklistQty = step.label === 'Multi-unit Abutment' && step.options.length === 1;
-      let result;
-      if(useChecklistQty){
-        const opt = step.options[0];
-        result = await runChecklistQtyPick(systemId, opt.category, implantPlatform, implantGeneration, null, step.label, `Part ${n+1} of ${chosenSteps.length}`,
-          {labelMustInclude: opt.labelMustInclude, labelMustExclude: opt.labelMustExclude, defaultQty, showBack: n>0,
-           afterAdd: (groupLabel) => maybeOfferMultiUnitCap(systemId, opt.category, groupLabel)});
-      } else {
-        result = await runWizardStep(systemId, step, implantPlatform, defaultQty, `Part ${n+1} of ${chosenSteps.length}`, null, n>0, implantGeneration);
-      }
-      if(wizardAborted) break;
-      if(result === '__PART_BACK__'){
-        restoreSelected(snapshots[n-1]); // undo the previous part, redo it
-        added = Math.max(0, added-1);
-        n = n-1;
-        continue;
-      }
-      if(result) added++;
-      render();
-      renderOrder();
-      n++;
-    }
-    if(!wizardAborted && added>0) showToast(`Added ${added} related part${added===1?'':'s'}`);
-  } finally {
-    if(!nestedInOuterWizard){
-      wizardActive = false;
-      wizardExitSnapshot = null;
-    }
-  }
-}
-
-let suppressAutoTriggers = false; // true while the All-on-X Case Wizard is running
-
-/* ---------- Wizard exit (the "X" on wizard modals) ----------
-   `wizardActive` tells showModal() whether to render the exit X at all —
-   set true only while an actual wizard (per-implant or All-on-X) is
-   running, so a plain manual "Quantity" prompt from browsing never gets
-   one. `wizardExitSnapshot` is the order state from the moment the current
-   wizard began, restored in full if the person confirms they want out —
-   "lose all information" means exactly that: everything added during this
-   wizard run is discarded, not just "stop asking questions." `wizardAborted`
-   is checked at each step/phase loop boundary so an exit actually stops
-   the whole wizard rather than just skipping to the next step (which is
-   what a plain per-step cancel already does on its own). */
-let wizardActive = false;
-let wizardExitSnapshot = null;
-let wizardAborted = false;
-
-function cancelledValueFor(type){
-  return type === 'confirm' ? false : null;
-}
-
 async function maybeOfferMultiUnitCap(systemId, category, groupLabel){
-  if(suppressAutoTriggers) return; // the case wizard has its own dedicated, batch step for this
   const trigger = MULTI_UNIT_CAP_TRIGGER[systemId];
   if(!trigger) return;
   if(resolveTrueCategory(systemId, category, groupLabel) !== trigger.category) return;
@@ -1712,20 +1233,14 @@ async function maybeOfferMultiUnitCap(systemId, category, groupLabel){
   if(added) showToast(`Added ${trigger.capLabel.toLowerCase()}`);
 }
 
-/* Generic "pick one item from a specific group (optionally name-filtered),
-   then quantity" flow — used by the automatic healing-cap prompt above and
-   by the All-on-X case wizard below. Accumulates quantity if the exact
-   same item is picked again (e.g. the same coping size for multiple
-   sites), rather than overwriting the previous pick. */
-async function pickFromFilteredGroup(systemId, category, groupLabel, nameFilter, promptLabel, defaultQty, progress, implantPlatform, canBackFurther){
+/* Pick one item from a specific group (optionally name-filtered), then
+   quantity — used by the healing-cap prompt above. Adds to the quantity
+   if the same item is already in the order. */
+async function pickFromFilteredGroup(systemId, category, groupLabel, nameFilter, promptLabel, defaultQty){
   const sys = SYSTEMS[systemId];
   const group = (sys.catalog[category] || []).find(g=>g.label===groupLabel);
   let items = group ? group.items : [];
   if(nameFilter) items = items.filter(([nm])=>nm.includes(nameFilter));
-  if(group){
-    const profile = toProfile(implantPlatform, null);
-    items = items.filter(([nm])=>partFits(systemId, category, group, nm, profile));
-  }
   if(!group || items.length===0){
     await showModal({type:'alert', title:promptLabel, message:`No ${promptLabel.toLowerCase()} options found.`});
     return null;
@@ -1734,11 +1249,9 @@ async function pickFromFilteredGroup(systemId, category, groupLabel, nameFilter,
 
   while(true){
     const choice = await showModal({
-      type:'select', progress, title:promptLabel, message:'Which one?',
-      options: items.map(([nm,rf],i)=>({value:i, label:nm, sublabel:'REF '+rf})),
-      showBack: canBackFurther
+      type:'select', title:promptLabel, message:'Which one?',
+      options: items.map(([nm,rf],i)=>({value:i, label:nm, sublabel:'REF '+rf}))
     });
-    if(choice==='__WIZARD_BACK__') return '__PART_BACK__';
     if(choice===null) return null;
     const chosenItem = items[choice];
 
@@ -1749,10 +1262,10 @@ async function pickFromFilteredGroup(systemId, category, groupLabel, nameFilter,
       ? `\n\nThis item ships ${packSize} per package. You need ${piecesNeeded} piece${piecesNeeded===1?'':'s'} — enter the number of PACKAGES (suggested: ${suggestedPackages}).`
       : '';
     const qty = await showModal({
-      type:'prompt', progress, title: packSize>1 ? 'Quantity (packages)' : 'Quantity', message:`${chosenItem[0]}\n(${group.label})${packNote}`,
+      type:'prompt', title: packSize>1 ? 'Quantity (packages)' : 'Quantity', message:`${chosenItem[0]}\n(${group.label})${packNote}`,
       defaultValue:String(suggestedPackages||1), okText:'Add', showBack:true
     });
-    if(qty==='__WIZARD_BACK__') continue; // re-show the item picker
+    if(qty==='__WIZARD_BACK__') continue; // back to the item list
     if(qty===null) return null;
     const finalQty = parseInt(qty,10) || 1; // packages actually ordered
 
@@ -1763,328 +1276,8 @@ async function pickFromFilteredGroup(systemId, category, groupLabel, nameFilter,
     if(existingTeeth) selected[key].teeth = existingTeeth;
     render();
     renderOrder();
-    return finalQty * packSize; // pieces fulfilled, for the caller's remaining-quantity math
+    return finalQty;
   }
-}
-
-/* ---------- All-on-X Case Wizard ----------
-   A separate, broader wizard from the per-implant one: walks through
-   everything typically needed to plan and order a full-arch, All-on-X
-   case on one system — primary implants, backups, multi-unit abutments,
-   temporary pick-up copings, healing caps (in case of staging/burying),
-   cover screws, and a final catch-all for anything else. Available
-   wherever a system has an "All-on-X Components" category (every system
-   except BLT, which doesn't have a built-out multi-unit line yet). */
-/* ---------- Checklist + quantity pickers ----------
-   Replaces the old "ask a total, then loop pick-one/enter-quantity until
-   it's covered" pattern. Instead: show every matching item as one
-   checklist screen, each row with its own quantity field — check as many
-   different sizes as needed and set quantities right there, submit once.
-   Removes the upfront "how many total" question entirely (the total is
-   just whatever ends up checked), and removes the need to re-walk the
-   whole picker from scratch for a second size. */
-
-/* Flattens every item across every group in `category` (after optional
-   labelMustInclude/Exclude on the group, optional itemNameFilter on items,
-   and platform/generation filtering) into one checklist_qty screen. Pass
-   `groups` in opts to skip category-wide gathering and flatten a specific
-   pre-chosen set of groups instead (used by the two-tier implant picker
-   below, where the group is picked first to avoid an unwieldy giant list). */
-async function runChecklistQtyPick(systemId, category, implantPlatform, implantGeneration, platformTracker, title, progress, opts){
-  opts = opts || {};
-  const sys = SYSTEMS[systemId];
-  let groups = opts.groups || (sys.catalog[category] || []).slice();
-  if(!opts.groups) groups = applyOptionLabelFilters(groups, opts);
-
-  const profile = toProfile(implantPlatform, implantGeneration);
-  const rows = [];
-  groups.forEach(g=>{
-    let items = g.items;
-    if(opts.itemNameFilter) items = items.filter(([nm])=>nm.includes(opts.itemNameFilter));
-    items = items.filter(([nm])=>partFits(systemId, category, g, nm, profile));
-    items.forEach(([nm, rf])=>{
-      const packSize = parsePackSize(nm, g.label);
-      const platform = platformLabel(deriveItemPlatforms(systemId, category, g.label, nm));
-      const generation = [...deriveItemGenerations(systemId, g.label, nm)].join('/');
-      rows.push({
-        label: friendlyItemLabel(nm),
-        sublabel: (groups.length>1 ? `${g.label} · ` : '') + `REF ${rf}` + (packSize>1 ? ` · ships ${packSize}/pkg` : ''),
-        group: g, name: nm, ref: rf, packSize, platform, generation
-      });
-    });
-  });
-
-  if(rows.length === 0){
-    const plat = profile.platforms.size ? ` (${platformLabel(profile.platforms)} platform)` : '';
-    await showModal({type:'alert', title, message:`None of the ${title.toLowerCase()} in this catalog fit this implant${plat}. If you need one, order it directly from the manufacturer's catalog or your rep.`});
-    return null;
-  }
-
-  // Group into columns by whichever dimension actually varies among the
-  // rows being shown — platform (NP/RP/WP) takes priority since it's the
-  // more clinically load-bearing distinction; generation (TiUltra/TiUnite)
-  // is the fallback for cases like Zygoma where both surface generations
-  // can be picked together in one case. If neither varies, no grouping —
-  // stays a plain flat list.
-  const distinctPlatforms = new Set(rows.map(r=>r.platform).filter(Boolean));
-  const sectionOf = distinctPlatforms.size > 1
-    ? (r => r.platform)
-    : (r => r.generation);
-
-  let picked = await showModal({
-    type:'checklist_qty', progress, title,
-    message:'Check everything you need and set quantities, then continue.',
-    options: rows.map((r,i)=>({value:String(i), label:r.label, sublabel:r.sublabel, defaultQty: opts.defaultQty||1, section: sectionOf(r)||undefined})),
-    okText:'Add', showBack: opts.showBack
-  });
-  if(picked==='__WIZARD_BACK__') return '__PART_BACK__';
-  if(!picked || picked.length===0) return 0;
-
-  // Any checked row whose group carries a data caution (e.g. an unverified
-  // REF) gets confirmed before it's actually added — same gate used by the
-  // manual catalog and per-implant wizard, just applied per distinct group
-  // here since several groups can be checked at once on this screen.
-  const cautionGroupsHere = new Set(picked.map(p=>rows[parseInt(p.value,10)].group).filter(g=>g.caution));
-  for(const g of cautionGroupsHere){
-    const ok = await confirmGroupCaution(systemId, g.sourceCategory || category, g.label);
-    if(!ok) picked = picked.filter(p=>rows[parseInt(p.value,10)].group !== g);
-  }
-  if(picked.length===0) return 0;
-
-  let added = 0;
-  const touchedGroups = new Set();
-  picked.forEach(p=>{
-    const row = rows[parseInt(p.value,10)];
-    const packages = p.qty;
-    const key = systemId+'::'+row.ref;
-    const existingQty = selected[key] ? selected[key].qty : 0;
-    const existingTeeth = selected[key] ? selected[key].teeth : undefined;
-    selected[key] = {name:row.name, group:row.group.label, category, qty: existingQty + packages, system:systemId, ref:row.ref};
-    if(existingTeeth) selected[key].teeth = existingTeeth;
-    trackImplantProfile(platformTracker, systemId, category, row.group.label, row.name);
-    touchedGroups.add(row.group.label);
-    added++;
-  });
-  render();
-  renderOrder();
-  if(opts.afterAdd){
-    for(const g of touchedGroups) await opts.afterAdd(g); // sequential — these can be modal-driven prompts
-  }
-  return added;
-}
-
-/* Two-tier picker for Primary/Backup Implants specifically — some systems
-   have 80-90+ individual implant REFs across all their diameter/platform
-   groups, too many for one flat checklist to be usable. First pick which
-   diameter/platform group(s) apply (compact — just group labels), then
-   flatten items+quantity within just those chosen groups. Backing out of
-   the item/quantity screen re-shows the diameter/platform checklist to
-   re-pick, rather than bubbling '__PART_BACK__' all the way out of this
-   whole part — that used to silently skip the implant and let the outer
-   wizard loop think this part was done. Backing out of the diameter/
-   platform checklist itself (nothing to return to within this part) is
-   what actually bubbles '__PART_BACK__' out to the caller. */
-async function pickImplantsForCase(systemId, implantsCat, roleLabel, platformTracker, canBack, extraOpts){
-  extraOpts = extraOpts || {};
-  const sys = SYSTEMS[systemId];
-  const allGroups = (sys.catalog[implantsCat] || []).slice();
-  if(allGroups.length === 0) return 0;
-
-  if(allGroups.length === 1){
-    return await runChecklistQtyPick(systemId, implantsCat, null, null, platformTracker, roleLabel, roleLabel, {groups: allGroups, showBack: canBack, ...extraOpts});
-  }
-
-  while(true){
-    const groupChoice = await showModal({
-      type:'checklist', title: roleLabel, message:'Which diameter/platform variant(s) do you need?',
-      options: allGroups.map((g,i)=>({value:String(i), label:g.label})), okText:'Continue', showBack: canBack
-    });
-    if(groupChoice==='__WIZARD_BACK__') return '__PART_BACK__';
-    if(groupChoice===null) return null;
-    if(!groupChoice || groupChoice.length===0) return 0;
-
-    const chosenGroups = groupChoice.map(i=>allGroups[parseInt(i,10)]);
-    const result = await runChecklistQtyPick(systemId, implantsCat, null, null, platformTracker, roleLabel, roleLabel, {groups: chosenGroups, showBack: true, ...extraOpts});
-    if(result === '__PART_BACK__') continue; // re-show the diameter/platform checklist above
-    return result;
-  }
-}
-
-async function runAllOnXWizard(systemId){
-  suppressAutoTriggers = true;
-  try {
-    await runAllOnXWizardInner(systemId);
-  } finally {
-    suppressAutoTriggers = false;
-    wizardActive = false;
-    wizardExitSnapshot = null;
-  }
-}
-
-async function runAllOnXWizardInner(systemId){
-  const sys = SYSTEMS[systemId];
-  const implantsCat = WIZARD_IMPLANTS_CATEGORY_NAME[systemId];
-  // Accumulates every platform (e.g. RP, WP), surface generation (zygoma)
-  // and diameter actually picked across primary and backup implants, so
-  // every later step only offers components that match — a single platform
-  // stays locked to it; mixing platforms widens what's offered downstream
-  // to match all of them. Snapshotted/restored alongside the order itself
-  // so Back can cleanly undo a whole phase.
-  const caseProfile = makeProfile();
-
-  const start = await showModal({
-    type:'confirm', title:'All-on-X Case Wizard',
-    message:`Walk through ordering everything for a full-arch, All-on-X case on ${sys.name}: primary implants, backups, multi-unit abutments, temporary copings, healing caps, and cover screws.`,
-    okText:'Start', cancelText:'Cancel'
-  });
-  if(!start) return;
-
-  wizardActive = true;
-  wizardAborted = false;
-  wizardExitSnapshot = snapshotSelected(); // nothing from this case wizard has been added yet
-
-  const muStep = (WIZARD_CONFIG[systemId]||[]).find(s=>s.label==='Multi-unit Abutment');
-  const copingCfg = MULTI_UNIT_TEMP_COPING_CONFIG[systemId];
-  const capCfg = MULTI_UNIT_CAP_TRIGGER[systemId];
-  const coverStep = (WIZARD_CONFIG[systemId]||[]).find(s=>s.label==='Cover Screw');
-  const extraLabels = ['Impression Coping','Analog','Implant Replica / Analog','Replacement Screw','Temporary Abutment','Impression / Analog','Healing Abutment'];
-  // Copings and healing caps sit on multi-unit abutments, so those two
-  // steps only make sense once the case actually has one (e.g. a 3.0
-  // platform case has no multi-unit abutment that fits at all).
-  const caseHasMultiUnit = () => !!muStep && Object.values(selected).some(it=>{
-    if(it.system !== systemId) return false;
-    const opt = muStep.options[0];
-    if(resolveTrueCategory(systemId, it.category, it.group) !== opt.category) return false;
-    return applyOptionLabelFilters([{label: it.group}], opt).length > 0 && !(capCfg && it.group === capCfg.capGroupLabel);
-  });
-  const extraOptions = (WIZARD_CONFIG[systemId]||[]).filter(s=>extraLabels.includes(s.label));
-
-  // Each phase returns the count of items it added, or '__PART_BACK__' if
-  // the person backed out of its own first gate — in which case the OUTER
-  // loop below undoes the previous phase entirely and re-runs it, exactly
-  // like backing out of one part in the per-implant wizard.
-  const phases = [
-    { // 1. Primary implants — no previous phase, so no Back offered here
-      run: async () => {
-        return await pickImplantsForCase(systemId, implantsCat, 'Primary Implants', caseProfile, false);
-      }
-    },
-    { // 2. Backup implants
-      run: async (canBack) => {
-        const wantsBackup = await showModal({
-          type:'confirm', title:'Backup Implants',
-          message:"Add backup implants on hand in case a primary implant doesn't achieve good initial stability?",
-          okText:'Yes', cancelText:'No, skip', showBack: canBack
-        });
-        if(wantsBackup==='__WIZARD_BACK__') return '__PART_BACK__';
-        if(!wantsBackup) return 0;
-        return await pickImplantsForCase(systemId, implantsCat, 'Backup Implants', caseProfile, true);
-      }
-    },
-    { // 3. Multi-unit abutments
-      run: async (canBack) => {
-        if(!muStep) return 0;
-        const wantsMU = await showModal({type:'confirm', title:'Multi-unit Abutments', message:'Add multi-unit abutments for this case?', okText:'Yes', cancelText:'No, skip', showBack: canBack});
-        if(wantsMU==='__WIZARD_BACK__') return '__PART_BACK__';
-        if(!wantsMU) return 0;
-        const opt = muStep.options[0];
-        return await runChecklistQtyPick(systemId, opt.category, caseProfile, null, null, 'Multi-unit Abutments', 'Multi-unit Abutments',
-          {labelMustInclude: opt.labelMustInclude, labelMustExclude: opt.labelMustExclude, showBack:true});
-      }
-    },
-    { // 4. Multi-unit temporary / pick-up copings
-      run: async (canBack) => {
-        if(!copingCfg || !caseHasMultiUnit()) return 0;
-        const wantsCoping = await showModal({
-          type:'confirm', title:'Temporary Copings',
-          message:'Add pick-up/temporary copings for the multi-unit abutments, for the immediate provisional?',
-          okText:'Yes', cancelText:'No, skip', showBack: canBack
-        });
-        if(wantsCoping==='__WIZARD_BACK__') return '__PART_BACK__';
-        if(!wantsCoping) return 0;
-        return await runChecklistQtyPick(systemId, copingCfg.category, caseProfile, null, null, 'Temporary Copings', copingCfg.label,
-          {labelMustInclude: copingCfg.groupLabel, itemNameFilter: copingCfg.nameFilter, showBack:true});
-      }
-    },
-    { // 5. Healing caps
-      run: async (canBack) => {
-        if(!capCfg || !caseHasMultiUnit()) return 0;
-        const wantsCaps = await showModal({
-          type:'confirm', title:`${capCfg.capLabel}s`,
-          message:`Multi-unit abutments typically need a healing cap placed over them unless you're going straight to a temporary the same visit. Add ${capCfg.capLabel.toLowerCase()}s?`,
-          okText:'Yes', cancelText:'No, skip', showBack: canBack
-        });
-        if(wantsCaps==='__WIZARD_BACK__') return '__PART_BACK__';
-        if(!wantsCaps) return 0;
-        return await runChecklistQtyPick(systemId, capCfg.category, caseProfile, null, null, `${capCfg.capLabel}s`, capCfg.capLabel,
-          {labelMustInclude: capCfg.capGroupLabel, itemNameFilter: capCfg.capNameFilter, showBack:true});
-      }
-    },
-    { // 6. Cover screws
-      run: async (canBack) => {
-        if(!coverStep) return 0;
-        const wantsCover = await showModal({
-          type:'confirm', title:'Cover Screws',
-          message:'For any implants being buried instead of having a multi-unit abutment connected now (two-stage approach), add cover screws?',
-          okText:'Yes', cancelText:'No, skip', showBack: canBack
-        });
-        if(wantsCover==='__WIZARD_BACK__') return '__PART_BACK__';
-        if(!wantsCover) return 0;
-        const opt = coverStep.options[0];
-        return await runChecklistQtyPick(systemId, opt.category, caseProfile, null, null, 'Cover Screws', 'Cover Screws',
-          {labelMustInclude: opt.labelMustInclude, labelMustExclude: opt.labelMustExclude, showBack:true});
-      }
-    },
-    { // 7. Anything else
-      run: async (canBack) => {
-        if(!extraOptions.length) return 0;
-        const chosenExtras = await showModal({
-          type:'checklist', title:'Anything else?',
-          message:'Any other components for this case — impression copings, lab analogs, spare screws, standard healing abutments?',
-          options: extraOptions.map((s,i)=>({value:String(i), label:s.label})), okText:'Continue', showBack: canBack
-        });
-        if(chosenExtras==='__WIZARD_BACK__') return '__PART_BACK__';
-        if(!chosenExtras || chosenExtras.length===0) return 0;
-        let added = 0;
-        for(const idx of chosenExtras){
-          const step = extraOptions[parseInt(idx,10)];
-          const ok = await runWizardStep(systemId, step, caseProfile, 1, step.label);
-          if(ok) added++;
-        }
-        return added;
-      }
-    }
-  ];
-
-  let addedCount = 0;
-  const snapshots = []; // {selected, platforms} taken right before each phase ran
-  const phaseAdds = [];
-  let idx = 0;
-  while(idx < phases.length){
-    if(wizardAborted) break;
-    snapshots[idx] = { selected: snapshotSelected(), profile: cloneProfile(caseProfile) };
-    const result = await phases[idx].run(idx > 0);
-    if(wizardAborted) break;
-    if(result === '__PART_BACK__'){
-      if(idx === 0){ continue; } // nothing before phase 0 — just retry it
-      const prev = snapshots[idx-1];
-      restoreSelected(prev.selected);
-      const restored = prev.profile;
-      ['platforms','generations','diameters'].forEach(k=>{ caseProfile[k].clear(); restored[k].forEach(x=>caseProfile[k].add(x)); });
-      addedCount -= (phaseAdds[idx-1] || 0);
-      phaseAdds[idx-1] = undefined;
-      idx = idx - 1;
-      continue;
-    }
-    const addedThisPhase = typeof result === 'number' ? result : 0;
-    phaseAdds[idx] = addedThisPhase;
-    addedCount += addedThisPhase;
-    idx++;
-  }
-
-  render();
-  renderOrder();
-  if(!wizardAborted && addedCount>0) showToast(`All-on-X case: added ${addedCount} item${addedCount===1?'':'s'}`);
 }
 
 function renderOrder(){
@@ -2248,14 +1441,8 @@ function showModal(opts){
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
     const box = document.createElement('div');
-    box.className = 'modal-box' + (opts.type==='checklist' || opts.type==='select' || opts.type==='checklist_qty' || opts.type==='odontogram' ? ' modal-wide' : '');
+    box.className = 'modal-box' + (opts.type==='select' ? ' modal-wide' : '');
 
-    if(opts.progress){
-      const prog = document.createElement('div');
-      prog.className = 'wizard-progress';
-      prog.textContent = opts.progress;
-      box.appendChild(prog);
-    }
     if(opts.title){
       const h3 = document.createElement('h3');
       h3.textContent = opts.title;
@@ -2272,27 +1459,7 @@ function showModal(opts){
       resolve(result);
     }
 
-    if(wizardActive && opts.type !== 'alert'){
-      const xBtn = document.createElement('button');
-      xBtn.className = 'modal-exit-x';
-      xBtn.innerHTML = '✕';
-      xBtn.title = 'Exit wizard';
-      xBtn.onclick = async ()=>{
-        const confirmed = await showModal({
-          type:'confirm', title:'Exit wizard?',
-          message:"Everything added during this wizard will be removed — nothing you added before starting it will be affected. This can't be undone.",
-          okText:'Exit & discard', cancelText:'Keep going'
-        });
-        if(!confirmed) return; // stay on the current modal, untouched
-        if(wizardExitSnapshot){ restoreSelected(wizardExitSnapshot); render(); renderOrder(); }
-        wizardAborted = true;
-        close(cancelledValueFor(opts.type));
-      };
-      box.appendChild(xBtn);
-    }
-
     let input = null;
-    const checkboxes = [];
 
     if(opts.type === 'prompt'){
       input = document.createElement('input');
@@ -2300,180 +1467,6 @@ function showModal(opts){
       input.min = '1';
       input.value = opts.defaultValue || '1';
       box.appendChild(input);
-    }
-
-    if(opts.type === 'checklist'){
-      const optWrap = document.createElement('div');
-      optWrap.className = 'modal-options';
-      opts.options.forEach(o=>{
-        const row = document.createElement('label');
-        row.className = 'modal-check-row';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.value = o.value;
-        checkboxes.push(cb);
-        row.appendChild(cb);
-        const span = document.createElement('span');
-        span.textContent = o.label;
-        row.appendChild(span);
-        optWrap.appendChild(row);
-      });
-      box.appendChild(optWrap);
-    }
-
-    // checklist_qty: a scrollable list of checkbox rows, each with its own
-    // inline quantity field. Lets a person pick several different sizes at
-    // once — e.g. one 3.5mm and one 4.3mm backup implant — and set each
-    // one's quantity right there, instead of looping through a full
-    // pick-one/enter-quantity cascade per size. The quantity field is
-    // disabled until its row is checked, and checking a row focuses its
-    // quantity field for a fast type-and-tab flow. When options carry a
-    // `section` (e.g. platform — NP vs RP), rows are grouped into
-    // side-by-side columns per section instead of one mixed list, so
-    // picking backups across two platforms doesn't read as one
-    // undifferentiated wall of rows.
-    const checkQtyRows = [];
-    if(opts.type === 'checklist_qty'){
-      const buildRow = (o) => {
-        const row = document.createElement('div');
-        row.className = 'modal-checkqty-row';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.value = o.value;
-        const info = document.createElement('label');
-        info.className = 'cq-info';
-        info.innerHTML = `<span class="cq-label">${o.label}</span>` + (o.sublabel ? `<span class="cq-sub">${o.sublabel}</span>` : '');
-        const qtyInput = document.createElement('input');
-        qtyInput.type = 'number';
-        qtyInput.min = '1';
-        qtyInput.className = 'cq-qty';
-        qtyInput.value = String(o.defaultQty || 1);
-        qtyInput.disabled = true;
-        cb.addEventListener('change', ()=>{
-          qtyInput.disabled = !cb.checked;
-          if(cb.checked) qtyInput.focus();
-        });
-        info.addEventListener('click', (e)=>{ e.preventDefault(); cb.checked = !cb.checked; cb.dispatchEvent(new Event('change')); });
-        row.appendChild(cb);
-        row.appendChild(info);
-        row.appendChild(qtyInput);
-        checkQtyRows.push({cb, qtyInput, value:o.value, packSize:o.packSize||1});
-        return row;
-      };
-
-      const sections = [...new Set(opts.options.map(o=>o.section).filter(Boolean))];
-      if(sections.length > 1){
-        box.classList.add('modal-grouped');
-        const grid = document.createElement('div');
-        grid.className = 'modal-checkqty-sections';
-        sections.forEach(sec=>{
-          const col = document.createElement('div');
-          col.className = 'modal-checkqty-section';
-          const head = document.createElement('div');
-          head.className = 'modal-checkqty-section-head';
-          head.textContent = sec;
-          col.appendChild(head);
-          opts.options.filter(o=>o.section===sec).forEach(o=> col.appendChild(buildRow(o)));
-          grid.appendChild(col);
-        });
-        const unsectioned = opts.options.filter(o=>!o.section);
-        if(unsectioned.length){
-          const col = document.createElement('div');
-          col.className = 'modal-checkqty-section';
-          const head = document.createElement('div');
-          head.className = 'modal-checkqty-section-head';
-          head.textContent = 'Other';
-          col.appendChild(head);
-          unsectioned.forEach(o=> col.appendChild(buildRow(o)));
-          grid.appendChild(col);
-        }
-        box.appendChild(grid);
-      } else {
-        const optWrap = document.createElement('div');
-        optWrap.className = 'modal-options';
-        opts.options.forEach(o=> optWrap.appendChild(buildRow(o)));
-        box.appendChild(optWrap);
-      }
-    }
-
-    // odontogram: an interactive Universal Numbering (1-32) tooth chart.
-    // Tapping a tooth cycles none → implant → (pontic, bridge mode only) →
-    // none. Single-tooth mode allows exactly one implant tooth and no
-    // pontics at all; bridge mode allows multiple of each. Resolves with
-    // {implants:[...], pontics:[...]}, both sorted ascending.
-    let odoState = {};
-    let odoSummaryEl = null;
-    if(opts.type === 'odontogram'){
-      box.classList.add('modal-grouped');
-      const wrap = document.createElement('div');
-      wrap.className = 'odo-wrap';
-
-      const legend = document.createElement('div');
-      legend.className = 'odo-legend';
-      legend.innerHTML = `<span><span class="odo-swatch" style="background:var(--green)"></span>Implant</span>` +
-        (opts.mode==='bridge' ? `<span><span class="odo-swatch" style="background:#F3D48A"></span>Pontic (no implant)</span>` : '');
-      wrap.appendChild(legend);
-
-      const upperLabel = document.createElement('div');
-      upperLabel.className = 'odo-arch-label'; upperLabel.textContent = 'Upper';
-      wrap.appendChild(upperLabel);
-      const upperRow = document.createElement('div');
-      upperRow.className = 'odo-arch upper';
-      const lowerRow = document.createElement('div');
-      lowerRow.className = 'odo-arch lower';
-
-      odoSummaryEl = document.createElement('div');
-      odoSummaryEl.className = 'odo-summary';
-
-      const updateSummary = () => {
-        const implants = Object.keys(odoState).filter(t=>odoState[t]==='implant').map(Number).sort((a,b)=>a-b);
-        const pontics = Object.keys(odoState).filter(t=>odoState[t]==='pontic').map(Number).sort((a,b)=>a-b);
-        if(implants.length===0 && pontics.length===0){
-          odoSummaryEl.innerHTML = 'Tap a tooth to mark it.';
-        } else {
-          let html = '';
-          if(implants.length) html += `<b>Implant:</b> #${implants.join(', #')}`;
-          if(pontics.length) html += (html?' &nbsp;·&nbsp; ':'') + `<b>Pontic:</b> #${pontics.join(', #')}`;
-          odoSummaryEl.innerHTML = html;
-        }
-      };
-
-      const makeTooth = (num) => {
-        const t = document.createElement('div');
-        t.className = 'odo-tooth';
-        t.textContent = num;
-        t.dataset.tooth = num;
-        t.onclick = ()=>{
-          const cur = odoState[num] || 'none';
-          if(cur === 'none'){
-            odoState[num] = 'implant';
-          } else if(cur === 'implant'){
-            if(opts.mode === 'bridge') odoState[num] = 'pontic'; // bridge sites can be a pontic instead
-            else delete odoState[num]; // single-implant mode: tap again to clear, no pontic concept
-          } else {
-            delete odoState[num]; // pontic → clear
-          }
-          wrap.querySelectorAll('.odo-tooth').forEach(el=>{
-            const n = el.dataset.tooth;
-            el.classList.remove('implant','pontic');
-            if(odoState[n]) el.classList.add(odoState[n]);
-          });
-          updateSummary();
-        };
-        return t;
-      };
-
-      for(let n=1; n<=16; n++) upperRow.appendChild(makeTooth(n));
-      for(let n=32; n>=17; n--) lowerRow.appendChild(makeTooth(n));
-
-      wrap.appendChild(upperRow);
-      const lowerLabel = document.createElement('div');
-      lowerLabel.className = 'odo-arch-label'; lowerLabel.textContent = 'Lower';
-      wrap.appendChild(lowerRow);
-      wrap.appendChild(lowerLabel);
-      wrap.appendChild(odoSummaryEl);
-      updateSummary();
-      box.appendChild(wrap);
     }
 
     if(opts.type === 'select'){
@@ -2504,7 +1497,7 @@ function showModal(opts){
       const cancelBtn = document.createElement('button');
       cancelBtn.className = 'modal-btn-cancel';
       cancelBtn.textContent = opts.cancelText || 'Cancel';
-      cancelBtn.onclick = ()=> close((opts.type==='prompt' || opts.type==='checklist' || opts.type==='checklist_qty' || opts.type==='odontogram') ? null : false);
+      cancelBtn.onclick = ()=> close(opts.type==='prompt' ? null : false);
       actions.appendChild(cancelBtn);
     } else if(opts.type === 'select'){
       const cancelBtn = document.createElement('button');
@@ -2520,22 +1513,6 @@ function showModal(opts){
       okBtn.textContent = opts.okText || 'OK';
       okBtn.onclick = ()=>{
         if(opts.type==='prompt') close(input.value || opts.defaultValue || '1');
-        else if(opts.type==='checklist') close(checkboxes.filter(c=>c.checked).map(c=>c.value));
-        else if(opts.type==='checklist_qty'){
-          const picked = checkQtyRows
-            .filter(r=>r.cb.checked)
-            .map(r=>({value:r.value, qty: parseInt(r.qtyInput.value,10) || 1}));
-          close(picked);
-        }
-        else if(opts.type==='odontogram'){
-          const implants = Object.keys(odoState).filter(t=>odoState[t]==='implant').map(Number).sort((a,b)=>a-b);
-          const pontics = Object.keys(odoState).filter(t=>odoState[t]==='pontic').map(Number).sort((a,b)=>a-b);
-          if(implants.length===0){
-            odoSummaryEl.innerHTML = '<span style="color:#B23">Mark at least one implant tooth to continue.</span>';
-            return;
-          }
-          close({implants, pontics});
-        }
         else close(true);
       };
       actions.appendChild(okBtn);
@@ -2549,14 +1526,13 @@ function showModal(opts){
       input.focus();
       input.select();
       input.addEventListener('keydown', e=>{ if(e.key==='Enter') close(input.value || '1'); });
-    } else if(opts.type !== 'select' && opts.type !== 'checklist'){
+    } else if(opts.type !== 'select'){
       const okBtn = box.querySelector('.modal-btn-ok');
       if(okBtn) okBtn.focus();
     }
     overlay.addEventListener('click', e=>{
       if(e.target!==overlay) return;
       if(opts.type==='prompt' || opts.type==='select') close(null);
-      else if(opts.type==='checklist' || opts.type==='checklist_qty') close(null);
       else close(false);
     });
   });
@@ -2571,7 +1547,11 @@ function showToast(msg){
 
 /* ---------- Search wiring ---------- */
 document.getElementById('searchBox').addEventListener('input', render);
-document.getElementById('homeBtn').addEventListener('click', ()=> navigateWithFade(()=>{ viewMode='home'; render(); }));
+document.getElementById('homeBtn').addEventListener('click', ()=>{
+  if(viewMode==='builder'){ cbCancel(); return; }
+  navigateWithFade(()=>{ viewMode='home'; render(); });
+});
+document.getElementById('builderView').addEventListener('click', cbOnClick);
 
 /* ---------- Init ---------- */
 document.getElementById('catalogPagesToggle').checked = showCatalogPages;

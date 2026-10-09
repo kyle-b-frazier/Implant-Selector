@@ -327,3 +327,74 @@ test('parts awaiting manufacturer confirmation carry a caution', () => {
   assert.ok(!find('nact', 'Locator R-Tx® Abutments', 'REF30506-05').group.caution); // only the 6mm one
   assert.ok(!find('gm', 'Surgical Instruments', '105.133').group.caution); // confirmed by the 2026 catalog
 });
+
+// ---------- Case builder (case-builder.js) ----------
+const plain = (x) => JSON.parse(JSON.stringify(x));
+
+test('case builder: every implant appears exactly once in its system\'s grid', () => {
+  for (const sid of SYSTEM_IDS) {
+    const grid = $('implantGrid')(sid);
+    const groups = SYSTEMS[sid].catalog[grid.category];
+    assert.equal(grid.rows.length, groups.length, sid);
+    const cols = $('gridColumns')(grid.rows);
+    const seen = new Set();
+    for (const row of grid.rows) {
+      assert.ok(grid.variants.includes(row.variant), `${sid}: ${row.group.label}`);
+      for (const [name, ref] of row.group.items) {
+        const key = $('lengthKey')(name);
+        assert.ok(cols.includes(key), `${sid}: no column for "${name}"`);
+        assert.equal(row.group.items.filter(([n]) => $('lengthKey')(n) === key).length, 1, `${sid}: two lengths share a cell in ${row.group.label}`);
+        seen.add(ref);
+      }
+    }
+    assert.equal(seen.size, groups.reduce((n, g) => n + g.items.length, 0), sid);
+  }
+  // Rows read as diameters, with the surface as the switch above the grid.
+  const blc = plain($('implantGrid')('blc'));
+  assert.deepEqual(blc.variants, ['SLActive®, Roxolid®', 'SLA®, Roxolid®']);
+  assert.equal(blc.rows[3].label, 'Ø 4.5mm WB');
+  assert.deepEqual(plain($('implantGrid')('nact')).rows.map((r) => r.label), ['Ø3.0mm', 'Ø3.5mm', 'Ø4.3mm', 'Ø5.0mm', 'Ø5.5mm']);
+});
+
+test('case builder: the multi-unit healing cap is offered right after the abutment', () => {
+  for (const sid of SYSTEM_IDS) {
+    const labels = plain($('builderPartTypes')(sid)).map((p) => p.label);
+    const cap = $('MULTI_UNIT_CAP_TRIGGER')[sid];
+    const mu = labels.indexOf('Multi-unit Abutment');
+    if (cap && mu >= 0) assert.equal(labels[mu + 1], `Multi-unit ${cap.capLabel}`, sid);
+    else assert.ok(!labels.some((l) => l.startsWith('Multi-unit ') && l !== 'Multi-unit Abutment' && l !== 'Multi-unit Abutment Screw'), sid);
+  }
+  const capType = $('builderPartTypes')('blc').find((p) => p.label === 'Multi-unit Protective Cap');
+  const groups = $('optionGroups')('blc', capType.options[0], implant('blc', '035.9310S'));
+  assert.deepEqual(plain(groups.map((g) => g.group.label)), ['Protective Caps (4 pack, PEEK/TAN)']);
+});
+
+test('case builder: picks fill in single choices and remembered ones, and drop what no longer fits', () => {
+  const healing = $('builderPartTypes')('blc').find((p) => p.label === 'Healing Abutment');
+  const wb = implant('blc', '035.9410S');
+  const rb = implant('blc', '035.9310S');
+  // Three subtypes and several groups: nothing is chosen for you.
+  assert.deepEqual(plain($('resolvePartPick')('blc', healing, wb, null, null)), { opt: null, group: null, ref: null });
+  const remembered = { opt: 0, group: 'RB/WB, Ø3.8mm platform (Crown ∅4mm)', ref: '064.4204S' };
+  assert.deepEqual(plain($('resolvePartPick')('blc', healing, wb, null, remembered)), remembered);
+  // A WB-only healing abutment remembered for a WB implant is not carried over to an RB one.
+  const wbOnly = { opt: 0, group: 'WB, ∅6.0mm (for final abutments ∅5.5mm)', ref: '064.8201S' };
+  assert.deepEqual(plain($('resolvePartPick')('blc', healing, rb, wbOnly, null)), { opt: 0, group: null, ref: null });
+  // One group and one item: picked straight away.
+  const cover = $('builderPartTypes')('nact').find((p) => p.label === 'Cover Screw');
+  const pick = plain($('resolvePartPick')('nact', cover, implant('nact', '34131'), null, null));
+  assert.equal(pick.ref, '36650');
+});
+
+test('case builder: GH × AH table and pack sizes', () => {
+  const group = SYSTEMS.blc.catalog['Healing Abutments — Crown'].find((g) => g.label === 'RB/WB, Ø3.8mm platform (Crown ∅4mm)');
+  const table = plain($('ghahTable')(group.items));
+  assert.deepEqual(table.ghs, ['1.5', '2.5', '3.5']);
+  assert.deepEqual(table.ahs, ['2', '4', '6']);
+  assert.equal(table.cells['2.5']['2'].item[1], '064.4204S');
+  assert.equal(table.cells['2.5']['2'].total, '4.5');
+  assert.equal($('ghahTable')([['0.5mm, Titanium', 'x'], ['0.5mm, H 2mm, TAN', 'y']]), null);
+  assert.equal($('parsePackSize')('H 5.1mm, ∅5.0mm', 'Protective Caps (4 pack, PEEK/TAN)'), 4);
+  assert.equal($('parsePackSize')('Healing Cap (2/pkg)', ''), 2);
+  assert.equal($('parsePackSize')('10mm', 'Ø 4.0mm RB'), 1);
+});
