@@ -305,10 +305,16 @@ function cbData(obj){
 
 /* The "ⓘ" button for a card's explanatory drawing, and the drawing
    itself when it is open. */
-function cbDiagram(key, kind){
-  if(!kind) return '';
-  const on = cb.dgOpen===key;
-  return `<button type="button" class="dg-btn${on?' on':''}" data-a="dg"${cbData({k:key})}>ⓘ ${cbEsc(DIAGRAM_BUTTON_LABELS[kind])}</button>${on?diagramHtml(kind):''}`;
+function cbDiagram(key, kinds){
+  kinds = diagramKindsToOffer([].concat(kinds || []));
+  if(!kinds.length) return '';
+  let open = null;
+  const btns = kinds.map(kind=>{
+    const on = cb.dgOpen===key+'|'+kind;
+    if(on) open = kind;
+    return `<button type="button" class="dg-btn${on?' on':''}" data-a="dg"${cbData({k:key+'|'+kind})}>ⓘ ${cbEsc(DIAGRAM_BUTTON_LABELS[kind])}</button>`;
+  }).join('');
+  return `<div class="dg-row">${btns}</div>${open?diagramHtml(open):''}`;
 }
 
 function renderCaseBuilder(){
@@ -436,7 +442,7 @@ function cbPartCards(){
     if(pick.opt!=null){
       const groups = optionGroups(cb.sys, pt.options[pick.opt], profile);
       const shown = groups.find(g=>g.group.label===pick.group) || groups[0];
-      if(shown) kind = diagramKindFor(cb.sys, shown.group.sourceCategory || pt.options[pick.opt].category, shown.group);
+      if(shown) kind = diagramKindsFor(cb.sys, shown.group.sourceCategory || pt.options[pick.opt].category, shown.group);
       if(!groups.length){
         html += `<p class="cb-warn">None of these fit this implant. Order directly from the manufacturer's catalog or your rep if you need one.</p>`;
       } else {
@@ -500,7 +506,7 @@ function cbAllOnXCards(){
         : `<div class="cb-lbl">${cbEsc(s.title)}</div>`;
       if(shown) html += s.items.map(([nm,rf])=>cbCountRow(pt.label, nm, rf, counts[rf]||0, parsePackSize(nm, s.group.label), s.group.caution)).join('');
     });
-    const kind = sections.length ? diagramKindFor(cb.sys, sections[0].group.sourceCategory || sections[0].category, sections[0].group) : null;
+    const kind = sections.flatMap(sec=>diagramKindsFor(cb.sys, sec.group.sourceCategory || sec.category, sec.group));
     out.push(`<div class="cb-card" id="cb-part-${pt.label.replace(/\W+/g,'-')}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${cbDiagram(pt.label, kind)}${html}</div>`);
   });
   return out.join('');

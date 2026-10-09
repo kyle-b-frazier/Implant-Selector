@@ -417,3 +417,22 @@ test('explanatory drawings: each size naming gets the drawing that explains it',
   }
   assert.deepEqual(plain($('diagramKindsToOffer')(['gh', 'gh-angled', null, 'ghah'])), ['gh-angled', 'ghah']);
 });
+
+test('explanatory drawings: concept drawings attach to the groups they explain', () => {
+  const kinds = (sid, category, label) => plain($('diagramKindsFor')(sid, category, SYSTEMS[sid].catalog[category].find((g) => g.label === label)));
+  assert.deepEqual(kinds('nrcc', 'Impression Copings', 'NP — Open Tray'), ['tray']);
+  assert.deepEqual(kinds('blc', 'Impression Components', 'RB/WB — for Crown'), ['tray', 'engaging']);
+  assert.deepEqual(kinds('nrcc', 'Cover Screws', 'All platforms'), ['cover']);
+  assert.deepEqual(kinds('nact', 'Healing Abutments — Crown', 'NP, Ø3.6mm'), ['h', 'cover']);
+  assert.deepEqual(kinds('nas', 'Temporary Abutments', 'Temporary Abutment, Non-Engaging (bridge), Ø4.1mm'), ['collar', 'engaging']);
+  assert.deepEqual(kinds('blc', 'Screw-retained / Multi-unit Abutments', 'Angled 17° (sterile)'), ['gh-angled', 'mu-stack']);
+  assert.deepEqual(kinds('blc', 'Novaloc® Abutments', 'Retention Inserts (4 pcs)'), ['novaloc']);
+  assert.deepEqual(kinds('nrcc', 'Locator R-Tx® Abutments', 'Retention Inserts (4/pkg)'), ['locator']);
+  // Nobel's zygoma "Position Locator" is not a Locator attachment.
+  assert.ok(!kinds('nzcc', 'Impression & Position Locators', 'Position Locator, Desktop (fits all multi-unit abutments except the Brånemark System wide-platform external hex)').includes('locator'));
+  assert.deepEqual(kinds('blc', 'Implants', 'Ø 4.5mm WB — SLActive®, Roxolid®'), ['implant']);
+  for (const k of ['tray', 'cover', 'engaging', 'mu-stack', 'novaloc', 'locator']) {
+    assert.match($('diagramHtml')(k), /<svg[\s\S]*<\/svg>/, k);
+    assert.ok($('DIAGRAM_BUTTON_LABELS')[k], k);
+  }
+});

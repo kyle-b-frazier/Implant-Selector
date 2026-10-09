@@ -132,7 +132,7 @@
   .dg-svg{display:block; width:100%; height:auto; border-radius:6px;}
   .dg-cap{font-size:13px; line-height:1.5; color:var(--ink); margin:8px 0 2px;}
   .dg-note{font-size:11px; color:var(--ink-soft); margin:0;}
-  .cb-card .dg-btn{margin-bottom:10px;}
+  .cb-card .dg-row{margin-bottom:10px;}
   .cb-card .dg{margin:0 0 12px; border-color:#E6EAF0;}
 
   /* ---- Case builder (Single/Bridge and All-on-X) ---- */
@@ -1112,7 +1112,7 @@ function render(){
   }
 
   if(!query){
-    const kinds = diagramKindsToOffer(sys.catalog[activeCategory].map(g=>diagramKindFor(activeSystemId, g.sourceCategory || activeCategory, g)));
+    const kinds = diagramKindsToOffer(sys.catalog[activeCategory].flatMap(g=>diagramKindsFor(activeSystemId, g.sourceCategory || activeCategory, g)));
     if(kinds.length) container.appendChild(buildDiagramToggles(kinds));
   }
 
