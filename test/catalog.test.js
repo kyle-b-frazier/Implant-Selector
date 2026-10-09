@@ -432,7 +432,13 @@ test('explanatory drawings: concept drawings attach to the groups they explain',
   assert.ok(!kinds('nzcc', 'Impression & Position Locators', 'Position Locator, Desktop (fits all multi-unit abutments except the Brånemark System wide-platform external hex)').includes('locator'));
   assert.deepEqual(kinds('blc', 'Implants', 'Ø 4.5mm WB — SLActive®, Roxolid®'), ['implant']);
   assert.deepEqual(kinds('blc', 'Healing Abutments — Crown', 'RB/WB, ∅5mm (for final abutments ∅4.5mm)'), ['ghah', 'pair-dia', 'cover']);
-  for (const k of ['pair-dia', 'tray', 'cover', 'engaging', 'mu-stack', 'novaloc', 'locator']) {
+  assert.deepEqual(kinds('blc', 'Anatomic Healing Abutments XC', 'RB/WB S1 shape, Ø3.8mm'), ['gh-h', 'cover', 'xc-shapes']);
+  assert.deepEqual(kinds('nrcc', 'Anatomic Healing Abutments (PEEK)', 'WP'), ['cover', 'anatomic']);
+  assert.deepEqual(kinds('blt', 'Healing Abutments', 'NC — bottle-shaped'), ['h', 'cover', 'heal-shape']);
+  assert.ok(kinds('blc', 'Variobase® for Crown AS', 'Burn-out Copings — 25°').includes('asc'));
+  assert.ok(kinds('nas', 'Universal Base ASC', 'Universal Base ASC, Engaging (single-unit), Ø4.1mm').includes('asc'));
+  assert.ok(!kinds('blc', 'Variobase® for Crown', 'RB/WB ∅3.8mm — incl. screw, AH 5.5mm').includes('asc'));
+  for (const k of ['pair-dia', 'tray', 'cover', 'engaging', 'mu-stack', 'novaloc', 'locator', 'xc-shapes', 'anatomic', 'heal-shape', 'asc']) {
     assert.match($('diagramHtml')(k), /<svg[\s\S]*<\/svg>/, k);
     assert.ok($('DIAGRAM_BUTTON_LABELS')[k], k);
   }

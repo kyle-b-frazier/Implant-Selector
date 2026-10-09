@@ -5,7 +5,7 @@
    attachments). Generic line drawings, not any manufacturer's product
    image. diagramKindsFor() picks the drawings that explain a group;
    diagramHtml() returns a drawing and its caption. Shown behind small
-   "ⓘ" buttons in the catalog and in the case builder. */
+   "Explain:" links in the catalog and in the case builder. */
 
 /* Which drawing explains a group's sizes, or null when none applies.
    Every item in the group has to follow the same naming. */
@@ -41,6 +41,9 @@ function diagramConceptsFor(systemId, category, group){
   if(/Multi-unit|Mini Conical/i.test(category + ' ' + group.label)) out.push('mu-stack');
   if(/Novaloc/i.test(category)) out.push('novaloc');
   if(/Locator(?:®| R-Tx)/i.test(category)) out.push('locator');
+  if(/Anatomic Healing/i.test(category)) out.push(/\bXC\b/.test(category) ? 'xc-shapes' : 'anatomic');
+  if(/Healing/i.test(category) && /conical|bottle/i.test(group.label)) out.push('heal-shape');
+  if(/\bASC?\b/.test(category + ' ' + group.label)) out.push('asc');
   return out;
 }
 
@@ -64,6 +67,10 @@ const DIAGRAM_CAPTIONS = {
   'mu-stack': 'The <b>multi-unit abutment</b> is screwed into the implant and normally stays in. Everything after that attaches to the abutment, not the implant: a <b>healing or protective cap</b> until the fixed denture or bridge goes in, then a <b>temporary coping</b> built into the <b>fixed denture or bridge</b> and held by a <b>prosthetic screw</b>. Angled abutments (e.g. 17° or 30°) correct for tilted implants so all the screws come out in a usable direction.',
   novaloc: 'The <b>abutment</b> screws into the implant. A <b>matrix housing</b> is set into the denture, and a <b>retention insert</b> clicks into the housing and snaps over the abutment head. Swapping the insert changes how firmly the denture holds; Novaloc color-codes the inserts by retention force, shown in the strip.',
   locator: 'The <b>Locator abutment</b> screws into the implant. A metal cap (housing) is processed into the denture, and a nylon <b>retention insert</b> sits in the cap and snaps onto the abutment. Inserts come in Zero, Low, Medium and High retention; swapping them changes how firmly the denture holds.',
+  'xc-shapes': '<b>Anatomic (XC)</b> healing abutments flare out above the implant, so the gum heals in a tooth-like outline instead of a round hole. <b>S, S1, M and XL</b> are Straumann\'s shape names: S, S1 and M all list Ø3.8mm, and XL comes in Ø4.5, Ø5.5 and Ø6.5mm (the bottom row shows those widths to scale). Straumann\'s catalog doesn\'t say which tooth each shape is for, so check Straumann\'s AHA XC guide or ask your rep.',
+  anatomic: '<b>Anatomical</b> healing abutments flare out above the implant, so the gum heals in a tooth-like outline instead of a round hole. Nobel Biocare lists two WP sizes, <b>6×7mm</b> and <b>7×8mm</b>; its catalog doesn\'t say which measurement is which, so confirm with your rep if it matters.',
+  'heal-shape': 'Straumann lists these healing abutments as <b>conical</b> or <b>bottle-shaped</b>. Conical ones widen steadily from the implant to a flat top. Bottle-shaped ones bulge out and then narrow again toward the top. Drawn from the shapes in Straumann\'s catalog photos.',
+  asc: 'With a <b>straight</b> screw channel, the screw hole comes out wherever the implant points, which on a tilted implant can be the front of the tooth. An <b>angled screw channel</b> lets the hole come out at an angle instead, e.g. behind a front tooth or on the biting surface of a back tooth. Straumann calls this <b>AS</b> (Angled Solution; its AS burn-out copings are 25°); Nobel Biocare calls it <b>ASC</b> (angulated screw channel).',
   implant: '<b>Ø</b> is the implant\'s diameter and <b>length</b> is how far it goes into the bone. The <b>platform</b> (e.g. RB/WB, NC/RC, NP/RP) is the connection on top; every part has to match it, which is why the app only offers parts for the implant\'s platform.'
 };
 
@@ -217,7 +224,78 @@ function dgDivider(){
 const DG_TRAY = {fill:'#EEF4E4', line:'#8DAA62', tray:'#C9D3E0'};
 const NOVALOC_INSERT_COLORS = {Red:'#D23B3B', White:'#FFFFFF', Yellow:'#F2C230', Green:'#3E9B4F', Blue:'#2F6FD0', Black:'#222'};
 
+/* Healing abutment side views: round (straight walls) and anatomic (flared). */
+function dgAnatomicSvg(withSizes){
+  const p = 176, g = 130;
+  let s = dgPanel(0, p, g, false) + dgPanel(180, p, g, false) + dgDivider();
+  // A tooth-like outline seen from above, w wide.
+  const outline = (cx, cy, w) => {
+    const a = w/2, b = w*0.36;
+    return `<path d="M${cx-a*0.82} ${cy-b} Q${cx} ${cy-b*1.35} ${cx+a*0.82} ${cy-b} Q${cx+a*1.08} ${cy} ${cx+a*0.82} ${cy+b} Q${cx} ${cy+b*1.2} ${cx-a*0.82} ${cy+b} Q${cx-a*1.08} ${cy} ${cx-a*0.82} ${cy-b} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.4"/>`;
+  };
+  s += dgImplantTop(90, p, 236) +
+    `<path d="M70 ${p} L68 100 Q68 94 74 94 L106 94 Q112 94 112 100 L110 ${p} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.6"/>` +
+    `<circle cx="90" cy="62" r="15" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.4"/>`;
+  s += dgImplantTop(270, p, 236) +
+    `<path d="M250 ${p} C246 156 232 146 230 ${g} L230 100 Q230 92 238 92 L302 92 Q310 92 310 100 L310 ${g} C308 146 294 156 290 ${p} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.6"/>` +
+    outline(270, 62, 46);
+  s += `<text x="118" y="66" font-size="10" fill="${DG.soft}">from above</text>` +
+    dgLabel(8, 20, 'Round', 'gum heals round', DG.ink) + dgLabel(188, 20, 'Anatomic', 'gum heals tooth-shaped', DG.ink) +
+    `<text x="8" y="228" font-size="10.5" fill="#9A845C">Bone</text>` +
+    `<text x="8" y="${g+24}" font-size="10.5" fill="#B06B6B">Gum</text>`;
+  if(!withSizes) return dgSvg(s, 'Round healing abutment compared with an anatomic one');
+  // Straumann XC widths, from above, to scale (8px per mm).
+  s += `<text x="8" y="258" font-size="11" font-weight="700" fill="${DG.ink}">XC widths from above, to scale</text>`;
+  [[46,3.8,'S · S1 · M'],[136,4.5,'XL'],[222,5.5,'XL'],[308,6.5,'XL']].forEach(([cx,d,name])=>{
+    s += outline(cx, 290, d*8) +
+      `<text x="${cx}" y="328" text-anchor="middle" font-size="12" font-weight="700" fill="${DG.partLine}">Ø${d}</text>` +
+      `<text x="${cx}" y="342" text-anchor="middle" font-size="10.5" fill="${DG.soft}">${name}</text>`;
+  });
+  return dgSvg(s, 'Round healing abutment compared with an anatomic one, and the XC widths', 350);
+}
+
 function diagramConceptSvg(kind){
+  if(kind==='xc-shapes' || kind==='anatomic') return dgAnatomicSvg(kind==='xc-shapes');
+  if(kind==='heal-shape'){
+    const p = 176, g = 130;
+    let s = dgPanel(0, p, g, false) + dgPanel(180, p, g, false) + dgDivider();
+    s += dgImplantTop(90, p, 236) +
+      `<path d="M76 ${p} L62 92 Q62 86 68 86 L112 86 Q118 86 118 92 L104 ${p} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.6"/>`;
+    s += dgImplantTop(270, p, 236) +
+      `<path d="M256 ${p} C250 156 240 134 242 116 C244 100 254 94 256 86 L284 86 C286 94 296 100 298 116 C300 134 290 156 284 ${p} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.6"/>`;
+    s += dgLabel(8, 20, 'Conical', 'widens to a flat top', DG.ink) + dgLabel(188, 20, 'Bottle-shaped', 'bulges, then narrows at the top', DG.ink) +
+      `<text x="8" y="228" font-size="10.5" fill="#9A845C">Bone</text>` +
+      `<text x="8" y="${g+24}" font-size="10.5" fill="#B06B6B">Gum</text>`;
+    return dgSvg(s, 'Conical healing abutment compared with a bottle-shaped one');
+  }
+  if(kind==='asc'){
+    const p = 184, g = 146;
+    let s = dgPanel(0, p, g, false) + dgPanel(180, p, g, false) + dgDivider();
+    // A front tooth seen from the side: lip side on the right. The implant
+    // is tilted toward the lip, as front implants often are.
+    const tilt = 16, rad = tilt*Math.PI/180, ux = Math.sin(rad), uy = -Math.cos(rad);
+    const tooth = cx => {
+      let t = `<g transform="rotate(${tilt} ${cx} ${p})">${dgImplantTop(cx, p, 250)}<rect x="${cx-13}" y="${g}" width="26" height="${p-g}" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.4"/></g>`;
+      t += `<path d="M${cx-22} ${g+4} C${cx-34} 112 ${cx-14} 84 ${cx-2} 40 L${cx+6} 38 C${cx+18} 70 ${cx+28} 104 ${cx+24} ${g+4} Q${cx} ${g+12} ${cx-22} ${g+4} Z" fill="#FFFDF6" stroke="#B7AC92" stroke-width="1.4"/>`;
+      return t;
+    };
+    const ch = 'stroke="#7C8796" stroke-width="5" stroke-linecap="round"';
+    // Straight: the channel follows the implant out through the front.
+    const sx = 90 + ux*(p-102)/-uy;
+    s += tooth(90) + `<line x1="90" y1="${p-4}" x2="${sx}" y2="102" ${ch}/>` +
+      `<ellipse cx="${sx+3}" cy="102" rx="3" ry="6" fill="#4A5260"/>` +
+      dgLeader(sx+5, 104, 134, 122, 'Hole', 'in front', DG.partLine);
+    // Angled: the channel bends back so the hole is behind the tooth.
+    const bx = 270 + ux*(p-g)/-uy;
+    s += tooth(270) + `<polyline points="270,${p-4} ${bx},${g} 256,96" fill="none" ${ch}/>` +
+      `<ellipse cx="253" cy="94" rx="3" ry="6" fill="#4A5260"/>` +
+      dgLeader(250, 96, 236, 116, 'Hole', 'behind', DG.partLine, 'end');
+    s += dgLabel(8, 20, 'Straight channel', '', DG.ink) + dgLabel(188, 20, 'Angled channel', 'AS / ASC', DG.ink) +
+      `<text x="8" y="${g+26}" font-size="10.5" fill="#B06B6B">Gum</text>` +
+      `<text x="172" y="50" text-anchor="end" font-size="10" fill="${DG.soft}">lip side →</text>` +
+      `<text x="352" y="50" text-anchor="end" font-size="10" fill="${DG.soft}">lip side →</text>`;
+    return dgSvg(s, 'Straight screw channel compared with an angled screw channel');
+  }
   if(kind==='pair-dia'){
     const p = 172, g = 126;
     let s = dgPanel(0, p, g, false) + dgPanel(180, p, g, false) + dgDivider();
@@ -393,15 +471,16 @@ function diagramConceptSvg(kind){
 
 function diagramHtml(kind){
   if(!DIAGRAM_CAPTIONS[kind]) return '';
-  return `<div class="dg">${diagramSvg(kind)}<p class="dg-cap">${DIAGRAM_CAPTIONS[kind]}</p><p class="dg-note">Simplified drawing — not to scale.</p></div>`;
+  return `<div class="dg">${diagramSvg(kind)}<p class="dg-cap">${DIAGRAM_CAPTIONS[kind]}</p><p class="dg-note">${kind==='xc-shapes' ? 'Simplified drawing — only the bottom row is to scale.' : 'Simplified drawing — not to scale.'}</p></div>`;
 }
 
-/* Text for the ⓘ button. */
+/* Text for the "Explain:" links. */
 const DIAGRAM_BUTTON_LABELS = {
   ghah:'GH & AH', 'gh-h':'GH & H', h:'Height (H)', gh:'What is GH?', 'gh-angled':'GH & angle',
   collar:'Collar height (H)', 'collar-angled':'Collar height & angle', implant:'Ø, length & platform',
   'pair-dia':'Which Ø is which?', tray:'Open vs closed tray', cover:'Cover screw vs healer', engaging:'Engaging vs non-engaging',
-  'mu-stack':'Multi-unit stack', novaloc:'Novaloc parts', locator:'Locator parts'
+  'mu-stack':'Multi-unit stack', novaloc:'Novaloc parts', locator:'Locator parts',
+  'xc-shapes':'XC shapes', anatomic:'Anatomic vs round', 'heal-shape':'Conical vs bottle', asc:'Angled screw channel'
 };
 
 /* The drawings to offer for a set of groups, without repeats: the angled

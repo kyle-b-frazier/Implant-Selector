@@ -125,9 +125,15 @@
   /* ---- Explanatory drawings (diagrams.js) ---- */
   .dg-toggles{margin:-4px 0 14px;}
   .dg-row{display:flex; flex-wrap:wrap; gap:6px;}
-  .dg-btn{border:1px solid #CFD8E6; background:#F4F7FC; color:var(--navy); border-radius:999px; padding:6px 12px; font:600 12.5px var(--sans); cursor:pointer;}
-  .dg-btn:hover{border-color:var(--navy);}
-  .dg-btn.on{background:var(--navy); border-color:var(--navy); color:#fff;}
+  /* Explanation links: plain underlined text with a disclosure arrow, so
+     they never look like the pill-shaped chips that pick a part. */
+  .dg-row{align-items:baseline; column-gap:14px; row-gap:2px;}
+  .dg-lead{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft);}
+  .dg-btn{border:none; background:none; padding:4px 0; color:#1F6FB2; font:600 13px var(--sans); cursor:pointer; text-decoration:underline dotted; text-underline-offset:3px;}
+  .dg-btn::before{content:'▸ '; text-decoration:none; display:inline-block; width:1em;}
+  .dg-btn:hover{color:var(--navy);}
+  .dg-btn.on{color:var(--navy); text-decoration-style:solid;}
+  .dg-btn.on::before{content:'▾ ';}
   .dg{background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px 12px 8px; margin-top:8px; max-width:520px;}
   .dg-svg{display:block; width:100%; height:auto; border-radius:6px;}
   .dg-cap{font-size:13px; line-height:1.5; color:var(--ink); margin:8px 0 2px;}
@@ -1160,7 +1166,7 @@ function render(){
   }
 }
 
-/* "ⓘ What do GH and AH mean?" buttons under a category heading, one per
+/* "Explain: GH & AH" links under a category heading, one per
    kind of drawing its groups use; tapping one shows that drawing below,
    tapping it again hides it. */
 function buildDiagramToggles(kinds){
@@ -1168,13 +1174,14 @@ function buildDiagramToggles(kinds){
   wrap.className = 'dg-toggles';
   const row = document.createElement('div');
   row.className = 'dg-row';
+  row.innerHTML = '<span class="dg-lead">Explain:</span>';
   const panel = document.createElement('div');
   let open = null;
   kinds.forEach(kind=>{
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'dg-btn';
-    btn.textContent = 'ⓘ ' + DIAGRAM_BUTTON_LABELS[kind];
+    btn.textContent = DIAGRAM_BUTTON_LABELS[kind];
     btn.onclick = ()=>{
       open = open===kind ? null : kind;
       row.querySelectorAll('.dg-btn').forEach(b=>b.classList.toggle('on', b===btn && open===kind));

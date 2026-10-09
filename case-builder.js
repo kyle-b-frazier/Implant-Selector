@@ -362,7 +362,7 @@ function cbData(obj){
   return Object.entries(obj).map(([k,v])=>` data-${k}="${cbEsc(v)}"`).join('');
 }
 
-/* The "ⓘ" button for a card's explanatory drawing, and the drawing
+/* The "Explain:" link for a card's explanatory drawing, and the drawing
    itself when it is open. */
 function cbDiagram(key, kinds){
   kinds = diagramKindsToOffer([].concat(kinds || []));
@@ -371,9 +371,9 @@ function cbDiagram(key, kinds){
   const btns = kinds.map(kind=>{
     const on = cb.dgOpen===key+'|'+kind;
     if(on) open = kind;
-    return `<button type="button" class="dg-btn${on?' on':''}" data-a="dg"${cbData({k:key+'|'+kind})}>ⓘ ${cbEsc(DIAGRAM_BUTTON_LABELS[kind])}</button>`;
+    return `<button type="button" class="dg-btn${on?' on':''}" data-a="dg"${cbData({k:key+'|'+kind})}>${cbEsc(DIAGRAM_BUTTON_LABELS[kind])}</button>`;
   }).join('');
-  return `<div class="dg-row">${btns}</div>${open?diagramHtml(open):''}`;
+  return `<div class="dg-row"><span class="dg-lead">Explain:</span>${btns}</div>${open?diagramHtml(open):''}`;
 }
 
 function renderCaseBuilder(){
@@ -864,17 +864,23 @@ function cbOnClick(e){
       const x = d.m==='x';
       const picks = x ? cb.pickers : cbEditableConfig().picks;
       const cur = picks[d.l] || {};
-      if(d.a==='opt'){ picks[d.l] = { opt:Number(d.i), group:null, ref:null }; delete cb.narrow[cbNarrowKey(d.l, d.m)]; }
-      else if(d.a==='group') picks[d.l] = { ...cur, group:d.g, ref:null };
+      // Tapping a chip that is already on turns it off again.
+      if(d.a==='opt'){ picks[d.l] = { opt: cur.opt===Number(d.i) ? null : Number(d.i), group:null, ref:null }; delete cb.narrow[cbNarrowKey(d.l, d.m)]; }
+      else if(d.a==='group') picks[d.l] = { ...cur, group: cur.group===d.g ? null : d.g, ref:null };
       else if(d.a==='gpre'){
         // First step of a two-step type pick; a step with one type picks it.
-        cb.narrow[cbNarrowKey(d.l, d.m)] = d.p;
+        const nk = cbNarrowKey(d.l, d.m);
         const pt = cbPartTypes().find(t=>t.label===d.l);
         const profile = x ? cbAllOnXProfile() : cbProfileFor(cbConfig(cb.activeTooth ?? cbImplantTeeth()[0]).implant);
         const labels = optionGroups(cb.sys, pt.options[cur.opt], profile).map(g=>g.group.label);
         const split = splitTypeLabels(labels);
-        const inHead = split ? labels.filter(l=>split.head(l)===d.p) : [];
-        picks[d.l] = { ...cur, group: inHead.length===1 ? inHead[0] : null, ref:null };
+        const shownHead = split && cur.group ? split.head(cur.group) : cb.narrow[nk];
+        if(shownHead===d.p){ delete cb.narrow[nk]; picks[d.l] = { ...cur, group:null, ref:null }; }
+        else {
+          cb.narrow[nk] = d.p;
+          const inHead = split ? labels.filter(l=>split.head(l)===d.p) : [];
+          picks[d.l] = { ...cur, group: inHead.length===1 ? inHead[0] : null, ref:null };
+        }
       }
       else if(x){
         // All-on-X: tapping a size adds it, one per implant not yet covered.
@@ -893,6 +899,7 @@ function cbOnClick(e){
         if(cb.fromLast) delete cb.fromLast[d.l];
         cb.lastDone = 'cb-part-' + d.l.replace(/\W+/g,'-');
       }
+      else if(cur.ref===d.r) picks[d.l] = { ...cur, ref:null };
       else {
         picks[d.l] = { ...cur, ref:d.r };
         cb.editing.delete(cbEditKey(d.l));
