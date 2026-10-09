@@ -119,16 +119,6 @@ test('wizard steps and multi-unit cap/coping links point at real catalog groups'
   }
 });
 
-test('the Favorites preset only reuses parts that are in the catalog', () => {
-  for (const [sid, tabs] of Object.entries($('FAVORITES_PRESET'))) {
-    for (const groups of Object.values(tabs)) {
-      for (const group of groups) {
-        for (const [, ref] of group.items) find(sid, group.sourceCategory || 'All-on-X Components', ref);
-      }
-    }
-  }
-});
-
 test('every group cites its catalog page, or says what is unverified', () => {
   const names = Object.keys($('CATALOG_SOURCES'));
   const cite = new RegExp(`^(${names.map((n) => n.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')).join('|')}) (p\\.\\d+|pp\\.\\d+(–\\d+)?(, \\d+(–\\d+)?)*)$`);
@@ -144,9 +134,6 @@ test('every group cites its catalog page, or says what is unverified', () => {
     for (const [cat, groups] of Object.entries(SYSTEMS[sid].catalog)) {
       for (const group of groups) check(`${sid} > ${cat}`, group);
     }
-  }
-  for (const [sid, tabs] of Object.entries($('FAVORITES_PRESET'))) {
-    for (const groups of Object.values(tabs)) for (const group of groups) check(`${sid} Favorites`, group);
   }
   // Every one of these is on FOLLOW-UP.md. Settle it there before removing it here.
   assert.deepEqual([...unverified].sort(), [

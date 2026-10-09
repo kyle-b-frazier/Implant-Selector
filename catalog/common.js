@@ -9,7 +9,7 @@
      nobel-s-series.js      NobelActive S, NobelParallel S, NobelReplace S
      nobel-zygoma.js        NobelZygoma 0° and 45°
      neodent-gm.js          Neodent GM
-     systems.js             Favorites, tab order and the system registry
+     systems.js             tab order and the system registry
 
    index.html loads them as plain scripts in that order (each file can use
    what the files before it define), so everything here is a global. The
@@ -31,7 +31,7 @@ const CATALOG_SOURCES = {
   "Neodent GM 2018": "Neodent Grand Morse Catalog 2018"
 };
 
-/* Copies groups into another tab (All-on-X Components, Favorites), tagging
+/* Copies groups into another tab (All-on-X Components), tagging
    each copy with its home category; see the All-on-X note in
    straumann-blc-blx.js. */
 function withSource(groups, sourceCategory){

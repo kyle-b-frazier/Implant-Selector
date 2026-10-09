@@ -445,8 +445,8 @@ function formatMismatchLine(w){
 /* Catalog citation for one order line, for the "catalog pages" switch on
    the order output: the catalog page its group cites, or the group's
    `unverified` note when this item's number is one the catalogs don't
-   list. Looks in the line's own category first, then the rest (Favorites
-   and All-on-X lines can carry a copy's category). */
+   list. Looks in the line's own category first, then the rest (All-on-X
+   lines can carry a copy's category). */
 function catalogSourceFor(it){
   const cat = SYSTEMS[it.system].catalog;
   const cats = [it.category, ...Object.keys(cat).filter(c=>c!==it.category)];

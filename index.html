@@ -202,19 +202,6 @@
     color:#0E2B00;
   }
   .systembar button.sysbtn.active .sysname{color:#0E2B00;}
-  .systembar button.favtab .sysname{color:var(--green);}
-  .systembar button.favtab:hover{border-color:var(--green);}
-  .systembar button.favtab:hover .sysname{color:#fff;}
-  .systembar button.favtab.active{
-    background:var(--green);
-    border-color:var(--green);
-  }
-  .systembar button.favtab.active .sysname{color:#0E2B00;}
-  .systembar button.first-system-tab{
-    margin-left:10px;
-    padding-left:18px;
-    border-left:1.5px solid rgba(255,255,255,.15);
-  }
 
   /* ---- Sidebar (categories) ---- */
   .sidebar{
@@ -389,50 +376,6 @@
     padding:1px 7px;
     margin-top:2px;
   }
-  .fav-bucket{margin-bottom:22px;}
-  .fav-bucket-head{
-    font-size:15px;
-    font-weight:700;
-    color:var(--navy);
-    padding-bottom:6px;
-    margin-bottom:10px;
-    border-bottom:2px solid var(--green);
-  }
-  .fav-system-head{
-    font-size:11.5px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:.05em;
-    color:var(--ink-soft);
-    margin:12px 0 6px;
-  }
-  .sys-filter-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin:2px 0 16px;
-    flex-wrap:wrap;
-  }
-  .sys-filter-row label{
-    font-size:12px;
-    font-weight:700;
-    color:var(--ink-soft);
-    text-transform:uppercase;
-    letter-spacing:.04em;
-  }
-  .sys-filter-row select{
-    padding:8px 12px;
-    border-radius:7px;
-    border:1.5px solid var(--line);
-    background:#fff;
-    color:var(--navy);
-    font-size:13px;
-    font-weight:600;
-    font-family:var(--sans);
-    cursor:pointer;
-    min-width:200px;
-  }
-  .sys-filter-row select:focus{outline:2px solid var(--green); border-color:var(--green);}
   .allonx-wizard-btn{
     display:flex;
     align-items:center;
@@ -890,7 +833,6 @@
     .sidebar button.catbtn.active{border-left:none; border-bottom-color:var(--green);}
     .orderpanel{position:relative; height:auto;}
     .searchwrap input{font-size:16px;} /* iOS Safari auto-zooms on focus below 16px */
-    .sys-filter-row select{font-size:16px;}
   }
 </style>
 </head>
@@ -960,22 +902,7 @@ function sectionOf(sys, cat){ return sys.surgical.has(cat) ? "SURGICAL" : "PROST
 /* ---------- State ---------- */
 let activeSystemId = "blc";
 let activeCategory = SYSTEMS[activeSystemId].order[0];
-let viewMode = "home";  // "home" | "category" | "favorites" — Home is the default landing screen
-let activeFavoritesCategory = FAVORITES_PRESET_CATEGORIES[0];
-let activeFavoritesSystem = null; // null = all systems, or a systemId string — filters the Favorites tab
-
-/* Clears activeFavoritesSystem if it isn't valid for whatever category is
-   now active — e.g. NobelReplace CC was selected on the Implants tab, then
-   the person switches to All-on-X Components, where only BLX/NobelActive/
-   Neodent GM are offered. Without this, the stale selection would keep
-   showing that system's All-on-X items instead of the restricted set. */
-function resetFavoritesSystemIfInvalidForCategory(){
-  if(!activeFavoritesSystem) return;
-  const allowed = activeFavoritesCategory === "All-on-X Components"
-    ? FAVORITES_ALLONX_SYSTEM_IDS
-    : SYSTEM_IDS.filter(sid => sid !== "blx"); // blx only exists in this preset for All-on-X
-  if(!allowed.includes(activeFavoritesSystem)) activeFavoritesSystem = null;
-}
+let viewMode = "home";  // "home" | "category" — Home is the default landing screen
 let selected = {};   // key `${systemId}::${ref}` -> {name, group, category, qty, system, ref}
 
 /* ---------- System switcher ---------- */
@@ -983,24 +910,10 @@ function buildSystemBar(){
   const bar = document.getElementById('systembar');
   bar.innerHTML = '';
 
-  const geiBtn = document.createElement('button');
-  geiBtn.className = 'sysbtn favtab' + (viewMode==='favorites' ? ' active':'');
-  geiBtn.innerHTML = `<span class="sysname">⭐ Favorites</span>`;
-  geiBtn.onclick = ()=>{
-    navigateWithFade(()=>{
-      viewMode = 'favorites';
-      activeFavoritesCategory = FAVORITES_PRESET_CATEGORIES[0];
-      resetFavoritesSystemIfInvalidForCategory();
-      document.getElementById('searchBox').value = '';
-      render();
-    });
-  };
-  bar.appendChild(geiBtn);
-
-  SYSTEM_IDS.forEach((id,idx)=>{
+  SYSTEM_IDS.forEach(id=>{
     const sys = SYSTEMS[id];
     const btn = document.createElement('button');
-    btn.className = 'sysbtn' + (idx===0 ? ' first-system-tab' : '') + (id===activeSystemId && viewMode==='category' ? ' active':'');
+    btn.className = 'sysbtn' + (id===activeSystemId && viewMode==='category' ? ' active':'');
     btn.innerHTML = `<span class="sysname">${sys.name}</span>`;
     btn.onclick = ()=>{
       navigateWithFade(()=>{
@@ -1016,34 +929,21 @@ function buildSystemBar(){
 
   const metaEl = document.getElementById('pageMeta');
   metaEl.innerHTML = '';
-  if(viewMode!=='favorites'){
-    const sys = SYSTEMS[activeSystemId];
-    metaEl.appendChild(document.createTextNode(sys.fullMeta));
-    if(sys.caveat){
-      const nb = document.createElement('span');
-      nb.className = 'meta-note';
-      nb.textContent = 'i';
-      nb.title = sys.caveat;
-      metaEl.appendChild(nb);
-    }
+  const sys = SYSTEMS[activeSystemId];
+  metaEl.appendChild(document.createTextNode(sys.fullMeta));
+  if(sys.caveat){
+    const nb = document.createElement('span');
+    nb.className = 'meta-note';
+    nb.textContent = 'i';
+    nb.title = sys.caveat;
+    metaEl.appendChild(nb);
   }
 }
 
-/* ---------- Build sidebar: system categories, or the Favorites preset ---------- */
+/* ---------- Build sidebar: the active system's categories ---------- */
 function buildSidebar(){
   const sb = document.getElementById('sidebar');
   sb.innerHTML = '';
-
-  if(viewMode==='favorites'){
-    FAVORITES_PRESET_CATEGORIES.forEach(pc=>{
-      const btn = document.createElement('button');
-      btn.className = 'catbtn' + (pc===activeFavoritesCategory ? ' active':'');
-      btn.innerHTML = `<span>${pc}</span>`;
-      btn.onclick = ()=>{ activeFavoritesCategory = pc; resetFavoritesSystemIfInvalidForCategory(); document.getElementById('searchBox').value=''; render(); };
-      sb.appendChild(btn);
-    });
-    return;
-  }
 
   const sys = SYSTEMS[activeSystemId];
   let lastSection = null;
@@ -1145,8 +1045,8 @@ const ICON_ARCH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const ICON_BOOK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.8c-1.7-1.3-3.8-1.9-5.9-1.9-.7 0-1.3.6-1.3 1.3v11c0 .7.6 1.3 1.3 1.3 2.1 0 4.2.6 5.9 1.9 1.7-1.3 3.8-1.9 5.9-1.9.7 0 1.3-.6 1.3-1.3v-11c0-.7-.6-1.3-1.3-1.3-2.1 0-4.2.6-5.9 1.9z"/><line x1="12" y1="6.8" x2="12" y2="19.4"/></svg>`;
 
 /* Fades the current view out, runs the navigation, then fades the new view
-   in — used for every top-level navigation (Home, system tabs,
-   Favorites, and the three Home-screen buttons) so switching views reads
+   in — used for every top-level navigation (Home, system tabs and the
+   three Home-screen buttons) so switching views reads
    as a deliberate transition rather than an instant content swap. */
 function navigateWithFade(fn){
   const app = document.getElementById('appRoot');
@@ -1251,9 +1151,9 @@ async function startSingleOrBridgeWizard(){
 
   if(!wizardAborted){
     navigateWithFade(()=>{
-      viewMode = 'favorites';
-      activeFavoritesCategory = FAVORITES_PRESET_CATEGORIES[0];
-      resetFavoritesSystemIfInvalidForCategory();
+      activeSystemId = sysId;
+      activeCategory = implantsCat;
+      viewMode = 'category';
       render();
     });
     showToast('Treatment plan complete — review your order');
@@ -1275,9 +1175,7 @@ async function goToAllOnX(){
 
 function goToFullCatalog(){
   navigateWithFade(()=>{
-    viewMode = 'favorites';
-    activeFavoritesCategory = FAVORITES_PRESET_CATEGORIES[0];
-    resetFavoritesSystemIfInvalidForCategory();
+    viewMode = 'category';
     render();
   });
 }
@@ -1325,7 +1223,6 @@ function render(){
 
   buildSystemBar();
   buildSidebar();
-  if(viewMode==='favorites'){ renderFavoritesView(); return; }
 
   const sys = SYSTEMS[activeSystemId];
   const container = document.getElementById('categoryView');
@@ -1385,123 +1282,6 @@ function render(){
     p.textContent = 'No matching components found in this system.';
     container.appendChild(p);
   }
-}
-
-/* ---------- Favorites view: curated preset, grouped by category
-   then by implant system. ---------- */
-function renderFavoritesView(){
-  const container = document.getElementById('categoryView');
-  container.innerHTML = '';
-
-  const query = document.getElementById('searchBox').value.trim().toLowerCase();
-  const sysLabel = activeFavoritesSystem ? ` — ${SYSTEMS[activeFavoritesSystem].name}` : '';
-
-  const heading = document.createElement('div');
-  if(query){
-    heading.innerHTML = `<h2>Search results</h2><p class="subtitle">Matching "${escapeHtml(query)}" within Favorites${sysLabel}</p>`;
-  } else {
-    heading.innerHTML = `<h2>⭐ Favorites${sysLabel} — ${activeFavoritesCategory}</h2>`;
-  }
-  container.appendChild(heading);
-
-  const onAllOnXTab = !query && activeFavoritesCategory === "All-on-X Components";
-  const dropdownSystemIds = onAllOnXTab ? FAVORITES_ALLONX_SYSTEM_IDS : undefined;
-
-  container.appendChild(buildSystemFilterRow(activeFavoritesSystem, (val)=>{
-    activeFavoritesSystem = val;
-    render();
-  }, undefined, dropdownSystemIds));
-
-  if(onAllOnXTab){
-    if(activeFavoritesSystem){
-      const wizardBtn = document.createElement('button');
-      wizardBtn.className = 'allonx-wizard-btn';
-      wizardBtn.innerHTML = `🦷 Launch All-on-X Case Wizard for ${SYSTEMS[activeFavoritesSystem].name}`;
-      wizardBtn.onclick = ()=> runAllOnXWizard(activeFavoritesSystem);
-      container.appendChild(wizardBtn);
-    } else {
-      const hint = document.createElement('div');
-      hint.className = 'mismatch-banner';
-      hint.innerHTML = '<div class="mismatch-title">Pick a system above to launch its All-on-X Case Wizard</div>The wizard walks through one implant system at a time — select BLX, NobelActive, or Neodent GM from the dropdown to enable it.';
-      container.appendChild(hint);
-    }
-  }
-
-  const catsToShow = query ? FAVORITES_PRESET_CATEGORIES : [activeFavoritesCategory];
-  const systemsToShow = activeFavoritesSystem ? [activeFavoritesSystem] : (onAllOnXTab ? FAVORITES_ALLONX_SYSTEM_IDS : SYSTEM_IDS);
-  let anyResults = false;
-
-  systemsToShow.forEach(sid=>{
-    const presetForSys = FAVORITES_PRESET[sid];
-    if(!presetForSys) return;
-
-    let groupsToShow = [];
-    catsToShow.forEach(pc=> groupsToShow.push(...(presetForSys[pc]||[])));
-
-    if(query){
-      groupsToShow = groupsToShow
-        .map(group=>{
-          const labelMatches = group.label.toLowerCase().includes(query);
-          const matchingItems = group.items.filter(([name,ref])=>
-            labelMatches || name.toLowerCase().includes(query) || ref.toLowerCase().includes(query));
-          return matchingItems.length ? {...group, items: matchingItems} : null;
-        })
-        .filter(Boolean);
-    }
-
-    if(groupsToShow.length===0) return;
-    anyResults = true;
-
-    const sysHead = document.createElement('div');
-    sysHead.className = 'fav-system-head';
-    sysHead.textContent = SYSTEMS[sid].name;
-    container.appendChild(sysHead);
-
-    groupsToShow.forEach(group=>{
-      const trueCat = group.sourceCategory;
-      const groupEl = document.createElement('div');
-      groupEl.className = 'group';
-      renderGroupHead(groupEl, sid, trueCat, group, group.sourceCategory);
-      const bodyEl = document.createElement('div');
-      bodyEl.className = 'group-body';
-      group.items.forEach(([name,ref])=> renderItemCard(bodyEl, sid, name, ref, group.label, trueCat));
-      groupEl.appendChild(bodyEl);
-      container.appendChild(groupEl);
-    });
-  });
-
-  if(!anyResults){
-    const p = document.createElement('div');
-    p.className = 'no-results';
-    p.textContent = query ? 'No matching components in Favorites.' : 'Nothing in this category.';
-    container.appendChild(p);
-  }
-}
-
-/* Builds a compact "filter by system" dropdown. onChange receives the
-   selected systemId, or null for "All Systems". */
-function buildSystemFilterRow(currentValue, onChange, labelText, systemIds){
-  const ids = systemIds || SYSTEM_IDS;
-  const row = document.createElement('div');
-  row.className = 'sys-filter-row';
-  const label = document.createElement('label');
-  label.textContent = labelText || 'Implant System';
-  row.appendChild(label);
-  const select = document.createElement('select');
-  const allOpt = document.createElement('option');
-  allOpt.value = '';
-  allOpt.textContent = 'All Systems';
-  select.appendChild(allOpt);
-  ids.forEach(sid=>{
-    const opt = document.createElement('option');
-    opt.value = sid;
-    opt.textContent = SYSTEMS[sid].name;
-    select.appendChild(opt);
-  });
-  select.value = currentValue || '';
-  select.onchange = ()=> onChange(select.value || null);
-  row.appendChild(select);
-  return row;
 }
 
 function escapeHtml(s){
