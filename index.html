@@ -57,10 +57,6 @@
     border-bottom:3px solid var(--green);
   }
   .topbar .brand{display:flex; flex-direction:column; gap:2px;}
-  .topbar .brand .eyebrow{
-    font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--green);
-    font-weight:700;
-  }
   .topbar .brand h1{margin:0; font-size:20px; font-weight:700; letter-spacing:-.01em;}
   .topbar-right{display:flex; align-items:center; gap:14px;}
   .topbar .meta{font-size:11px; color:#B9C3DD; text-align:right; line-height:1.5;}
@@ -92,7 +88,6 @@
   .home-hero{background:var(--navy); display:flex; align-items:center; gap:28px; padding:32px 36px; opacity:0; animation:homeFadeDown .5s ease-out forwards;}
   .home-hero .art{flex:0 0 auto; width:130px; height:130px; border-radius:14px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.06); color:var(--green); box-shadow:0 8px 24px rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.12);}
   .home-hero .art svg{width:72%; height:72%; display:block;}
-  .home-hero .txt .eyebrow{font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--green); font-weight:700; margin:0 0 8px;}
   .home-hero .txt h2{margin:0; font-size:26px; color:#fff; font-weight:700; letter-spacing:-.01em; line-height:1.2;}
   .home-btn-row{padding:26px 36px 34px; display:flex; flex-direction:column; gap:14px;}
   .home-card{
@@ -835,7 +830,6 @@
   <div class="topbar">
     <div class="brand" style="display:flex; align-items:center;">
       <div style="display:flex; flex-direction:column; gap:2px;">
-        <span class="eyebrow">Implant Reference</span>
         <h1 id="pageTitle">Implant Parts Selector</h1>
       </div>
     </div>
@@ -1081,7 +1075,6 @@ function renderHomeView(){
       <div class="home-hero">
         <div class="art">${ICON_IMPLANT_HERO}</div>
         <div class="txt">
-          <p class="eyebrow">Implant Reference</p>
           <h2>Implant Parts Selector</h2>
         </div>
       </div>
