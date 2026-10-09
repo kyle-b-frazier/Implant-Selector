@@ -240,7 +240,7 @@ const CATALOG_NOBEL_RC = {
   ]}
 ],
 "Cover Screws": [
-  {label:"All platforms", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"Cover screw", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
     ["3.0 Platform","36775"],["NP","36649"],["RP","36650"],["WP","37812"]
   ]}
 ],
@@ -299,7 +299,7 @@ const CATALOG_NOBEL_NA = {
   ]}
 ],
 "Cover Screws": [
-  {label:"All platforms", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"Cover screw", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
     ["3.0 Platform","36775"],["NP","36649"],["RP","36650"],["WP","37812"]
   ]}
 ],
@@ -354,7 +354,7 @@ const CATALOG_NOBEL_PARALLEL = {
   ]}
 ],
 "Cover Screws": [
-  {label:"All platforms", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"Cover screw", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
     ["3.0 Platform","36775"],["NP","36649"],["RP","36650"],["WP","37812"]
   ]}
 ],

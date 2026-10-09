@@ -426,7 +426,7 @@ test('explanatory drawings: concept drawings attach to the groups they explain',
   const kinds = (sid, category, label) => plain($('diagramKindsFor')(sid, category, SYSTEMS[sid].catalog[category].find((g) => g.label === label)));
   assert.deepEqual(kinds('nrcc', 'Impression Copings', 'NP — Open Tray'), ['tray']);
   assert.deepEqual(kinds('blc', 'Impression Components', 'RB/WB — for Crown'), ['tray', 'engaging']);
-  assert.deepEqual(kinds('nrcc', 'Cover Screws', 'All platforms'), ['cover']);
+  assert.deepEqual(kinds('nrcc', 'Cover Screws', 'Cover screw'), ['cover']);
   assert.deepEqual(kinds('nact', 'Healing Abutments — Crown', 'NP, Ø3.6mm'), ['h', 'cover']);
   assert.deepEqual(kinds('nas', 'Temporary Abutments', 'Temporary Abutment, Non-Engaging (bridge), Ø4.1mm'), ['collar', 'engaging']);
   assert.deepEqual(kinds('blc', 'Screw-retained / Multi-unit Abutments', 'Angled 17° (sterile)'), ['gh-angled', 'mu-stack']);
