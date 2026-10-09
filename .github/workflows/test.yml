@@ -1,0 +1,26 @@
+# Runs the catalog and compatibility tests (npm test) on pull requests and
+# on pushes to any branch but main. Pushes to main run them through the
+# deploy workflow (static.yml), which won't deploy unless they pass.
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches-ignore: ["main"]
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run tests
+        run: npm test

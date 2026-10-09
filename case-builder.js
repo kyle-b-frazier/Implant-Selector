@@ -93,6 +93,33 @@ OVERDENTURE_PARTS.npcc = OVERDENTURE_PARTS.nrcc;
 const OVERDENTURE_CATEGORIES = new Set(Object.values(OVERDENTURE_PARTS).flatMap(l=>l.flatMap(p=>p.options.map(o=>o.category))));
 function overdentureLabels(systemId){ return (OVERDENTURE_PARTS[systemId] || []).map(p=>p.label); }
 
+/* Whether an order line is one of a part type's options. */
+function lineIsPartType(it, partType){
+  const category = resolveTrueCategory(it.system, it.category, it.group);
+  return partType.options.some(o=>o.category===category &&
+    applyOptionLabelFilters((SYSTEMS[it.system].catalog[category] || []).filter(g=>g.label===it.group), o).length>0);
+}
+/* Reminders for an order with an overdenture abutment but none of the
+   other attachment parts of its line (retention inserts, processing parts,
+   impression parts): [{system, item, missing}]. A reminder, not a
+   warning: the lab may supply them. Systems sharing one attachment line
+   (BLC/BLX, the Nobel conical systems) are looked at together. */
+function missingOverdentureParts(order){
+  const items = Object.values(order);
+  const out = [];
+  const seen = new Set();
+  items.forEach(it=>{
+    const parts = OVERDENTURE_PARTS[it.system];
+    if(!parts || seen.has(parts) || !lineIsPartType(it, parts[0])) return;
+    seen.add(parts);
+    const line = items.filter(x=>OVERDENTURE_PARTS[x.system]===parts);
+    parts.slice(1).forEach(pt=>{
+      if(!line.some(x=>lineIsPartType(x, pt))) out.push({ system: it.system, item: it, missing: pt.label });
+    });
+  });
+  return out;
+}
+
 /* The part types the case builder offers for a system: the wizard steps
    from compatibility.js, plus the multi-unit healing cap right after the
    multi-unit abutment for systems that have one, and the overdenture
@@ -393,7 +420,7 @@ function cbAllOnXProfile(){
 
 function cbEsc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function cbChip(label, on, action, extra, sub){
-  return `<button type="button" class="cb-chip${on?' on':''}" data-a="${action}"${extra||''}>${cbEsc(label)}${sub?`<small class="cb-chip-sub${sub.startsWith('✓')?' sug':''}">${cbEsc(sub)}</small>`:''}</button>`;
+  return `<button type="button" class="cb-chip${on?' on':''}" aria-pressed="${on?'true':'false'}" data-a="${action}"${extra||''}>${cbEsc(label)}${sub?`<small class="cb-chip-sub${sub.startsWith('✓')?' sug':''}">${cbEsc(sub)}</small>`:''}</button>`;
 }
 function cbData(obj){
   return Object.entries(obj).map(([k,v])=>` data-${k}="${cbEsc(v)}"`).join('');
@@ -442,7 +469,7 @@ function renderCaseBuilder(){
 function cbTeethCard(){
   const tooth = n => {
     const s = cb.teeth[n];
-    return `<button type="button" class="cb-tooth${s?' '+s:''}" data-a="tooth"${cbData({n})}>${n}</button>`;
+    return `<button type="button" class="cb-tooth${s?' '+s:''}" data-a="tooth"${cbData({n})} aria-label="Tooth ${n}${s?', '+s:''}">${n}</button>`;
   };
   let upper = '', lower = '';
   for(let n=1; n<=16; n++) upper += tooth(n);
@@ -502,7 +529,7 @@ function cbToothTabs(){
   const lead = teeth[0];
   const tabs = teeth.map(t=>{
     const sub = t===lead ? '' : (cb.own[t] ? 'own picks' : `same as #${lead}`);
-    return `<button type="button" class="cb-tab${t===cb.activeTooth?' on':''}" data-a="tab"${cbData({n:t})}><b>#${t}</b>${sub?`<small>${sub}</small>`:''}</button>`;
+    return `<button type="button" class="cb-tab${t===cb.activeTooth?' on':''}" aria-pressed="${t===cb.activeTooth?'true':'false'}" data-a="tab"${cbData({n:t})}><b>#${t}</b>${sub?`<small>${sub}</small>`:''}</button>`;
   }).join('');
   const active = cb.activeTooth;
   const reset = (active!==lead && cb.own[active])
@@ -527,13 +554,13 @@ function cbImplantCard(){
   }
   const variants = grid.variants.length>1
     ? `<div class="cb-chips cb-variants">${grid.variants.map(v=>cbChip(v, v===cb.variant, 'variant', cbData({v}))).join('')}</div>` : '';
-  const head = `<tr><th></th>${cols.map(c=>`<th>${cbEsc(c)}</th>`).join('')}</tr>`;
+  const head = `<tr><th><span class="sr-only">Implant</span></th>${cols.map(c=>`<th>${cbEsc(c)}</th>`).join('')}</tr>`;
   const body = rows.map(r=>{
     const cells = cols.map(c=>{
       const item = r.group.items.find(([nm])=>lengthKey(nm)===c);
       if(!item) return `<td class="na"></td>`;
       const on = sel && sel.group===r.group.label && sel.ref===item[1];
-      return `<td><button type="button" class="cb-cell${on?' on':''}" data-a="implant"${cbData({g:r.group.label, r:item[1]})} title="${cbEsc(r.group.label+', '+item[0]+' — REF '+item[1])}"></button></td>`;
+      return `<td><button type="button" class="cb-cell${on?' on':''}" aria-pressed="${on?'true':'false'}" data-a="implant"${cbData({g:r.group.label, r:item[1]})} title="${cbEsc(r.group.label+', '+item[0]+' — REF '+item[1])}" aria-label="${cbEsc(r.group.label+', '+item[0]+', REF '+item[1])}"></button></td>`;
     }).join('');
     return `<tr><th>${cbEsc(r.label)}</th>${cells}</tr>`;
   }).join('');
@@ -600,7 +627,7 @@ function cbChooser(pt, pick, profile, mode){
   const on = rf => !m && pick.ref===rf;
   const ghah = ghahTable(g.items), axis = !ghah && axisTable(g.items);
   if(ghah){
-    res.html += `<div class="cb-lbl">GH × AH (mm) · cells show total height</div><table class="cb-grid cb-ghah"><thead><tr><th></th>${ghah.ahs.map(a=>`<th>AH ${a}</th>`).join('')}</tr></thead><tbody>${
+    res.html += `<div class="cb-lbl">GH × AH (mm) · cells show total height</div><table class="cb-grid cb-ghah"><thead><tr><th><span class="sr-only">GH</span></th>${ghah.ahs.map(a=>`<th>AH ${a}</th>`).join('')}</tr></thead><tbody>${
       ghah.ghs.map(gh=>`<tr><th>GH ${gh}</th>${ghah.ahs.map(ah=>{
         const c = ghah.cells[gh][ah];
         if(!c) return `<td class="na"></td>`;
@@ -608,7 +635,7 @@ function cbChooser(pt, pick, profile, mode){
       }).join('')}</tr>`).join('')}</tbody></table>`;
   } else if(axis){
     const rowName = trimShared(axis.rows), colName = trimShared(axis.cols);
-    res.html += `<table class="cb-grid cb-ghah"><thead><tr><th></th>${axis.cols.map((c,i)=>`<th>${cbEsc(colName[i])}</th>`).join('')}</tr></thead><tbody>${
+    res.html += `<table class="cb-grid cb-ghah"><thead><tr><th><span class="sr-only">Size</span></th>${axis.cols.map((c,i)=>`<th>${cbEsc(colName[i])}</th>`).join('')}</tr></thead><tbody>${
       axis.rows.map((r,ri)=>`<tr><th>${cbEsc(rowName[ri])}</th>${axis.cols.map(c=>{
         const it = axis.cells[r][c];
         if(!it) return `<td class="na"></td>`;
@@ -650,7 +677,7 @@ function cbConfKey(label){ return `${cb.own[cb.activeTooth] ? cb.activeTooth : '
 function cbDoneCard(id, title, summary, sub, key, removable){
   return `<div class="cb-card cb-done" id="${id}"><button type="button" class="cb-donebtn" data-a="edit"${cbData({k:key})}>
     <span class="cb-done-t">✓ ${cbEsc(title)}</span><b>${cbEsc(summary)}</b>${sub?`<small>${sub}</small>`:''}<span class="cb-done-c">Change</span></button>${
-    removable ? `<button type="button" class="cb-x" data-a="need"${cbData({l:title})} title="Not needed">✕</button>` : ''}</div>`;
+    removable ? `<button type="button" class="cb-x" data-a="need"${cbData({l:title})} title="Not needed" aria-label="Not needed: ${cbEsc(title)}">✕</button>` : ''}</div>`;
 }
 
 function cbPartCards(){
@@ -678,7 +705,7 @@ function cbPartCards(){
       : c.item
       ? `<div class="cb-summary"><b>${cbEsc(c.group.label)}, ${cbEsc(c.item[0])}</b><span class="cb-ref">REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}${tq?` · 🔧 ${cbEsc(tq)}`:''}</span>${c.group.caution?`<span class="cb-warn">⚠ ${cbEsc(c.group.caution)}</span>`:''}</div>`
       : '';
-    return `<div class="cb-card${missing?' cb-missing-card':''}" id="${id}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${cbDiagram(pt.label, c.kinds)}${c.html}${done}</div>`;
+    return `<div class="cb-card${missing?' cb-missing-card':''}" id="${id}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed" aria-label="Not needed: ${cbEsc(pt.label)}">✕</button></h3>${cbDiagram(pt.label, c.kinds)}${c.html}${done}</div>`;
   }).join('');
 }
 
@@ -732,14 +759,14 @@ function cbAllOnXCards(){
       if(cands.length>1) html += `<button type="button" class="cb-link" data-a="xadd"${cbData({l:L})}>+ Add another size</button>`;
     }
     const missing = !lines.length && cb.showMissing;
-    out.push(`<div class="cb-card${missing?' cb-missing-card':''}" id="cb-part-${L.replace(/\W+/g,'-')}"><h3>${cbEsc(L)}<button type="button" class="cb-x" data-a="need"${cbData({l:L})} title="Not needed">✕</button></h3>${cbDiagram(L, kinds)}${html}</div>`);
+    out.push(`<div class="cb-card${missing?' cb-missing-card':''}" id="cb-part-${L.replace(/\W+/g,'-')}"><h3>${cbEsc(L)}<button type="button" class="cb-x" data-a="need"${cbData({l:L})} title="Not needed" aria-label="Not needed: ${cbEsc(L)}">✕</button></h3>${cbDiagram(L, kinds)}${html}</div>`);
   });
   return out.join('');
 }
 
 function cbCountRow(label, name, ref, n, pack, caution){
   return `<div class="cb-row${n?' on':''}"><div class="t"><b>${cbEsc(name)}</b><small>REF ${cbEsc(ref)}${pack>1?` · ships ${pack}/pkg`:''}${caution?' · ⚠ confirm before ordering':''}</small></div>
-    <div class="cb-step"><button type="button" data-a="cnt"${cbData({l:label, r:ref, d:-1})}${n?'':' disabled'}>−</button><span>${n}</span><button type="button" data-a="cnt"${cbData({l:label, r:ref, d:1})}>+</button></div></div>`;
+    <div class="cb-step"><button type="button" data-a="cnt"${cbData({l:label, r:ref, d:-1})}${n?'':' disabled'} aria-label="One fewer ${cbEsc(name)}">−</button><span aria-live="polite">${n}</span><button type="button" data-a="cnt"${cbData({l:label, r:ref, d:1})} aria-label="One more ${cbEsc(name)}">+</button></div></div>`;
 }
 
 function cbCountImplantCard(role){
@@ -749,7 +776,7 @@ function cbCountImplantCard(role){
   const cols = gridColumns(rows);
   const variants = grid.variants.length>1
     ? `<div class="cb-chips cb-variants">${grid.variants.map(v=>cbChip(v, v===cb.variant, 'variant', cbData({v}))).join('')}</div>` : '';
-  const head = `<tr><th></th>${cols.map(c=>`<th>${cbEsc(c)}</th>`).join('')}</tr>`;
+  const head = `<tr><th><span class="sr-only">Implant</span></th>${cols.map(c=>`<th>${cbEsc(c)}</th>`).join('')}</tr>`;
   const body = rows.map(r=>`<tr><th>${cbEsc(r.label)}</th>${cols.map(c=>{
     const item = r.group.items.find(([nm])=>lengthKey(nm)===c);
     if(!item) return `<td class="na"></td>`;
@@ -767,7 +794,7 @@ function cbCountImplantCard(role){
   const same = planned.length
     ? `<button type="button" class="cb-link" data-a="bsame">+ One more of ${planned.length>1 ? 'each implant planned' : 'the planned implant'}</button>` : '';
   const note = cb.kind==='case' ? '<p class="cb-note cb-top">Extra implants to have on hand for the whole case, in case one doesn\'t fit as planned.</p>' : '';
-  return `<div class="cb-card" id="cb-part-${role.replace(/\W+/g,'-')}"><h3>${role}<button type="button" class="cb-x" data-a="need"${cbData({l:role})} title="Not needed">✕</button></h3>${note}${cbDiagram(role,'implant')}${variants}
+  return `<div class="cb-card" id="cb-part-${role.replace(/\W+/g,'-')}"><h3>${role}<button type="button" class="cb-x" data-a="need"${cbData({l:role})} title="Not needed" aria-label="Not needed: ${cbEsc(role)}">✕</button></h3>${note}${cbDiagram(role,'implant')}${variants}
     <div class="cb-gridwrap"><table class="cb-grid"><thead>${head}</thead><tbody>${body}</tbody></table></div>
     <p class="cb-note cb-axis">Tap a cell once per implant · Rows: diameter · Columns: length (mm)</p>${same}${picked.join('')}</div>`;
 }
@@ -1176,7 +1203,17 @@ function cbOnClick(e){
     case 'cancel': cbCancel(); return;
     default: return;
   }
+  const hadFocus = document.activeElement===btn;
   renderCaseBuilder();
+  // Re-rendering replaces every button; put keyboard focus back on the
+  // one just pressed (or, if it's gone, its card's first button).
+  if(hadFocus){
+    const same = [...document.querySelectorAll('#builderView [data-a]')].find(b=>
+      Object.keys(d).length===Object.keys(b.dataset).length && Object.keys(d).every(k=>b.dataset[k]===d[k]));
+    const card = typeof tappedKey==='string' ? document.getElementById(tappedKey) : cards()[tappedKey];
+    const target = same || (card && card.querySelector('button'));
+    if(target) target.focus({preventScroll:true});
+  }
   // A card that just folded up: keep it in view and bring the next card
   // up under it. A card that grew: scroll so its new rows aren't hidden
   // under the bottom bar.

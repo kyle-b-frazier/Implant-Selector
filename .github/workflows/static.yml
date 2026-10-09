@@ -22,8 +22,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
+  # The catalog and compatibility tests must pass before anything deploys.
+  test:
+    uses: ./.github/workflows/test.yml
+
   deploy:
+    needs: test
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -37,6 +41,9 @@ jobs:
       # index.html with a cached older .js file (Pages caches for 10 min).
       - name: Cache-bust script URLs
         run: sed -i -E "s#<script src=\"([^\"?]+\.js)\"></script>#<script src=\"\1?v=${GITHUB_SHA::8}\"></script>#" index.html && grep -n '<script src=' index.html
+      # A new offline cache for each deploy, so phones drop the old copy.
+      - name: Stamp the offline cache name
+        run: sed -i "s/implant-selector-dev/implant-selector-${GITHUB_SHA::8}/" sw.js && grep -n "const CACHE" sw.js | grep -q "${GITHUB_SHA::8}"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

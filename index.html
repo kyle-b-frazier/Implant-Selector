@@ -16,6 +16,7 @@
     --navy-deep:#001438;
     --green:#78BE21;
     --green-deep:#5C9418;
+    --green-text:#3E6B10; /* green for text: 4.5:1 or better on white and the pale greens */
     --paper:#F2F4F7;
     --card:#FFFFFF;
     --ink:#1B2430;
@@ -26,6 +27,7 @@
     --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
   button, select{
     -webkit-appearance:none;
     appearance:none;
@@ -83,9 +85,16 @@
   /* ---- Button press feedback (general) ---- */
   button:active, .card:active{transform:scale(.97);}
   :focus-visible{outline:2px solid var(--green); outline-offset:2px;}
+  /* Navy surfaces: the green ring alone is hard to see against the topbar
+     and dark sidebar, so it gets a white inner edge there. */
+  .topbar :focus-visible, .systembar :focus-visible, .sidebar :focus-visible{box-shadow:0 0 0 2px #fff;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *, *::before, *::after{animation-duration:.01ms !important; animation-delay:0s !important; transition-duration:.01ms !important;}
+  }
 
   /* ---- Home screen ---- */
-  .app.home-mode{grid-template-columns:1fr;}
+  .app.home-mode{grid-template-columns:minmax(0,1fr);}
   .app.home-mode .systembar, .app.home-mode .sidebar, .app.home-mode .orderpanel, .app.home-mode .content{display:none;}
   #homeView{display:none;}
   .app.home-mode #homeView{grid-column:1/-1; display:flex; justify-content:center; padding:40px 20px 60px; background:#EDEEF0; min-height:calc(100vh - 76px);}
@@ -114,7 +123,7 @@
   .home-card .hc-icon svg{width:24px; height:24px;}
   .home-card .hc-txt h3{margin:0 0 3px; font-size:15px; color:var(--ink); font-weight:700;}
   .home-card .hc-arrow{margin-left:auto; color:#9AA3AF; font-size:18px; transition:transform .18s ease;}
-  .home-card:hover .hc-arrow{transform:translateX(3px); color:var(--green-deep);}
+  .home-card:hover .hc-arrow{transform:translateX(3px); color:var(--green-text);}
   .home-search{padding:0 36px 6px; display:flex; gap:8px;}
   .home-search input{flex:1; min-width:0; padding:12px 14px; border:1px solid var(--line); border-radius:10px; font-size:16px; font-family:inherit; color:var(--ink);}
   .home-search input:focus{outline:2px solid var(--green); border-color:var(--green);}
@@ -126,7 +135,7 @@
   .recent-row .rr-txt{flex:1; min-width:0;}
   .recent-row b{display:block; font-size:14px;}
   .recent-row small{display:block; font-size:12px; color:var(--ink-soft); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .recent-row .rr-go{font-size:12.5px; font-weight:600; color:var(--green-deep); white-space:nowrap;}
+  .recent-row .rr-go{font-size:12.5px; font-weight:600; color:var(--green-text); white-space:nowrap;}
   .search-system{margin:22px 0 10px; font-size:15px; color:var(--navy); border-bottom:2px solid var(--line); padding-bottom:6px;}
   @keyframes homeFadeDown{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
   @keyframes homeFadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
@@ -136,6 +145,8 @@
     .home-btn-row{padding:20px 16px 24px; gap:12px;}
     .home-card{padding:16px; gap:14px;}
     .home-search{padding:0 16px 4px;}
+    .home-search .scanbtn{padding:0 12px;}
+    .home-search .scan-lbl{display:none;}
     .home-recent{padding:4px 16px 22px;}
   }
 
@@ -165,7 +176,7 @@
   .app.builder-mode #builderView{display:block; grid-column:1/-1; background:#EDEEF0; min-height:calc(100vh - 76px);}
   .cb-wrap{max-width:720px; margin:0 auto; padding:18px 16px 0;}
   .cb-head{margin:4px 2px 4px;}
-  .cb-eyebrow{margin:0; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--green-deep); font-weight:700;}
+  .cb-eyebrow{margin:0; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--green-text); font-weight:700;}
   .cb-head h2{margin:2px 0 0; font-size:22px; color:var(--navy);}
   .cb-card{background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px; margin:10px 0;}
   .cb-card h3{margin:0 0 10px; font-size:15px; color:var(--navy); display:flex; align-items:center; gap:8px;}
@@ -178,7 +189,7 @@
   .cb-chip:hover{border-color:#9AA3AF;}
   .cb-chip.on{background:var(--navy); border-color:var(--navy); color:#fff;}
   .cb-chip-sub{display:block; font-size:12px; font-weight:500; opacity:.75; margin-top:1px;}
-  .cb-chip-sub.sug{color:var(--green-deep); font-weight:700; opacity:1;}
+  .cb-chip-sub.sug{color:var(--green-text); font-weight:700; opacity:1;}
   .cb-chip.on .cb-chip-sub.sug{color:#BFE59A;}
   .cb-variants{margin-bottom:10px;}
   .cb-seg{display:flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:12px;}
@@ -187,12 +198,12 @@
   .cb-arch{font-size:10px; color:var(--ink-soft); margin:4px 0 3px; letter-spacing:.06em; text-transform:uppercase;}
   .cb-odo{display:grid; grid-template-columns:repeat(16,1fr); gap:3px; margin-bottom:3px;}
   .cb-tooth{font:700 11px var(--sans); padding:8px 0; border:1.5px solid var(--line); border-radius:5px; color:var(--ink-soft); background:#fff; cursor:pointer; min-width:0;}
-  .cb-tooth.implant{background:var(--green); border-color:var(--green-deep); color:#fff;}
+  .cb-tooth.implant{background:var(--green); border-color:var(--green-deep); color:#0E2B00;}
   .cb-tooth.pontic{background:#F3D48A; border-color:#C99A2E; color:#5A430E;}
   .cb-note{font-size:12.5px; color:var(--ink-soft); margin:8px 0 0; line-height:1.45;}
   .cb-note b{color:var(--ink);}
   .cb-note.cb-top{margin:-4px 0 10px;}
-  .cb-note.cb-last{color:var(--green-deep); font-weight:600;}
+  .cb-note.cb-last{color:var(--green-text); font-weight:600;}
   .cb-brand{font-size:12.5px; font-weight:700; color:var(--navy); margin:12px 0 6px;}
   .cb-lbl + .cb-brand{margin-top:2px;}
   .cb-subgroup{border-left:3px solid var(--line); padding-left:10px; margin:0 0 10px;}
@@ -244,7 +255,7 @@
   .cb-step button{width:36px; height:34px; border:none; background:#F4F6F9; font:700 17px var(--sans); color:var(--navy); cursor:pointer;}
   .cb-step button:disabled{color:#C3CAD3; cursor:default;}
   .cb-step span{min-width:30px; text-align:center; font-weight:700; font-size:14px;}
-  .cb-row.on .cb-step span{color:var(--green-deep);}
+  .cb-row.on .cb-step span{color:var(--green-text);}
   .cb-foot{position:sticky; bottom:0; margin:14px -16px 0; padding:12px 16px 18px; background:#fff; border-top:1px solid var(--line); box-shadow:0 -4px 14px rgba(0,0,0,.06); display:flex; gap:10px; align-items:center;}
   .cb-add{flex:1; background:var(--green); color:var(--navy-deep); border:none; border-radius:12px; padding:14px; font:800 15.5px var(--sans); cursor:pointer;}
   .cb-add.wait{background:#E4E8EE; color:var(--ink-soft); font-weight:700;}
@@ -368,8 +379,31 @@
     font-size:13px;
     color:var(--ink-soft);
   }
-  .searchwrap{margin-bottom:20px;}
+  .searchwrap{margin-bottom:20px; display:flex; gap:8px;}
+  .scanbtn{
+    flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; padding:0 14px; border:1.5px solid #C9D3E3; border-radius:8px;
+    background:#fff; color:var(--navy); font-weight:600; font-size:13px; font-family:inherit; cursor:pointer;
+  }
+  .scanbtn:hover{border-color:var(--navy); background:#F5F8FC;}
+  .scanbtn svg{width:18px; height:18px;}
+  .home-search .scanbtn{border-radius:10px; font-size:14px;}
+  .scan-overlay{position:fixed; inset:0; z-index:1000; background:rgba(0,20,56,.7); display:flex; align-items:center; justify-content:center; padding:16px;}
+  .scan-box{background:#fff; border-radius:14px; width:100%; max-width:480px; max-height:100%; overflow:auto; padding:16px 18px 18px; box-shadow:0 24px 60px rgba(0,0,0,.35);}
+  .scan-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .scan-head h3{margin:0; font-size:16px; color:var(--navy);}
+  .scan-close{background:#EEF0F3; border:none; border-radius:8px; width:34px; height:34px; font-size:15px; cursor:pointer; color:var(--ink);}
+  .scan-view{position:relative; background:#000; border-radius:10px; overflow:hidden; aspect-ratio:4/3;}
+  .scan-view[hidden]{display:none;}
+  .scan-view video{width:100%; height:100%; object-fit:cover; display:block;}
+  .scan-frame{position:absolute; inset:18% 22%; border:2.5px solid var(--green); border-radius:10px; box-shadow:0 0 0 999px rgba(0,0,0,.28);}
+  .scan-status{font-size:13px; color:var(--ink); margin:10px 0 12px; line-height:1.5;}
+  .scan-manual label{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px;}
+  .scan-manual-row{display:flex; gap:8px;}
+  .scan-manual input{flex:1; min-width:0; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:16px; font-family:var(--mono);}
+  .scan-manual input:focus{outline:2px solid var(--green); border-color:var(--green);}
+  .scan-manual button{padding:0 16px; border:none; border-radius:8px; background:var(--navy); color:#fff; font-weight:600; font-size:14px; font-family:inherit; cursor:pointer;}
   .searchwrap input{
+    flex:1; min-width:0;
     width:100%;
     padding:10px 14px;
     border:1.5px solid var(--line);
@@ -432,7 +466,7 @@
   .group-head .material{
     font-size:10px;
     font-weight:700;
-    color:var(--green-deep);
+    color:var(--green-text);
     background:#EEF7E1;
     padding:2px 8px;
     border-radius:20px;
@@ -525,6 +559,13 @@
     margin-bottom:4px;
   }
   .mismatch-banner ul{margin:0; padding-left:18px;}
+  .reminder-box, .drivers-box{
+    background:#EEF3FA; border:1px solid #C5D5EC; border-radius:8px; padding:9px 12px; margin:0 0 12px;
+    font-size:11.5px; color:#1F3B66; line-height:1.5;
+  }
+  .drivers-box{margin:12px 0 4px; background:#F5F7F9; border-color:var(--line); color:var(--ink);}
+  .reminder-title, .drivers-title{font-weight:700; margin-bottom:3px;}
+  .reminder-box ul, .drivers-box ul{margin:0; padding-left:18px;}
   .pending-badge{
     display:inline-block;
     background:#FDF2E9;
@@ -599,7 +640,8 @@
     margin-bottom:18px;
     font-family:var(--sans);
   }
-  .modal-box input[type=number]:focus{outline:2px solid var(--green); border-color:var(--green);}
+  .modal-box input[type=number]:focus, .modal-box input.modal-text:focus{outline:2px solid var(--green); border-color:var(--green);}
+  .modal-box input.modal-text{width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:8px; font-size:16px; margin-bottom:18px; font-family:var(--sans);}
   .modal-actions{
     display:flex;
     gap:10px;
@@ -803,6 +845,18 @@
     cursor:pointer;
   }
   .clearbtn:hover{border-color:#C0392B; color:#C0392B;}
+  .sendrow{display:flex; gap:6px; margin-top:8px;}
+  .sendbtn{
+    flex:1; padding:9px 4px; background:#fff; border:1px solid #C9D3E3; color:var(--navy);
+    border-radius:8px; font-weight:600; font-size:12.5px; font-family:inherit; cursor:pointer;
+  }
+  .sendbtn:hover{border-color:var(--navy); background:#F5F8FC;}
+  .sendbtn[hidden]{display:none;}
+  #printArea{display:none;}
+  @media print{
+    body > *:not(#printArea){display:none !important;}
+    #printArea{display:block; margin:0; font-family:Georgia, 'Times New Roman', serif; font-size:11pt; line-height:1.5; white-space:pre-wrap; color:#000;}
+  }
   .toast{
     position:fixed;
     bottom:24px;
@@ -836,7 +890,7 @@
 </head>
 <body>
 <div class="app" id="appRoot">
-  <div class="topbar">
+  <div class="topbar" role="banner">
     <div class="brand" style="display:flex; align-items:center;">
       <div style="display:flex; flex-direction:column; gap:2px;">
         <h1 id="pageTitle">Implant Parts Selector</h1>
@@ -847,24 +901,25 @@
     </div>
   </div>
 
-  <div id="homeView"></div>
+  <div id="homeView" role="main"></div>
 
-  <div id="builderView"></div>
+  <div id="builderView" role="main"></div>
 
-  <div class="systembar" id="systembar"></div>
+  <div class="systembar" id="systembar" role="navigation" aria-label="Implant systems"></div>
 
-  <div class="sidebar" id="sidebar"></div>
+  <div class="sidebar" id="sidebar" role="navigation" aria-label="Categories"></div>
 
-  <div class="content" id="content">
+  <div class="content" id="content" role="main">
     <div class="searchwrap">
-      <input type="text" id="searchBox" placeholder="Search all systems by name or REF (e.g. &quot;024.4100S&quot;, &quot;cover screw&quot;, &quot;3.75&quot;)…">
+      <input type="text" id="searchBox" aria-label="Search all systems by name or REF" placeholder="Search all systems by name or REF (e.g. &quot;024.4100S&quot;, &quot;cover screw&quot;, &quot;3.75&quot;)…">
+      <button type="button" class="scanbtn" id="catalogScan" onclick="openScanner()" aria-label="Scan a box's barcode">Scan</button>
     </div>
     <div id="categoryView"></div>
   </div>
 
-  <div class="orderpanel">
+  <div class="orderpanel" role="complementary" aria-label="Order">
     <h3>Order List <span class="badge" id="orderCount">0</span></h3>
-    <div class="hint">Tap a component to add it, set quantity, then copy into your note.</div>
+    <div class="hint">Tap a component to add it, set quantity, then copy, share or email the order. It's kept on this device until you clear it.</div>
     <div class="orderlist" id="orderList">
       <div class="empty-order">No items selected yet.<br>Choose components from the catalog to build your order.</div>
     </div>
@@ -879,15 +934,22 @@
         <span class="switch" aria-hidden="true"></span>
         <span>Include torque &amp; driver</span>
       </label>
-      <textarea id="outputText" readonly>No items selected.</textarea>
+      <textarea id="outputText" readonly aria-label="Order text">No items selected.</textarea>
       <button class="copybtn" onclick="copyText()">📋 Copy Order to Clipboard</button>
+      <div class="sendrow">
+        <button class="sendbtn" id="shareBtn" onclick="shareOrder()" hidden>Share</button>
+        <button class="sendbtn" onclick="emailOrder()">Email</button>
+        <button class="sendbtn" onclick="downloadCsv()" title="Spreadsheet file, one row per part">CSV</button>
+        <button class="sendbtn" onclick="printOrder()">Print</button>
+      </div>
       <button class="clearbtn" onclick="clearAll()">Clear all selections</button>
     </div>
     <div class="orderpanel-footnote">Verify all part numbers before ordering · Last checked against manufacturer catalogs Oct 2026</div>
   </div>
 </div>
 
-<div class="toast" id="toast">Copied to clipboard</div>
+<div class="toast" id="toast" role="status" aria-live="polite">Copied to clipboard</div>
+<pre id="printArea"></pre>
 
 <script src="catalog/common.js"></script>
 <script src="catalog/straumann-blc-blx.js"></script>
@@ -900,6 +962,7 @@
 <script src="compatibility.js"></script>
 <script src="diagrams.js"></script>
 <script src="case-builder.js"></script>
+<script src="scan.js"></script>
 <script>
 
 function sectionOf(sys, cat){ return sys.surgical.has(cat) ? "SURGICAL" : "PROSTHETIC / RESTORATIVE"; }
@@ -919,6 +982,7 @@ function buildSystemBar(){
     const sys = SYSTEMS[id];
     const btn = document.createElement('button');
     btn.className = 'sysbtn' + (id===activeSystemId && viewMode==='category' ? ' active':'');
+    if(id===activeSystemId && viewMode==='category') btn.setAttribute('aria-current', 'true');
     btn.innerHTML = `<span class="sysname">${sys.name}</span>`;
     btn.onclick = ()=>{
       navigateWithFade(()=>{
@@ -951,6 +1015,7 @@ function buildSidebar(){
     }
     const btn = document.createElement('button');
     btn.className = 'catbtn' + (cat===activeCategory ? ' active':'');
+    if(cat===activeCategory) btn.setAttribute('aria-current', 'true');
     btn.innerHTML = `<span>${cat}</span>`;
     btn.onclick = ()=>{ activeCategory = cat; viewMode = 'category'; document.getElementById('searchBox').value=''; render(); };
     sb.appendChild(btn);
@@ -966,6 +1031,7 @@ function renderItemCard(container, systemId, name, ref, groupLabel, category){
   const isSel = !!selected[key];
   const btn = document.createElement('button');
   btn.className = 'itembtn' + (isSel ? ' selected':'');
+  btn.setAttribute('aria-pressed', isSel ? 'true' : 'false');
   btn.innerHTML = `<span class="desc">${name}</span><span class="ref">REF ${ref}</span>` +
                    (isSel ? `<span class="qtytag">Qty ${selected[key].qty}</span>` : '');
   btn.onclick = ()=> toggleItem(systemId, ref, name, groupLabel, category);
@@ -1051,6 +1117,7 @@ const ICON_IMPLANT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
    threaded implant body. */
 const ICON_IMPLANT_HERO = `<svg viewBox="0 0 64 84" xmlns="http://www.w3.org/2000/svg"><path d="M13 21C11 12 14 4.5 20.5 4c4-.3 6 2.6 11.5 2.6S39.5 3.7 43.5 4C50 4.5 53 12 51 21c-1 4.6-3.6 8-6.4 9.4H19.4C16.6 29 14 25.6 13 21z" fill="#F4F7FC"/><path d="M20.5 9.5c-2.2.6-3.4 3-3.2 6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".9"/><path d="M23 30.4h18l-2.2 8.2H25.2z" fill="#AFC0D6"/><path d="M24.6 38.6h14.8l-1.3 29.4L32 79l-6.1-11z" fill="currentColor"/>${[43,49,55,61,67].map(y=>`<path d="M24.2 ${y+2.6}L39.8 ${y-1.2}" stroke="#0B2559" stroke-width="2.2" stroke-linecap="round"/>`).join('')}</svg>`;
 const ICON_ARCH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.2c0 5.9 4 10.3 9 10.3s9-4.4 9-10.3"/><path d="M4.3 7c2.3 1.9 4.9 2.9 7.7 2.9S17.4 8.9 19.7 7"/><line x1="7.1" y1="9.5" x2="7.7" y2="12.4"/><line x1="10.5" y1="10.7" x2="10.7" y2="13.6"/><line x1="13.5" y1="10.7" x2="13.3" y2="13.6"/><line x1="16.9" y1="9.5" x2="16.3" y2="12.4"/></svg>`;
+const ICON_SCAN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><line x1="8" y1="9" x2="8" y2="15"/><line x1="11" y1="9" x2="11" y2="15"/><line x1="14" y1="9" x2="14" y2="15"/><line x1="16.5" y1="9" x2="16.5" y2="15"/></svg>`;
 const ICON_BOOK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.8c-1.7-1.3-3.8-1.9-5.9-1.9-.7 0-1.3.6-1.3 1.3v11c0 .7.6 1.3 1.3 1.3 2.1 0 4.2.6 5.9 1.9 1.7-1.3 3.8-1.9 5.9-1.9.7 0 1.3-.6 1.3-1.3v-11c0-.7-.6-1.3-1.3-1.3-2.1 0-4.2.6-5.9 1.9z"/><line x1="12" y1="6.8" x2="12" y2="19.4"/></svg>`;
 
 /* Fades the current view out, runs the navigation, then fades the new view
@@ -1109,6 +1176,7 @@ function renderHomeView(){
       <form class="home-search" id="homeSearch">
         <input type="search" id="homeSearchBox" placeholder="Find a part by name or REF" aria-label="Find a part by name or REF" enterkeyhint="search">
         <button type="submit">Find</button>
+        <button type="button" class="scanbtn" id="homeScan" aria-label="Scan a box's barcode">${ICON_SCAN}<span class="scan-lbl">Scan</span></button>
       </form>
       ${recentCasesHtml()}
     </div>
@@ -1128,6 +1196,7 @@ function renderHomeView(){
   document.getElementById('homeCardWizard').onclick = ()=> openCaseBuilder({kind:'case'});
   document.getElementById('homeCardAllOnX').onclick = ()=> openCaseBuilder({kind:'allonx'});
   document.getElementById('homeCardCatalog').onclick = goToFullCatalog;
+  document.getElementById('homeScan').onclick = openScanner;
 }
 
 function render(){
@@ -1243,9 +1312,10 @@ function buildDiagramToggles(kinds){
     btn.type = 'button';
     btn.className = 'dg-btn';
     btn.textContent = DIAGRAM_BUTTON_LABELS[kind];
+    btn.setAttribute('aria-expanded', 'false');
     btn.onclick = ()=>{
       open = open===kind ? null : kind;
-      row.querySelectorAll('.dg-btn').forEach(b=>b.classList.toggle('on', b===btn && open===kind));
+      row.querySelectorAll('.dg-btn').forEach(b=>{ b.classList.toggle('on', b===btn && open===kind); b.setAttribute('aria-expanded', b===btn && open===kind ? 'true' : 'false'); });
       panel.innerHTML = open ? diagramHtml(open) : '';
     };
     row.appendChild(btn);
@@ -1439,13 +1509,21 @@ function renderOrder(){
     empty.innerHTML = 'No items selected yet.<br>Choose components from the catalog to build your order.';
     list.appendChild(empty);
   } else {
-    const mismatches = detectPlatformMismatches(selected);
-    if(mismatches.length>0){
+    const warnings = orderWarnings(selected);
+    if(warnings.length>0){
       const banner = document.createElement('div');
       banner.className = 'mismatch-banner';
-      banner.innerHTML = `<div class="mismatch-title">⚠ Possible platform mismatch</div>` +
-        `<ul>${mismatches.map(w=>`<li>${escapeHtml(formatMismatchLine(w))}</li>`).join('')}</ul>`;
+      banner.innerHTML = `<div class="mismatch-title">⚠ Check before ordering</div>` +
+        `<ul>${warnings.map(w=>`<li>${escapeHtml(formatMismatchLine(w))}</li>`).join('')}</ul>`;
       list.appendChild(banner);
+    }
+    const reminders = missingOverdentureParts(selected);
+    if(reminders.length>0){
+      const box = document.createElement('div');
+      box.className = 'reminder-box';
+      box.innerHTML = `<div class="reminder-title">Overdenture: anything missing?</div><ul>${reminders.map(r=>
+        `<li>${escapeHtml(SYSTEMS[r.system].name)}: no ${escapeHtml(r.missing.toLowerCase())} in the order. Add some unless the lab supplies them.</li>`).join('')}</ul>`;
+      list.appendChild(box);
     }
 
     keys.forEach(key=>{
@@ -1465,13 +1543,22 @@ function renderOrder(){
           <div class="rf">REF ${it.ref}${backupNote(it)}</div>
           ${packLine}
         </div>
-        <input class="qty" type="number" min="1" value="${it.qty}" onchange="updateQty('${key}', this.value)">
-        <button class="rm" title="Remove" onclick="removeItem('${key}')">✕</button>
+        <input class="qty" type="number" min="1" value="${it.qty}" onchange="updateQty('${key}', this.value)" aria-label="Quantity of ${escapeHtml(it.name)}, REF ${escapeHtml(it.ref)}">
+        <button class="rm" title="Remove" aria-label="Remove ${escapeHtml(it.name)}, REF ${escapeHtml(it.ref)}" onclick="removeItem('${key}')">✕</button>
       `;
       list.appendChild(row);
     });
+    const drivers = orderDrivers(selected);
+    if(drivers.length>0){
+      const box = document.createElement('div');
+      box.className = 'drivers-box';
+      box.innerHTML = `<div class="drivers-title">🔧 Drivers for this order</div><ul>${drivers.map(d=>
+        `<li><b>${escapeHtml(d.driver)}</b>${d.torques.length ? ' · ' + escapeHtml(d.torques.join(', ')) : ''}</li>`).join('')}</ul>`;
+      list.appendChild(box);
+    }
   }
   updateOutput();
+  saveOrder();
 }
 
 /* " (incl. 1 backup)" for implants the case builder added as backups. */
@@ -1523,22 +1610,15 @@ function torqueText(group){
   if(!group) return '';
   return [group.torque, group.driver].filter(Boolean).join(' · ');
 }
-function orderGroupFor(it){
-  const cat = SYSTEMS[it.system].catalog;
-  for(const c of [it.category, ...Object.keys(cat).filter(c=>c!==it.category)]){
-    const g = (cat[c]||[]).find(g=>g.label===it.group && g.items.some(([,r])=>r===it.ref));
-    if(g) return g;
-  }
-  return null;
-}
 
 function updateOutput(){
   const keys = Object.keys(selected);
-  const ta = document.getElementById('outputText');
-  if(keys.length===0){
-    ta.value = "No items selected.";
-    return;
-  }
+  document.getElementById('outputText').value = keys.length ? orderText(keys) : "No items selected.";
+}
+
+/* The order as text, for the lines in `keys` (all of them, or one
+   maker's for an email). */
+function orderText(keys){
   const today = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
   const bySystem = {};
   keys.forEach(key=>{
@@ -1568,24 +1648,38 @@ function updateOutput(){
         const c = catalogSourceFor(it);
         lines.push(c.source ? `    Catalog: ${c.source}` : `    Catalog: not verified — ${c.unverified}`);
       }
-      const tq = showTorque && torqueText(orderGroupFor(it));
+      const tq = showTorque && torqueText(orderLineGroup(it));
       if(tq) lines.push(`    Torque: ${tq}`);
       lines.push('');
     });
   });
   lines.push(`Total line items: ${keys.length}`);
-  ta.value = lines.join('\n');
+  const drivers = showTorque ? orderDrivers(Object.fromEntries(keys.map(k=>[k, selected[k]]))) : [];
+  if(drivers.length){
+    lines.push('');
+    lines.push('Drivers: ' + drivers.map(d=>d.driver + (d.torques.length ? ` (${d.torques.join(', ')})` : '')).join('; '));
+  }
+  return lines.join('\n');
+}
+
+/* Before the order leaves the app (copy, share, email, CSV, print):
+   shows the order's warnings (orderWarnings), if any, and lets the person go back.
+   `verb` names the action on the button, e.g. "Copy". */
+async function confirmBeforeSending(verb){
+  if(!Object.keys(selected).length){
+    showToast('Nothing in the order yet');
+    return false;
+  }
+  const warnings = orderWarnings(selected);
+  if(warnings.length===0) return true;
+  const msg = "Worth a second look:\n\n" +
+    warnings.map(w=>"• " + formatMismatchLine(w)).join("\n") +
+    "\n\nThis can be intentional (e.g. different sites needing different platforms) — just double-check before ordering.";
+  return await showModal({type:'confirm', title:'⚠ Check before ordering', message:msg, okText:`${verb} anyway`, cancelText:'Go back'});
 }
 
 async function copyText(){
-  const mismatches = detectPlatformMismatches(selected);
-  if(mismatches.length>0){
-    const msg = "Possible platform mismatch detected:\n\n" +
-      mismatches.map(w=>"• " + formatMismatchLine(w)).join("\n") +
-      "\n\nThis can be intentional (e.g. different sites needing different platforms) — just double-check before ordering.";
-    const ok = await showModal({type:'confirm', title:'⚠ Check before copying', message:msg, okText:'Copy anyway', cancelText:'Go back'});
-    if(!ok) return;
-  }
+  if(!(await confirmBeforeSending('Copy'))) return;
   const ta = document.getElementById('outputText');
   ta.select();
   navigator.clipboard.writeText(ta.value).then(()=>{
@@ -1596,41 +1690,176 @@ async function copyText(){
   });
 }
 
+/* Share sheet (phones, and Safari/Edge on desktop): the order text goes
+   straight into Messages, Mail, etc. The button is shown only where the
+   browser has one. */
+async function shareOrder(){
+  if(!(await confirmBeforeSending('Share'))) return;
+  const text = orderText(Object.keys(selected));
+  try{
+    await navigator.share({ title: text.split('\n')[0], text });
+  }catch(e){
+    if(e && e.name==='AbortError') return; // closed the share sheet
+    copyText();
+  }
+}
+
+/* Email: opens a new message in the mail app with the order in the body.
+   An order with parts from more than one maker can go out as one email
+   per maker; the rep's address for each maker is kept on this device. */
+const REP_EMAILS_KEY = 'repEmails';
+function loadRepEmails(){
+  try{ const r = JSON.parse(localStorage.getItem(REP_EMAILS_KEY)); return r && typeof r==='object' ? r : {}; }catch(e){ return {}; }
+}
+async function emailOrder(){
+  if(!(await confirmBeforeSending('Email'))) return;
+  const keys = Object.keys(selected);
+  const brandOf = k => systemBrand(selected[k].system);
+  const brands = [...new Set(keys.map(brandOf))];
+  let brand = brands[0];
+  if(brands.length>1){
+    brand = await showModal({
+      type:'select', title:'Email which items?', message:'Each maker usually takes its own order.',
+      options: [
+        ...brands.map(b=>{ const n = keys.filter(k=>brandOf(k)===b).length; return {value:b, label:`${b} items only`, sublabel:`${n} line${n===1?'':'s'}`}; }),
+        {value:'*', label:'Everything in one email', sublabel:`${keys.length} lines`}
+      ]
+    });
+    if(brand==null) return;
+  }
+  const reps = loadRepEmails();
+  const to = await showModal({
+    type:'prompt', inputType:'email', title:'Send to',
+    message: brand==='*' ? 'Email address (optional).' : `${brand} rep's email address (optional). It's kept on this device for next time.`,
+    defaultValue: brand==='*' ? '' : (reps[brand] || ''), okText:'Open email', placeholder:'name@example.com'
+  });
+  if(to===null) return;
+  const addr = to.trim().replace(/[^\w.+@,;-]/g, '');
+  if(brand!=='*'){
+    reps[brand] = addr;
+    try{ localStorage.setItem(REP_EMAILS_KEY, JSON.stringify(reps)); }catch(e){}
+  }
+  const text = orderText(brand==='*' ? keys : keys.filter(k=>brandOf(k)===brand));
+  location.href = `mailto:${addr}?subject=${encodeURIComponent(text.split('\n')[0])}&body=${encodeURIComponent(text)}`;
+}
+
+/* CSV: one row per order line, for ordering portals and spreadsheets. */
+function orderCsv(keys){
+  const head = ['System','Category','Group','Part','REF','Qty','Per package','Pieces','Backup','Teeth','Catalog','Torque','Driver'];
+  const rows = keys.map(k=>{
+    const it = selected[k];
+    const pack = parsePackSize(it.name, it.group);
+    const g = orderLineGroup(it) || {};
+    const c = catalogSourceFor(it);
+    return [SYSTEMS[it.system].name, it.category, it.group, it.name, it.ref, it.qty, pack, it.qty*pack,
+      Math.min(it.backup || 0, it.qty) || '', (it.teeth || []).map(t=>'#'+t).join(' '),
+      c.source || `not verified: ${c.unverified}`, g.torque || '', g.driver || ''];
+  });
+  const cell = v => { const s = String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s; };
+  return [head, ...rows].map(r=>r.map(cell).join(',')).join('\r\n');
+}
+async function downloadCsv(){
+  if(!(await confirmBeforeSending('Download'))) return;
+  // A byte-order mark so Excel reads Ø, ° and ® correctly.
+  const blob = new Blob(['﻿' + orderCsv(Object.keys(selected))], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `implant-order-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 10000);
+}
+
+/* Print: only the order text goes on the page (see #printArea's print
+   styles), so it can be printed or saved as a PDF. */
+async function printOrder(){
+  if(!(await confirmBeforeSending('Print'))) return;
+  document.getElementById('printArea').textContent = orderText(Object.keys(selected));
+  window.print();
+}
+
+/* ---------- Saved order ----------
+   The order in progress is kept on this device as it changes, so closing
+   the tab or reloading doesn't lose it. Only parts, quantities and teeth
+   numbers are kept, nothing about the patient. */
+const ORDER_KEY = 'orderInProgress';
+function saveOrder(){
+  try{
+    if(Object.keys(selected).length || orderCases.length) localStorage.setItem(ORDER_KEY, JSON.stringify({ at:Date.now(), selected, orderCases }));
+    else localStorage.removeItem(ORDER_KEY);
+  }catch(e){}
+}
+/* Puts back the saved order; returns when it was saved, or 0 if there was
+   none. Lines for a system no longer in the app are left out. */
+function loadOrder(){
+  try{
+    const o = JSON.parse(localStorage.getItem(ORDER_KEY));
+    if(!o || !o.selected || typeof o.selected!=='object') return 0;
+    Object.entries(o.selected).forEach(([k,it])=>{
+      if(it && SYSTEMS[it.system] && it.ref && it.qty>0) selected[k] = it;
+    });
+    orderCases = Array.isArray(o.orderCases) ? o.orderCases.filter(c=>c && SYSTEMS[c.sys]) : [];
+    return Object.keys(selected).length ? (o.at || Date.now()) : 0;
+  }catch(e){ return 0; }
+}
+
 /* Custom in-app modal — replaces window.prompt/confirm/alert, which many
    sandboxed mobile webviews (including how artifacts render in the Claude
    mobile app) silently block or no-op. Returns a Promise: prompt resolves
    with the entered string (or null if cancelled), confirm resolves with
    true/false, alert resolves with true once dismissed. */
+let modalSeq = 0;
 function showModal(opts){
   return new Promise(resolve=>{
+    const opener = document.activeElement;
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
     const box = document.createElement('div');
     box.className = 'modal-box' + (opts.type==='select' ? ' modal-wide' : '');
+    box.setAttribute('role', opts.type==='alert' || opts.type==='confirm' ? 'alertdialog' : 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    const id = 'modal' + (++modalSeq);
 
     if(opts.title){
       const h3 = document.createElement('h3');
+      h3.id = id + 't';
       h3.textContent = opts.title;
       box.appendChild(h3);
+      box.setAttribute('aria-labelledby', h3.id);
     }
     if(opts.message){
       const p = document.createElement('p');
+      p.id = id + 'm';
       p.textContent = opts.message;
       box.appendChild(p);
+      box.setAttribute('aria-describedby', p.id);
     }
 
     function close(result){
+      document.removeEventListener('keydown', onKey, true);
       document.body.removeChild(overlay);
+      // Back to whatever had focus before, if it's still on the page.
+      if(opener && opener.focus && document.contains(opener)) opener.focus();
       resolve(result);
     }
+    // What leaving without choosing returns: Escape, a tap outside, Cancel.
+    const dismissed = ()=> opts.type==='prompt' || opts.type==='select' ? null : false;
 
     let input = null;
+    // Text prompts (e.g. an email address) return what was typed, even
+    // empty; number prompts fall back to the default, then 1.
+    const textInput = opts.type==='prompt' && opts.inputType && opts.inputType!=='number';
+    const inputValue = ()=> textInput ? input.value : (input.value || opts.defaultValue || '1');
 
     if(opts.type === 'prompt'){
       input = document.createElement('input');
-      input.type = 'number';
-      input.min = '1';
-      input.value = opts.defaultValue || '1';
+      input.type = opts.inputType || 'number';
+      if(!textInput) input.min = '1';
+      else{ input.className = 'modal-text'; input.autocomplete = opts.inputType==='email' ? 'email' : 'off'; }
+      if(opts.placeholder) input.placeholder = opts.placeholder;
+      input.value = opts.defaultValue ?? (textInput ? '' : '1');
+      input.setAttribute('aria-labelledby', box.getAttribute('aria-labelledby') || '');
       box.appendChild(input);
     }
 
@@ -1658,17 +1887,11 @@ function showModal(opts){
       actions.appendChild(backBtn);
     }
 
-    if(opts.type !== 'alert' && opts.type !== 'select'){
+    if(opts.type !== 'alert'){
       const cancelBtn = document.createElement('button');
       cancelBtn.className = 'modal-btn-cancel';
       cancelBtn.textContent = opts.cancelText || 'Cancel';
-      cancelBtn.onclick = ()=> close(opts.type==='prompt' ? null : false);
-      actions.appendChild(cancelBtn);
-    } else if(opts.type === 'select'){
-      const cancelBtn = document.createElement('button');
-      cancelBtn.className = 'modal-btn-cancel';
-      cancelBtn.textContent = opts.cancelText || 'Cancel';
-      cancelBtn.onclick = ()=> close(null);
+      cancelBtn.onclick = ()=> close(dismissed());
       actions.appendChild(cancelBtn);
     }
 
@@ -1677,7 +1900,7 @@ function showModal(opts){
       okBtn.className = 'modal-btn-ok';
       okBtn.textContent = opts.okText || 'OK';
       okBtn.onclick = ()=>{
-        if(opts.type==='prompt') close(input.value || opts.defaultValue || '1');
+        if(opts.type==='prompt') close(inputValue());
         else close(true);
       };
       actions.appendChild(okBtn);
@@ -1690,15 +1913,27 @@ function showModal(opts){
     if(input){
       input.focus();
       input.select();
-      input.addEventListener('keydown', e=>{ if(e.key==='Enter') close(input.value || '1'); });
-    } else if(opts.type !== 'select'){
-      const okBtn = box.querySelector('.modal-btn-ok');
-      if(okBtn) okBtn.focus();
+      // preventDefault: the same Enter would otherwise also press the first
+      // button of a dialog opened right after this one.
+      input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); close(inputValue()); } });
+    } else {
+      const first = box.querySelector(opts.type==='select' ? '.modal-select-row' : '.modal-btn-ok');
+      if(first) first.focus();
     }
+    // Escape closes; Tab stays inside the dialog.
+    function onKey(e){
+      if(e.key==='Escape'){ e.preventDefault(); close(opts.type==='alert' ? true : dismissed()); return; }
+      if(e.key!=='Tab') return;
+      const f = [...box.querySelectorAll('button, input')];
+      if(!f.length) return;
+      const i = f.indexOf(document.activeElement);
+      if(e.shiftKey && i<=0){ e.preventDefault(); f[f.length-1].focus(); }
+      else if(!e.shiftKey && i===f.length-1){ e.preventDefault(); f[0].focus(); }
+    }
+    document.addEventListener('keydown', onKey, true);
     overlay.addEventListener('click', e=>{
       if(e.target!==overlay) return;
-      if(opts.type==='prompt' || opts.type==='select') close(null);
-      else close(false);
+      close(dismissed());
     });
   });
 }
@@ -1733,8 +1968,15 @@ document.getElementById('builderView').addEventListener('click', cbOnClick);
 /* ---------- Init ---------- */
 document.getElementById('catalogPagesToggle').checked = showCatalogPages;
 document.getElementById('torqueToggle').checked = showTorque;
+document.getElementById('shareBtn').hidden = !navigator.share;
+document.getElementById('catalogScan').insertAdjacentHTML('afterbegin', ICON_SCAN);
+const restoredAt = loadOrder();
 render();
 renderOrder();
+if(restoredAt){
+  const when = new Date(restoredAt).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  showToast(`Your order from ${when} is still here`, {label:'Clear it', run:clearAll});
+}
 
 /* Works offline and can be added to the home screen (sw.js). */
 if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')){

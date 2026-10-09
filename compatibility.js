@@ -460,21 +460,85 @@ function formatMismatchLine(w){
   return `${SYSTEMS[w.system].name} — "${w.item.name}" (${w.item.group}): ${w.reason}`;
 }
 
+/* The catalog group an order line came from: its own category first,
+   then the rest (All-on-X lines can carry a copy's category). */
+function orderLineGroup(it){
+  const cat = SYSTEMS[it.system].catalog;
+  for(const c of [it.category, ...Object.keys(cat).filter(c=>c!==it.category)]){
+    const group = (cat[c]||[]).find(g=>g.label===it.group && g.items.some(([,r])=>r===it.ref));
+    if(group) return group;
+  }
+  return null;
+}
+
 /* Catalog citation for one order line, for the "catalog pages" switch on
    the order output: the catalog page its group cites, or the group's
    `unverified` note when this item's number is one the catalogs don't
-   list. Looks in the line's own category first, then the rest (All-on-X
-   lines can carry a copy's category). */
+   list. */
 function catalogSourceFor(it){
-  const cat = SYSTEMS[it.system].catalog;
-  const cats = [it.category, ...Object.keys(cat).filter(c=>c!==it.category)];
-  for(const c of cats){
-    const group = (cat[c]||[]).find(g=>g.label===it.group && g.items.some(([,r])=>r===it.ref));
-    if(!group) continue;
-    if(group.unverified && (!group.source || group.unverified.includes(it.ref.replace(/^REF\s*/,'')))){
-      return { unverified: group.unverified };
-    }
-    return { source: group.source };
+  const group = orderLineGroup(it);
+  if(!group) return { unverified: 'Not found in the catalog data' };
+  if(group.unverified && (!group.source || group.unverified.includes(it.ref.replace(/^REF\s*/,'')))){
+    return { unverified: group.unverified };
   }
-  return { unverified: 'Not found in the catalog data' };
+  return { source: group.source };
+}
+
+/* ---------- Order checks beyond platform ----------
+   Each returns warnings shaped like detectPlatformMismatches's
+   ({system, item, reason}), so the order panel and the check before
+   sending list them together. */
+
+/* Every REF in a system's catalog. */
+const systemRefCache = {};
+function systemRefs(sid){
+  if(!systemRefCache[sid]) systemRefCache[sid] = new Set(Object.values(SYSTEMS[sid].catalog).flatMap(gs=>gs.flatMap(g=>g.items.map(([,r])=>r))));
+  return systemRefCache[sid];
+}
+
+/* A part from a system none of the order's implants belong to, e.g. a
+   Straumann closure cap in an order whose only implants are NobelActive.
+   A part is fine if its REF is sold for any of the order's implant systems
+   (BLC and BLX share prosthetics, as do the Nobel conical-connection
+   systems), and an order with no implants isn't checked at all: stocking
+   up on parts is normal. */
+function detectOtherSystemParts(order){
+  const items = Object.values(order);
+  const implantSystems = [...new Set(items.filter(it=>it.category===WIZARD_IMPLANTS_CATEGORY_NAME[it.system]).map(it=>it.system))];
+  if(!implantSystems.length) return [];
+  const names = implantSystems.map(s=>SYSTEMS[s].name).join(', ');
+  return items
+    .filter(it=>!implantSystems.includes(it.system) && !implantSystems.some(s=>systemRefs(s).has(it.ref)))
+    .map(it=>({ system: it.system, item: it, reason: `${SYSTEMS[it.system].name} part, but this order's implants are ${names}` }));
+}
+
+/* Parts whose article number still needs confirming: a group `caution`
+   (asked about when the part is added) or a number no catalog lists. */
+function detectUnconfirmedParts(order){
+  return Object.values(order).flatMap(it=>{
+    const group = orderLineGroup(it);
+    const c = catalogSourceFor(it);
+    if(group && group.caution) return [{ system: it.system, item: it, reason: 'article number awaiting manufacturer confirmation' }];
+    if(c.unverified) return [{ system: it.system, item: it, reason: `not in the catalogs (${c.unverified})` }];
+    return [];
+  });
+}
+
+/* Everything worth a second look before the order goes out. */
+function orderWarnings(order){
+  return [...detectPlatformMismatches(order), ...detectOtherSystemParts(order), ...detectUnconfirmedParts(order)];
+}
+
+/* The screwdrivers the order's parts are seated with, and the torques the
+   catalog gives for each: [{driver, torques:[...]}], drivers in the order
+   first met. Only groups that carry `driver` count. */
+function orderDrivers(order){
+  const byDriver = new Map();
+  Object.values(order).forEach(it=>{
+    const g = orderLineGroup(it);
+    if(!g || !g.driver) return;
+    if(!byDriver.has(g.driver)) byDriver.set(g.driver, new Set());
+    if(g.torque) byDriver.get(g.driver).add(g.torque);
+  });
+  return [...byDriver].map(([driver, torques])=>({ driver, torques:[...torques] }));
 }

@@ -362,6 +362,79 @@ test('the order check flags parts that fit none of the implants, and nothing els
   assert.deepEqual(Array.from(warnings, (w) => `${w.system} ${w.item.ref}`), ['blc 064.8102S']);
 });
 
+function orderOf(...lines) {
+  const order = {};
+  for (const line of lines) order[`${line.system}::${line.ref}`] = line;
+  return order;
+}
+
+test('the order check flags parts from a system none of the implants belong to', () => {
+  const other = (order) => Array.from($('detectOtherSystemParts')(order), (w) => `${w.system} ${w.item.ref}`);
+  // A Straumann closure cap with only NobelActive implants.
+  assert.deepEqual(other(orderOf(orderLine('nact', 'Implants', '34131'), orderLine('blc', 'Closure Caps', '064.4100S'))), ['blc 064.4100S']);
+  // BLC and BLX share prosthetics; the Nobel conical systems share theirs.
+  assert.deepEqual(other(orderOf(orderLine('blx', 'Implants', SYSTEMS.blx.catalog.Implants[0].items[0][1]), orderLine('blc', 'Closure Caps', '064.4100S'))), []);
+  assert.deepEqual(other(orderOf(orderLine('nact', 'Implants', '34131'), orderLine('nrcc', 'Cover Screws', '36650'))), []);
+  // No implants in the order: parts for stock, nothing to compare against.
+  assert.deepEqual(other(orderOf(orderLine('blc', 'Closure Caps', '064.4100S'), orderLine('nact', 'Cover Screws', '36650'))), []);
+});
+
+test('the order check flags parts still awaiting confirmation, and drivers are summed up', () => {
+  const unconfirmed = (order) => Array.from($('detectUnconfirmedParts')(order), (w) => w.item.ref);
+  assert.deepEqual(unconfirmed(orderOf(
+    orderLine('nact', 'Locator R-Tx® Abutments', 'REF30506-06'), // caution
+    orderLine('nact', 'Clinical & Laboratory Screws', '38420'), // not in the catalog
+    orderLine('nact', 'Locator R-Tx® Abutments', 'REF30506-05'), // fine
+  )), ['REF30506-06', '38420']);
+  const drivers = plain($('orderDrivers')(orderOf(
+    orderLine('nact', 'Multi-unit Abutments Plus', '38878'),
+    orderLine('nact', 'Cover Screws', '36650'),
+    orderLine('nact', 'Implants', '34131'),
+  )));
+  assert.deepEqual(drivers, [
+    { driver: 'Multi-unit screwdriver', torques: ['35 Ncm'] },
+    { driver: 'Unigrip screwdriver', torques: ['Hand-tight'] },
+  ]);
+});
+
+test('overdenture reminder: an attachment abutment without its inserts or processing parts', () => {
+  const missing = (order) => Array.from($('missingOverdentureParts')(order), (r) => r.missing);
+  const abutment = orderLine('nact', 'Locator R-Tx® Abutments', 'REF30507-02');
+  assert.deepEqual(missing(orderOf(abutment)), ['Retention Inserts', 'Overdenture Processing']);
+  // Inserts listed under a sibling system of the same line count too.
+  assert.deepEqual(missing(orderOf(abutment, orderLine('nrcc', 'Locator R-Tx® Abutments', 'REF30002-01'), orderLine('nact', 'Locator R-Tx® Abutments', 'REF30012-01'))), []);
+  // No abutment, no reminder.
+  assert.deepEqual(missing(orderOf(orderLine('nact', 'Locator R-Tx® Abutments', 'REF30002-01'))), []);
+});
+
+// ---------- Barcode scanning (scan.js) ----------
+
+test('scanning: every REF stays distinct once punctuation is dropped', () => {
+  for (const [key, parts] of $('scanRefIndex')()) {
+    assert.equal(new Set(parts.map((p) => p.ref)).size, 1, `${key}: ${parts.map((p) => `${p.sid} ${p.ref}`).join(', ')}`);
+  }
+  assert.deepEqual(Array.from($('partsForRef')('0644100S'), (p) => p.ref), ['064.4100S', '064.4100S']); // BLC and BLX
+  assert.deepEqual(Array.from($('partsForRef')('REF 30506-05'), (p) => p.sid), ['nrcc', 'nact', 'npcc']);
+  assert.equal($('partsForRef')('12345678').length, 0);
+});
+
+test('scanning: GS1 and HIBC label codes', () => {
+  const printed = plain($('parseGs1')('(01)07630031740526(17)280331(10)LOT123(240)021.4308'));
+  assert.deepEqual(printed, { gtin: '07630031740526', lot: 'LOT123', serial: '', ref: '021.4308', expiry: '2028-03-31' });
+  // Raw form: symbology prefix, fixed fields run on, variable ones end at GS.
+  const raw = plain($('parseGs1')(']d2010763003174052617280300' + '10AB12\x1d' + '21XYZ'));
+  assert.deepEqual(raw, { gtin: '07630031740526', lot: 'AB12', serial: 'XYZ', ref: '', expiry: '2028-03' });
+  assert.equal($('parseGs1')('36117'), null);
+  assert.equal($('parseGs1')('(10)LOT'), null); // no GTIN
+  assert.deepEqual(plain($('parseHibc')('+H123ABC1231C')), { lic: 'H123', pcn: 'ABC123' });
+  assert.deepEqual(plain($('parseHibc')('+H123ABC1231/$$52001510X3G')), { lic: 'H123', pcn: 'ABC123' });
+  assert.equal($('parseHibc')('+$$52001510X3G'), null); // secondary only
+  // What gets tried as a REF.
+  assert.deepEqual(plain($('readLabelCode')('(01)07630031740526(240)36117').tries), ['36117']);
+  assert.deepEqual(plain($('readLabelCode')('(01)07630031740526(10)L1').tries), []); // GTIN only: looked up, not guessed
+  assert.deepEqual(plain($('readLabelCode')('REF 36117').tries), ['REF 36117', 'REF', '36117'].filter((s) => $('normRef')(s).length >= 4));
+});
+
 // Open questions (see FOLLOW-UP.md): the catalogs contradict these, so the
 // app asks for confirmation before adding them until the reps confirm.
 test('parts awaiting manufacturer confirmation carry a caution', () => {

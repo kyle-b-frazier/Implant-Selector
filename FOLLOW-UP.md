@@ -33,6 +33,15 @@ Checked against the Neodent 2026 Product Catalog (CALIT.2040). It confirms 180 o
 - [x] **BLT RC basal screws** 025.4900, 025.4906, 025.4908 added to Replacement Screws (Straumann 2022/2023 p.222).
 - [x] **BLC/BLX WB ∅6.0mm healing abutment** GH 2.5 versions 064.8217S/064.8218S added (iEXCEL 2026 p.27).
 
+## Drill sequences (not built yet)
+
+- [ ] **Drilling protocol for each implant size.** The catalogs list the drills but not which ones to use, in what order, for each implant diameter, length and bone density. That's in each maker's surgical manual: Straumann's "Basic information on the surgical procedures" for BLX/BLC and BLT, Nobel's procedure manuals for NobelActive, NobelReplace CC, NobelParallel CC, the S series and NobelZygoma, and Neodent's GM surgical manual. Upload those and the app can show the sequence for the implant picked, citing the manual page the way it cites catalog pages now.
+
+## Barcode scanning
+
+- [ ] **Test on real boxes.** The scanner was tested with generated GS1 DataMatrix labels, not real ones. For each maker, scan a box and note whether the app finds the part straight away, or asks for the REF once (a GTIN-only label it can't look up).
+- [ ] **AccessGUDID lookup.** For a GTIN-only label, the app asks the FDA's device database (accessgudid.nlm.nih.gov) for the catalog number. That couldn't be reached from where this was built, so it's untested. If it doesn't work in the browser, typing the REF once per barcode still does.
+
 ## Repository housekeeping (PDF removal)
 
 - [ ] In GitHub → Actions, delete workflow runs #6 and #7 ("Add files via upload"). Their site bundles included the catalog PDFs. They expire on their own, but deleting the runs removes them now.
