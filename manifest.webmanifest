@@ -1,0 +1,15 @@
+{
+  "name": "Implant Parts Selector",
+  "short_name": "Implant Parts",
+  "description": "Pick dental implant parts by system and platform, and copy the order into a note.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EDEEF0",
+  "theme_color": "#00205B",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

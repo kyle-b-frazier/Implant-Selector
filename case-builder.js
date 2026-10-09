@@ -71,13 +71,38 @@ function gridColumns(rows){
   return [...keys].sort((a,b)=>parseFloat(a)-parseFloat(b));
 }
 
+/* Overdenture attachments, for systems whose catalogs have them: the
+   abutment (narrowed to the implant's platform), then the denture-side
+   parts, which fit any of that line's abutments. */
+const OVERDENTURE_PARTS = {
+  blc: [
+    {label:"Overdenture Abutment", options:[{label:"Novaloc® abutment", category:"Novaloc® Abutments", labelMustInclude:["angulation","Angled"]}]},
+    {label:"Retention Inserts", options:[{label:"Novaloc® retention insert", category:"Novaloc® Abutments", labelMustInclude:"Retention Inserts", anyPlatform:true}]},
+    {label:"Overdenture Processing", options:[{label:"Novaloc® processing", category:"Novaloc® Abutments", labelMustInclude:["Processing Packages","Matrix Housings"], anyPlatform:true}]},
+    {label:"Overdenture Impression / Analog", options:[{label:"Novaloc® impression / analog", category:"Novaloc® Abutments", labelMustInclude:"Impression / Model", anyPlatform:true}]}
+  ],
+  nrcc: [
+    {label:"Overdenture Abutment", options:[{label:"Locator R-Tx® abutment", category:"Locator R-Tx® Abutments", labelMustInclude:["NP","RP","WP"]}]},
+    {label:"Retention Inserts", options:[{label:"Locator R-Tx® retention insert", category:"Locator R-Tx® Abutments", labelMustInclude:"Retention Inserts", anyPlatform:true}]},
+    {label:"Overdenture Processing", options:[{label:"Locator R-Tx® processing / impression", category:"Locator R-Tx® Abutments", labelMustInclude:"Processing Components", anyPlatform:true}]}
+  ]
+};
+OVERDENTURE_PARTS.blx = OVERDENTURE_PARTS.blc;
+OVERDENTURE_PARTS.nact = OVERDENTURE_PARTS.nrcc;
+OVERDENTURE_PARTS.npcc = OVERDENTURE_PARTS.nrcc;
+const OVERDENTURE_CATEGORIES = new Set(Object.values(OVERDENTURE_PARTS).flatMap(l=>l.flatMap(p=>p.options.map(o=>o.category))));
+function overdentureLabels(systemId){ return (OVERDENTURE_PARTS[systemId] || []).map(p=>p.label); }
+
 /* The part types the case builder offers for a system: the wizard steps
    from compatibility.js, plus the multi-unit healing cap right after the
-   multi-unit abutment for systems that have one. The cap fits any
-   multi-unit abutment of its line, so it isn't narrowed by implant
-   platform. */
+   multi-unit abutment for systems that have one, and the overdenture
+   parts at the end. The cap fits any multi-unit abutment of its line, so
+   it isn't narrowed by implant platform. Overdenture abutments are left
+   out of "Final Abutment", since they have their own card. */
 function builderPartTypes(systemId){
-  const steps = (WIZARD_CONFIG[systemId] || []).map(s=>({ label:s.label, options:s.options }));
+  const steps = (WIZARD_CONFIG[systemId] || []).map(s=>({ label:s.label, options:s.options.filter(o=>!OVERDENTURE_CATEGORIES.has(o.category)) }))
+    .filter(s=>s.options.length)
+    .concat(OVERDENTURE_PARTS[systemId] || []);
   const cap = MULTI_UNIT_CAP_TRIGGER[systemId];
   const mu = steps.findIndex(s=>s.label==='Multi-unit Abutment');
   if(cap && mu>=0){
@@ -395,7 +420,7 @@ function renderCaseBuilder(){
     parts.push(`<div class="cb-card"><div class="cb-summary"><b>${cbEsc(it.group)}, ${cbEsc(it.name)}</b><span class="cb-ref">REF ${cbEsc(it.ref)} · already in your order${it.qty>1?` · qty ${it.qty}`:''}</span></div></div>`);
     parts.push(cbNeededCard(), cbPartCards());
   } else {
-    parts.push(`<div class="cb-head"><p class="cb-eyebrow">New case</p><h2>Crown &amp; Bridge</h2></div>`);
+    parts.push(`<div class="cb-head"><p class="cb-eyebrow">New case</p><h2>${cb.type==='overdenture' ? 'Overdenture' : 'Crown &amp; Bridge'}</h2></div>`);
     parts.push(cbTeethCard(), cbSystemCard());
     if(cb.sys && cbImplantTeeth().length){
       parts.push(cbToothTabs(), cbImplantCard(), cbNeededCard(), cbPartCards());
@@ -420,7 +445,7 @@ function cbTeethCard(){
       (pontics.length ? `${implants.length?' &nbsp;·&nbsp; ':''}<b>Pontic:</b> #${pontics.join(', #')}` : '');
   }
   return `<div class="cb-card">
-    <div class="cb-seg">${cbChip('Single crown(s)', cb.type==='single', 'type', cbData({v:'single'}))}${cbChip('Bridge', cb.type==='bridge', 'type', cbData({v:'bridge'}))}</div>
+    <div class="cb-seg">${cbChip('Single crown(s)', cb.type==='single', 'type', cbData({v:'single'}))}${cbChip('Bridge', cb.type==='bridge', 'type', cbData({v:'bridge'}))}${cbChip('Overdenture', cb.type==='overdenture', 'type', cbData({v:'overdenture'}))}</div>
     <div class="cb-arch">Upper</div><div class="cb-odo">${upper}</div>
     <div class="cb-odo">${lower}</div><div class="cb-arch">Lower</div>
     <p class="cb-note">${summary}</p>
@@ -515,7 +540,9 @@ function cbNeededCard(){
   const types = cbPartTypes();
   const prefix = cb.kind==='allonx' ? [{label:'Primary Implants'},{label:'Backup Implants'}] : [];
   const all = prefix.concat(types);
-  return `<div class="cb-card"><h3>Parts needed</h3><p class="cb-note cb-top">Tick only what this case needs.</p><div class="cb-chips">${
+  const noOd = cb.kind==='case' && cb.type==='overdenture' && !overdentureLabels(cb.sys).length
+    ? `<p class="cb-warn">This app has no overdenture attachments for ${cbEsc(SYSTEMS[cb.sys].name)} yet. Order them from the manufacturer's catalog or your rep.</p>` : '';
+  return `<div class="cb-card"><h3>Parts needed</h3><p class="cb-note cb-top">Tick only what this case needs.</p>${noOd}<div class="cb-chips">${
     all.map(pt=>cbChip((cb.needed.includes(pt.label)?'✓ ':'+ ')+pt.label, cb.needed.includes(pt.label), 'need', cbData({l:pt.label}))).join('')}</div></div>`;
 }
 
@@ -629,7 +656,8 @@ function cbPartCards(){
     const id = 'cb-part-' + pt.label.replace(/\W+/g,'-');
     const c = cbChooser(pt, pick, profile, '');
     const pack = c.item ? parsePackSize(c.item[0], c.group.label) : 1;
-    const sub = c.item ? `REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}${c.group.caution?` · <span class="cb-warn-i">⚠ confirm before ordering</span>`:''}` : '';
+    const tq = c.item ? torqueText(c.group) : '';
+    const sub = c.item ? `REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}${tq?` · 🔧 ${cbEsc(tq)}`:''}${c.group.caution?` · <span class="cb-warn-i">⚠ confirm before ordering</span>`:''}` : '';
     // A part that had to be this one folds; one only filled in from the
     // last case stays open, pre-picked, so the other choices still show.
     const forced = c.item && resolvePartPick(cb.sys, pt, profile, null, null).ref===c.item[1];
@@ -641,7 +669,7 @@ function cbPartCards(){
     const done = fromMemory
       ? `<p class="cb-note cb-last">Auto-picked from your last case. Review and change if needed.</p>`
       : c.item
-      ? `<div class="cb-summary"><b>${cbEsc(c.group.label)}, ${cbEsc(c.item[0])}</b><span class="cb-ref">REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}</span>${c.group.caution?`<span class="cb-warn">⚠ ${cbEsc(c.group.caution)}</span>`:''}</div>`
+      ? `<div class="cb-summary"><b>${cbEsc(c.group.label)}, ${cbEsc(c.item[0])}</b><span class="cb-ref">REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}${tq?` · 🔧 ${cbEsc(tq)}`:''}</span>${c.group.caution?`<span class="cb-warn">⚠ ${cbEsc(c.group.caution)}</span>`:''}</div>`
       : '';
     return `<div class="cb-card${missing?' cb-missing-card':''}" id="${id}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${cbDiagram(pt.label, c.kinds)}${c.html}${done}</div>`;
   }).join('');
@@ -734,22 +762,25 @@ function cbCountImplantCard(role){
 /* ---------- What will be added ---------- */
 
 /* Every line the builder would add: [{ref, name, group, category,
-   pieces|packages, teeth}], plus what is still missing. */
+   pieces|packages, teeth}], plus what is still missing and how many
+   picks the case needs in all (`slots`). */
 function cbCollect(){
   const lines = new Map();
   const missing = [];
+  let slots = 0;
   const add = (ref, name, group, category, n, unit, tooth) => {
     let l = lines.get(ref);
     if(!l){ l = { ref, name, group, category, pieces:0, packages:0, teeth:new Set() }; lines.set(ref, l); }
     l[unit] += n;
     if(tooth!=null) l.teeth.add(tooth);
   };
-  if(!cb || !cb.sys){ return { lines:[], missing:['system'] }; }
+  if(!cb || !cb.sys){ return { lines:[], missing:['system'], slots:0 }; }
   const sys = SYSTEMS[cb.sys];
   const implantCat = WIZARD_IMPLANTS_CATEGORY_NAME[cb.sys];
   if(cb.kind==='allonx'){
     Object.entries(cb.implantCounts).forEach(([role, counts])=>{
       if(!cb.needed.includes(role)) return;
+      slots++;
       let any = false;
       (sys.catalog[implantCat] || []).forEach(g=>g.items.forEach(([nm,rf])=>{
         if(counts[rf]){ any = true; add(rf, nm, g, implantCat, counts[rf], 'packages'); }
@@ -759,6 +790,7 @@ function cbCollect(){
     const profile = cbAllOnXProfile();
     allOnXPartTypes(cb.sys).forEach(pt=>{
       if(!cb.needed.includes(pt.label)) return;
+      slots++;
       const counts = cb.counts[pt.label] || {};
       let any = false;
       pt.options.forEach(opt=>optionGroups(cb.sys, opt, profile).forEach(g=>g.items.forEach(([nm,rf])=>{
@@ -767,7 +799,7 @@ function cbCollect(){
       if(!any) missing.push(pt.label.toLowerCase());
     });
     if(!cb.needed.length) missing.push('parts');
-    return { lines:[...lines.values()], missing };
+    return { lines:[...lines.values()], missing, slots };
   }
   const teeth = cb.fixedImplant ? [null] : cbImplantTeeth();
   if(!teeth.length) missing.push('teeth');
@@ -775,7 +807,12 @@ function cbCollect(){
   teeth.forEach(tooth=>{
     const config = cbConfig(tooth);
     const where = tooth==null ? '' : ` for #${tooth}`;
-    if(!config.implant){ missing.push('implant'+where); return; }
+    slots += (cb.fixedImplant ? 0 : 1) + cbPartTypes().filter(pt=>cb.needed.includes(pt.label)).length;
+    if(!config.implant){
+      missing.push('implant'+where);
+      cbPartTypes().forEach(pt=>{ if(cb.needed.includes(pt.label)) missing.push(pt.label.toLowerCase()+where); });
+      return;
+    }
     if(!cb.fixedImplant){
       const g = cbImplantGroup(config.implant);
       const item = g.items.find(([,r])=>r===config.implant.ref);
@@ -793,16 +830,23 @@ function cbCollect(){
     });
   });
   if(cb.fixedImplant && !cb.needed.length) missing.push('parts');
-  return { lines:[...lines.values()], missing };
+  return { lines:[...lines.values()], missing, slots };
 }
 
+/* The bottom bar: "Add N items" once everything is picked; until then how
+   far along the case is, and the next thing to pick (tapping jumps to it). */
 function cbFooter(){
-  const { lines, missing } = cbCollect();
+  const { lines, missing, slots } = cbCollect();
   const n = lines.length;
-  const label = missing.length
-    ? (cb.sys ? `Still to pick: ${missing.slice(0,3).join(', ')}${missing.length>3?'…':''}` : 'Pick a system')
-    : `Add ${n} item${n===1?'':'s'} to order`;
-  return `<div class="cb-foot"><button type="button" class="cb-add${missing.length?' wait':''}" data-a="add">${cbEsc(label)}</button>
+  const done = Math.max(0, slots - missing.length);
+  const counted = slots>0 && missing.length<=slots && done>0;
+  let label;
+  if(!missing.length) label = `Add ${n} item${n===1?'':'s'} to order`;
+  else if(!cb.sys) label = 'Pick a system';
+  else if(counted) label = `${done} of ${slots} picked · Next: ${missing[0]} ›`;
+  else label = `Still to pick: ${missing.slice(0,3).join(', ')}${missing.length>3?'…':''}`;
+  const bar = missing.length && counted ? ` style="--p:${Math.round(100*done/slots)}%"` : '';
+  return `<div class="cb-foot"><button type="button" class="cb-add${missing.length?' wait':''}${bar?' prog':''}" data-a="add"${bar}>${cbEsc(label)}</button>
     <button type="button" class="cb-cancel" data-a="cancel">Cancel</button></div>`;
 }
 
@@ -812,6 +856,9 @@ async function cbAddToOrder(){
   const { lines, missing } = cbCollect();
   if(missing.length){
     cb.showMissing = true;
+    // Show the tooth the next missing pick belongs to.
+    const t = (missing[0].match(/ for #(\d+)$/) || [])[1];
+    if(t && cbImplantTeeth().length>1) cb.activeTooth = Number(t);
     renderCaseBuilder();
     const target = document.querySelector('.cb-missing, .cb-missing-card');
     if(target) target.scrollIntoView({behavior:'smooth', block:'center'});
@@ -832,6 +879,7 @@ async function cbAddToOrder(){
     if(teeth.length) selected[key].teeth = teeth;
   });
   cbRemember();
+  cbSaveRecent();
   if(cb.kind==='case' && !cb.fixedImplant){
     currentTreatmentPlan = { type:cb.type, implants:cbImplantTeeth(), pontics:cbPontics() };
   }
@@ -873,6 +921,55 @@ function cbRemember(){
   cbSaveMemory(mem);
 }
 
+/* ---------- Recent cases (this browser only) ----------
+   The last few cases added to an order, so one can be opened again as the
+   start of a new case. Only teeth numbers and parts are kept, nothing
+   about the patient. Parts-only cases (an implant picked in the catalog)
+   aren't kept: their implant was in that order, not the next one. */
+
+const CB_RECENT_KEY = 'caseBuilderRecent';
+const CB_RECENT_MAX = 5;
+function cbLoadRecent(){
+  try{ const r = JSON.parse(localStorage.getItem(CB_RECENT_KEY)); return Array.isArray(r) ? r : []; }catch(e){ return []; }
+}
+function cbSaveRecent(){
+  if(!cb || cb.fixedImplant) return;
+  const state = { ...cb, editing:[], confirmed:[...cb.confirmed], showMissing:false, dgOpen:null, lastDone:null };
+  const { lines } = cbCollect();
+  const entry = { at: Date.now(), state, items: lines.length };
+  const list = cbLoadRecent();
+  list.unshift(entry);
+  try{ localStorage.setItem(CB_RECENT_KEY, JSON.stringify(list.slice(0, CB_RECENT_MAX))); }catch(e){}
+}
+function recentCaseTitle(r){
+  const st = r.state;
+  const sys = SYSTEMS[st.sys] ? SYSTEMS[st.sys].name : '';
+  if(st.kind==='allonx') return `All-on-X · ${sys}`;
+  return `${st.type==='bridge' ? 'Bridge' : st.type==='overdenture' ? 'Overdenture' : 'Crown'} · ${sys}`;
+}
+function recentCaseDetail(r){
+  const st = r.state;
+  const when = new Date(r.at).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  const teeth = Object.keys(st.teeth || {}).map(Number).sort((a,b)=>a-b);
+  const where = st.kind==='allonx' ? '' : teeth.length ? `#${teeth.join(', #')} · ` : '';
+  return `${where}${r.items} item${r.items===1?'':'s'} · ${when}`;
+}
+function recentCasesHtml(){
+  const list = cbLoadRecent().filter(r=>r && r.state && SYSTEMS[r.state.sys]);
+  if(!list.length) return '';
+  return `<div class="home-recent"><h4>Recent cases</h4>${list.map((r,i)=>
+    `<button type="button" class="recent-row" data-recent="${i}"><span class="rr-txt"><b>${cbEsc(recentCaseTitle(r))}</b><small>${cbEsc(recentCaseDetail(r))}</small></span><span class="rr-go">Start from this ›</span></button>`).join('')}</div>`;
+}
+/* Opens a recent case in the builder with every pick as it was; nothing
+   is added to the order until "Add to order" is tapped again. */
+function reopenRecentCase(i){
+  const r = cbLoadRecent().filter(r=>r && r.state && SYSTEMS[r.state.sys])[i];
+  if(!r) return;
+  cb = { ...newCase(r.state.kind), ...r.state, editing:new Set(), confirmed:new Set(r.state.confirmed || []) };
+  navigateWithFade(()=>{ viewMode = 'builder'; render(); window.scrollTo(0,0); });
+  showToast('Opened a recent case. Review it, then add to order.');
+}
+
 async function cbCancel(){
   const touched = cb && (Object.keys(cb.teeth).length || cb.needed.length || cb.sys && cb.kind==='allonx' && Object.keys(cb.counts).length);
   if(touched){
@@ -882,6 +979,17 @@ async function cbCancel(){
   const back = cb && cb.fixedImplant ? 'category' : 'home';
   cb = null;
   navigateWithFade(()=>{ viewMode = back; render(); window.scrollTo(0,0); });
+}
+
+/* An overdenture case starts with its attachment parts ticked; leaving
+   it unticks them again. */
+function cbTickOverdenture(){
+  if(cb.kind!=='case' || !cb.sys) return;
+  const od = overdentureLabels(cb.sys);
+  if(cb.type==='overdenture') od.forEach(l=>{ if(!cb.needed.includes(l)) cb.needed.push(l); });
+  else cb.needed = cb.needed.filter(l=>!od.includes(l));
+  const order = cbPartTypes().map(p=>p.label);
+  cb.needed.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
 }
 
 function cbOnClick(e){
@@ -896,7 +1004,8 @@ function cbOnClick(e){
   switch(d.a){
     case 'type':
       cb.type = d.v;
-      if(cb.type==='single') Object.keys(cb.teeth).forEach(t=>{ if(cb.teeth[t]==='pontic') delete cb.teeth[t]; });
+      if(cb.type!=='bridge') Object.keys(cb.teeth).forEach(t=>{ if(cb.teeth[t]==='pontic') delete cb.teeth[t]; });
+      cbTickOverdenture();
       break;
     case 'tooth': {
       const n = d.n, cur = cb.teeth[n];
@@ -910,7 +1019,7 @@ function cbOnClick(e){
       if(!teeth.includes(cb.activeTooth)) cb.activeTooth = teeth[0] ?? null;
       break;
     }
-    case 'sys': cbSetSystem(d.id); cb.editing.delete(cbEditKey('sys')); break;
+    case 'sys': cbSetSystem(d.id); cb.editing.delete(cbEditKey('sys')); cbTickOverdenture(); break;
     case 'variant': cb.variant = d.v; break;
     case 'tab': cb.activeTooth = Number(d.n); break;
     case 'relink': delete cb.own[cb.activeTooth]; break;
