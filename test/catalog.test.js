@@ -160,7 +160,11 @@ test('Straumann BLC/BLX: RB and WB parts only fit their own base', () => {
   assert.ok(fits('blc', 'Healing Abutments — Crown', '064.4202S', rb)); // RB/WB fits both
   assert.ok(fits('blc', 'Healing Abutments — Crown', '064.4202S', wb));
   assert.ok(!fits('blc', 'Healing Abutments — Crown', '064.8511S', rb)); // WB-only ∅7
-  assert.ok(fits('blc', 'Anatomic Healing Abutments XC', '064.4522S', rb)); // XL Ø6.5 is RB/WB (iEXCEL 2026 p.28)
+  // XL Ø5.5/Ø6.5 are WB only (Straumann AHA XC technical information; FDA recall Z-1671-2025).
+  assert.ok(!fits('blc', 'Anatomic Healing Abutments XC', '064.4522S', rb));
+  assert.ok(fits('blc', 'Anatomic Healing Abutments XC', '064.4522S', wb));
+  assert.ok(!fits('blc', 'Anatomic Healing Abutments XC', '064.8482S', rb));
+  assert.ok(fits('blc', 'Anatomic Healing Abutments XC', '064.4482S', rb)); // XL Ø4.5 stays RB/WB
   assert.ok(fits('blx', 'Closure Caps', '064.4100S', implant('blx', '061.3310'))); // BLX Ø3.5 RB
 });
 
@@ -442,6 +446,15 @@ test('explanatory drawings: concept drawings attach to the groups they explain',
     assert.match($('diagramHtml')(k), /<svg[\s\S]*<\/svg>/, k);
     assert.ok($('DIAGRAM_BUTTON_LABELS')[k], k);
   }
+});
+
+test('case builder: Straumann XC shape for each tooth', () => {
+  const f = $('xcShapeForTooth');
+  const got = n => f(n);
+  for (const n of [8, 9, 6, 11]) assert.equal(got(n), 'S', n);        // upper centrals, canines
+  for (const n of [7, 10, 22, 23, 24, 25, 26, 27]) assert.equal(got(n), 'S1', n); // upper laterals, lower anteriors
+  for (const n of [4, 5, 12, 13, 20, 21, 28, 29]) assert.equal(got(n), 'M', n);   // premolars
+  for (const n of [1, 2, 3, 14, 15, 16, 17, 18, 19, 30, 31, 32]) assert.equal(got(n), 'XL', n); // molars
 });
 
 test('case builder: long chip lists are shortened', () => {

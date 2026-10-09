@@ -162,6 +162,9 @@
   .cb-chip{border:1px solid var(--line); background:#fff; border-radius:999px; padding:8px 13px; font-size:13.5px; font-weight:600; color:var(--ink); font-family:var(--sans); cursor:pointer; text-align:left; line-height:1.25;}
   .cb-chip:hover{border-color:#9AA3AF;}
   .cb-chip.on{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .cb-chip-sub{display:block; font-size:12px; font-weight:500; opacity:.75; margin-top:1px;}
+  .cb-chip-sub.sug{color:var(--green-deep); font-weight:700; opacity:1;}
+  .cb-chip.on .cb-chip-sub.sug{color:#BFE59A;}
   .cb-variants{margin-bottom:10px;}
   .cb-seg{display:flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:12px;}
   .cb-seg .cb-chip{flex:1; border:none; border-radius:0; text-align:center; border-right:1px solid var(--line);}
@@ -382,6 +385,8 @@
     gap:8px;
     min-width:0;
   }
+  .group-head .headleft{flex-wrap:wrap; row-gap:2px;}
+  .group-hint{font-weight:500; color:var(--ink-soft);}
   .group-source{
     padding:4px 16px;
     background:#F8F9FB;
@@ -983,6 +988,12 @@ function renderGroupHead(container, systemId, category, group, labelPrefix){
   const labelSpan = document.createElement('span');
   labelSpan.textContent = labelPrefix ? `${labelPrefix} — ${group.label}` : group.label;
   left.appendChild(labelSpan);
+  if(group.hint){
+    const hint = document.createElement('span');
+    hint.className = 'group-hint';
+    hint.textContent = group.hint;
+    left.appendChild(hint);
+  }
   if(group.pendingNote){
     const badge = document.createElement('span');
     badge.className = 'pending-badge';

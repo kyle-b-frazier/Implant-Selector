@@ -9,7 +9,7 @@ Catalogs used: Straumann iEXCEL Product Catalog 2026 (450.036), Straumann Produc
 ## Straumann
 
 - [ ] ⚠ **BLC Ø4.5 implant: RB or WB?** The iEXCEL 2026 catalog lists 035.94xxS (SLActive) as **WB** on p.5 but 035.84xxS (SLA) as **RB** on p.7. The app treats both as WB, so it pairs them with WB closure caps, healing abutments and impression posts. Ask Straumann which platform the BLC Ø4.5 has.
-- [ ] **XL anatomic healing abutments Ø5.5/Ø6.5 (064.8482S, 064.4510S, 064.4522S, 064.4523S).** The app now follows the iEXCEL 2026 catalog (p.28), which lists every XL size as **RB/WB**. The previous version limited these to WB, citing a 2025 recall of 064.4522S/064.4523S blister labels that couldn't be verified. Ask Straumann whether Ø5.5/Ø6.5 XL fit RB implants.
+- [x] **XL anatomic healing abutments Ø5.5/Ø6.5 (064.8482S, 064.4510S, 064.4522S, 064.4523S): WB only.** Settled October 2026. iEXCEL 2026 (p.28) lists every XL size as RB/WB, but Straumann's AHA XC technical information (707883) says Ø5.5 and Ø6.5 are WB only ("Do not place WB AHAs on RB implants"), and the 2025 recall of 064.4522S/064.4523S (FDA Z-1671-2025, Health Canada) was for blister labels that wrongly read "RB/WB". The app offers them for WB implants only.
 
 ## Nobel Biocare
 

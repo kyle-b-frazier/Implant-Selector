@@ -359,8 +359,8 @@ function cbAllOnXProfile(){
 /* ---------- Rendering ---------- */
 
 function cbEsc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-function cbChip(label, on, action, extra){
-  return `<button type="button" class="cb-chip${on?' on':''}" data-a="${action}"${extra||''}>${cbEsc(label)}</button>`;
+function cbChip(label, on, action, extra, sub){
+  return `<button type="button" class="cb-chip${on?' on':''}" data-a="${action}"${extra||''}>${cbEsc(label)}${sub?`<small class="cb-chip-sub${sub.startsWith('✓')?' sug':''}">${cbEsc(sub)}</small>`:''}</button>`;
 }
 function cbData(obj){
   return Object.entries(obj).map(([k,v])=>` data-${k}="${cbEsc(v)}"`).join('');
@@ -526,17 +526,25 @@ function cbChooser(pt, pick, profile, mode){
   }
   if(groups.length>1){
     const labels = groups.map(g=>g.group.label);
+    // Straumann XC shapes: mark the one made for this tooth.
+    const tooth = m || cb.fixedImplant ? null : (cb.activeTooth ?? cbImplantTeeth()[0]);
+    const want = tooth!=null ? xcShapeForTooth(tooth) : null;
+    const hint = l => {
+      const h = groups.find(g=>g.group.label===l).group.hint || '';
+      const shape = (l.match(/\b(S1|S|M|XL) shape\b/) || [])[1];
+      return h && want && shape===want ? `✓ For #${tooth} · ${h}` : h;
+    };
     const split = splitTypeLabels(labels);
     if(split){
       const cur = pick.group ? split.head(pick.group) : cb.narrow[cbNarrowKey(L, m)];
       res.html += `<div class="cb-lbl">Type</div><div class="cb-chips">${split.heads.map(h=>cbChip(h, cur===h, 'gpre', cbData({l:L, p:h, m}))).join('')}</div>`;
       const inHead = labels.filter(l=>split.head(l)===cur);
       if(inHead.length>1){
-        res.html += `<div class="cb-lbl">Size</div><div class="cb-chips">${inHead.map(l=>cbChip(split.tail(l), pick.group===l, 'group', cbData({l:L, g:l, m}))).join('')}</div>`;
+        res.html += `<div class="cb-lbl">Size</div><div class="cb-chips">${inHead.map(l=>cbChip(split.tail(l), pick.group===l, 'group', cbData({l:L, g:l, m}), hint(l))).join('')}</div>`;
       }
     } else {
       const lead = commonLead(labels);
-      res.html += `<div class="cb-lbl">Type</div><div class="cb-chips">${labels.map(l=>cbChip(l.slice(lead.length), pick.group===l, 'group', cbData({l:L, g:l, m}))).join('')}</div>`;
+      res.html += `<div class="cb-lbl">Type</div><div class="cb-chips">${labels.map(l=>cbChip(l.slice(lead.length), pick.group===l, 'group', cbData({l:L, g:l, m}), hint(l))).join('')}</div>`;
     }
   }
   const g = groups.find(g=>g.group.label===pick.group);
@@ -564,6 +572,17 @@ function cbChooser(pt, pick, profile, mode){
   }
   if(!m) res.item = g.items.find(([,r])=>r===pick.ref) || null;
   return res;
+}
+/* Straumann's anatomic healing abutment (XC) shape for a tooth, by
+   Universal number: S for upper centrals and canines, S1 for upper
+   laterals and lower incisors and canines, M for premolars, XL for
+   molars (Straumann AHA XC basic information). */
+function xcShapeForTooth(n){
+  const upper = n<=16, pos = upper ? Math.abs(n - 8.5) + 0.5 : Math.abs(n - 24.5) + 0.5; // 1 = central … 8 = third molar
+  if(pos>=6) return 'XL';
+  if(pos>=4) return 'M';
+  if(!upper) return 'S1';
+  return pos===2 ? 'S1' : 'S';
 }
 function cbNarrowKey(label, mode){ return `${mode||''}|${mode ? '' : cb.activeTooth}|${label}`; }
 function cbEditKey(key){ return `${cb.activeTooth}|${key}`; }

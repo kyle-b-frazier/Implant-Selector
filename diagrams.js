@@ -67,7 +67,7 @@ const DIAGRAM_CAPTIONS = {
   'mu-stack': 'The <b>multi-unit abutment</b> is screwed into the implant and normally stays in. Everything after that attaches to the abutment, not the implant: a <b>healing or protective cap</b> until the fixed denture or bridge goes in, then a <b>temporary coping</b> built into the <b>fixed denture or bridge</b> and held by a <b>prosthetic screw</b>. Angled abutments (e.g. 17° or 30°) correct for tilted implants so all the screws come out in a usable direction.',
   novaloc: 'The <b>abutment</b> screws into the implant. A <b>matrix housing</b> is set into the denture, and a <b>retention insert</b> clicks into the housing and snaps over the abutment head. Swapping the insert changes how firmly the denture holds; Novaloc color-codes the inserts by retention force, shown in the strip.',
   locator: 'The <b>Locator abutment</b> screws into the implant. A metal cap (housing) is processed into the denture, and a nylon <b>retention insert</b> sits in the cap and snaps onto the abutment. Inserts come in Zero, Low, Medium and High retention; swapping them changes how firmly the denture holds.',
-  'xc-shapes': '<b>Anatomic (XC)</b> healing abutments flare out above the implant, so the gum heals in a tooth-like outline instead of a round hole. <b>S, S1, M and XL</b> are Straumann\'s shape names: S, S1 and M all list Ø3.8mm, and XL comes in Ø4.5, Ø5.5 and Ø6.5mm (the bottom row shows those widths to scale). Straumann\'s catalog doesn\'t say which tooth each shape is for, so check Straumann\'s AHA XC guide or ask your rep.',
+  'xc-shapes': '<b>Anatomic (XC)</b> healing abutments flare out above the implant, so the gum heals in a tooth-like outline instead of a round hole. Straumann makes four shapes, each for a group of teeth: <b>S</b> for upper central incisors and upper canines, <b>S1</b> for upper lateral incisors and the lower incisors and canines, <b>M</b> for premolars and <b>XL</b> for molars. Pick the <b>Ø</b> and <b>GH</b> to match the final abutment you plan to use; every one stands 3mm above the gum, so H = GH + 3mm. XL Ø5.5 and Ø6.5 fit WB implants only.',
   anatomic: '<b>Anatomical</b> healing abutments flare out above the implant, so the gum heals in a tooth-like outline instead of a round hole. Nobel Biocare lists two WP sizes, <b>6×7mm</b> and <b>7×8mm</b>; its catalog doesn\'t say which measurement is which, so confirm with your rep if it matters.',
   'heal-shape': 'Straumann lists these healing abutments as <b>conical</b> or <b>bottle-shaped</b>. Conical ones widen steadily from the implant to a flat top. Bottle-shaped ones bulge out and then narrow again toward the top. Drawn from the shapes in Straumann\'s catalog photos.',
   asc: 'With a <b>straight</b> screw channel, the screw hole comes out wherever the implant points, which on a tilted implant can be the front of the tooth. An <b>angled screw channel</b> lets the hole come out at an angle instead, e.g. behind a front tooth or on the biting surface of a back tooth. Straumann calls this <b>AS</b> (Angled Solution; its AS burn-out copings are 25°); Nobel Biocare calls it <b>ASC</b> (angulated screw channel).',
@@ -244,15 +244,48 @@ function dgAnatomicSvg(withSizes){
     `<text x="8" y="228" font-size="10.5" fill="#9A845C">Bone</text>` +
     `<text x="8" y="${g+24}" font-size="10.5" fill="#B06B6B">Gum</text>`;
   if(!withSizes) return dgSvg(s, 'Round healing abutment compared with an anatomic one');
-  // Straumann XC widths, from above, to scale (8px per mm).
-  s += `<text x="8" y="258" font-size="11" font-weight="700" fill="${DG.ink}">XC widths from above, to scale</text>`;
-  [[46,3.8,'S · S1 · M'],[136,4.5,'XL'],[222,5.5,'XL'],[308,6.5,'XL']].forEach(([cx,d,name])=>{
-    s += outline(cx, 290, d*8) +
-      `<text x="${cx}" y="328" text-anchor="middle" font-size="12" font-weight="700" fill="${DG.partLine}">Ø${d}</text>` +
-      `<text x="${cx}" y="342" text-anchor="middle" font-size="10.5" fill="${DG.soft}">${name}</text>`;
+  // Straumann XC: which shape for which tooth, on an upper and a lower
+  // arch seen from above (Straumann AHA XC basic information).
+  s += `<text x="8" y="262" font-size="11.5" font-weight="700" fill="${DG.ink}">Which shape for which tooth</text>`;
+  const C = XC_SHAPE_COLORS;
+  // Per side, front to back: tooth widths (mm) and shapes.
+  const upper = [[8.5,'S'],[6.5,'S1'],[7.5,'S'],[7,'M'],[6.5,'M'],[10,'XL'],[9,'XL'],[8.5,'XL']];
+  const lower = [[5,'S1'],[5.5,'S1'],[7,'S1'],[7,'M'],[7,'M'],[11,'XL'],[10.5,'XL'],[10,'XL']];
+  const arch = (cx, frontY, down, teeth) => {
+    const a = 64, b = 82, cy = down ? frontY - b : frontY + b, sgn = down ? 1 : -1;
+    const pt = th => [cx + a*Math.cos(th), cy + sgn*b*Math.sin(th)];
+    // Arc length from the front (90°) back to -14°, sampled.
+    const N = 300, th0 = Math.PI/2, th1 = -14*Math.PI/180, cum = [0];
+    for(let k=1; k<=N; k++){
+      const [x0,y0] = pt(th0 + (th1-th0)*(k-1)/N), [x1,y1] = pt(th0 + (th1-th0)*k/N);
+      cum.push(cum[k-1] + Math.hypot(x1-x0, y1-y0));
+    }
+    const at = len => { let k = cum.findIndex(c=>c>=len); if(k<0) k = N; return pt(th0 + (th1-th0)*k/N); };
+    const total = teeth.reduce((n,[w])=>n+w, 0), scale = cum[N]/total;
+    let out = '', run = 0;
+    teeth.forEach(([w, shape])=>{
+      const [x, y] = at((run + w/2)*scale);
+      run += w;
+      const r = Math.max(4.5, w*scale*0.42);
+      [x, 2*cx - x].forEach(xx=>{ out += `<circle cx="${xx.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${C[shape]}" stroke="#fff" stroke-width="1.2"/>`; });
+    });
+    return out;
+  };
+  s += arch(90, 280, false, upper) + arch(270, 372, true, lower) +
+    `<text x="90" y="318" text-anchor="middle" font-size="12" font-weight="700" fill="${DG.ink}">Upper</text>` +
+    `<text x="90" y="332" text-anchor="middle" font-size="10" fill="${DG.soft}">front at top</text>` +
+    `<text x="270" y="334" text-anchor="middle" font-size="12" font-weight="700" fill="${DG.ink}">Lower</text>` +
+    `<text x="270" y="348" text-anchor="middle" font-size="10" fill="${DG.soft}">front at bottom</text>`;
+  [['S','upper central incisors, upper canines'],['S1','upper lateral incisors, lower incisors & canines'],
+   ['M','premolars (Ø3.8)'],['XL','molars (Ø4.5 RB/WB; Ø5.5, Ø6.5 WB only)']].forEach(([k, t], n)=>{
+    const y = 404 + n*20;
+    s += `<circle cx="16" cy="${y-4}" r="6.5" fill="${C[k]}"/>` +
+      `<text x="28" y="${y}" font-size="12" font-weight="700" fill="${DG.ink}">${k}</text>` +
+      `<text x="50" y="${y}" font-size="11.5" fill="${DG.ink}">${t}</text>`;
   });
-  return dgSvg(s, 'Round healing abutment compared with an anatomic one, and the XC widths', 350);
+  return dgSvg(s, 'Round healing abutment compared with an anatomic one, and which XC shape goes with which tooth', 476);
 }
+const XC_SHAPE_COLORS = { S:'#2E6FD0', S1:'#E8913A', M:'#5E9E22', XL:'#8E5BC8' };
 
 function diagramConceptSvg(kind){
   if(kind==='xc-shapes' || kind==='anatomic') return dgAnatomicSvg(kind==='xc-shapes');
@@ -471,7 +504,7 @@ function diagramConceptSvg(kind){
 
 function diagramHtml(kind){
   if(!DIAGRAM_CAPTIONS[kind]) return '';
-  return `<div class="dg">${diagramSvg(kind)}<p class="dg-cap">${DIAGRAM_CAPTIONS[kind]}</p><p class="dg-note">${kind==='xc-shapes' ? 'Simplified drawing — only the bottom row is to scale.' : 'Simplified drawing — not to scale.'}</p></div>`;
+  return `<div class="dg">${diagramSvg(kind)}<p class="dg-cap">${DIAGRAM_CAPTIONS[kind]}</p><p class="dg-note">Simplified drawing — not to scale.${kind==='xc-shapes' ? ' Shapes per tooth: Straumann AHA XC basic information.' : ''}</p></div>`;
 }
 
 /* Text for the "Explain:" links. */

@@ -92,25 +92,30 @@ const CATALOG_BLC = {
 ],
 
 "Anatomic Healing Abutments XC": [
-  {label:"RB/WB S shape, Ø3.8mm", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN", items:[
+  // Which tooth each shape is for, and the WB-only Ø5.5/Ø6.5 XL sizes:
+  // Straumann AHA XC basic information (707883 / NAMLIT.1724) and the
+  // 2025 recall of 064.4522S/064.4523S blister labels that wrongly read
+  // "RB/WB" (FDA Z-1671-2025, Health Canada). iEXCEL 2026 p.28 still
+  // groups every XL size under RB/WB.
+  {label:"RB/WB S shape, Ø3.8mm", hint:"Upper central incisors, upper canines", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN", items:[
     ["GH 1.5, H 4.5mm","064.4432S"],["GH 2.5, H 5.5mm","064.4433S"]
   ]},
-  {label:"RB/WB S1 shape, Ø3.8mm", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN", items:[
+  {label:"RB/WB S1 shape, Ø3.8mm", hint:"Upper lateral incisors, lower incisors and canines", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN", items:[
     ["GH 1.5, H 4.5mm","064.4514S"],["GH 2.5, H 5.5mm","064.4515S"]
   ]},
-  {label:"RB/WB M shape, Ø3.8mm", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN", items:[
+  {label:"RB/WB M shape, Ø3.8mm", hint:"Premolars", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN", items:[
     ["GH 1.5, H 4.5mm","064.4452S"],["GH 2.5, H 5.5mm","064.4453S"]
   ]},
-  {label:"RB/WB XL shape, Ø4.5mm", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN", items:[
+  {label:"RB/WB XL shape, Ø4.5mm", hint:"Molars", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN", items:[
     ["GH 1.5, H 4.5mm","064.4482S"],["GH 2.5, H 5.5mm","064.4483S"]
   ]},
-  {label:"RB/WB XL shape, Ø5.5mm", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN",
-    note:"Straumann's 2026 iEXCEL catalog (p.28) lists the XL shape as RB/WB in every size; this is being confirmed with Straumann.",
+  {label:"WB XL shape, Ø5.5mm", hint:"Molars", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN",
+    note:"WB only. iEXCEL 2026 (p.28) lists the XL shape as RB/WB in every size, but Straumann's AHA XC technical information says Ø5.5 and Ø6.5 are WB only (\"Do not place WB AHAs on RB implants\"), and Straumann's shop names these WB.",
     items:[
     ["GH 1.5, H 4.5mm","064.8482S"],["GH 2.5, H 5.5mm","064.4510S"]
   ]},
-  {label:"RB/WB XL shape, Ø6.5mm", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN",
-    note:"Straumann's 2026 iEXCEL catalog (p.28) lists the XL shape as RB/WB in every size; this is being confirmed with Straumann.",
+  {label:"WB XL shape, Ø6.5mm", hint:"Molars", source:"Straumann iEXCEL 2026 p.28", material:"PEEK / TAN",
+    note:"WB only. iEXCEL 2026 (p.28) lists the XL shape as RB/WB in every size, but Straumann's AHA XC technical information says Ø5.5 and Ø6.5 are WB only, and the 2025 recall of these two REFs (FDA Z-1671-2025) was for blister labels that wrongly read \"RB/WB\".",
     items:[
     ["GH 1.5, H 4.5mm","064.4522S"],["GH 2.5, H 5.5mm","064.4523S"]
   ]}
