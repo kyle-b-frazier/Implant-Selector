@@ -888,6 +888,11 @@ function cbOnClick(e){
   const btn = e.target.closest('[data-a]');
   if(!btn || !cb) return;
   const d = btn.dataset;
+  // Remember which card was tapped (by id, else by position) so it can be
+  // scrolled into view if it grows past the bottom bar.
+  const cards = () => [...document.querySelectorAll('#builderView .cb-card')];
+  const tapped = btn.closest('.cb-card');
+  const tappedKey = tapped ? (tapped.id || cards().indexOf(tapped)) : null;
   switch(d.a){
     case 'type':
       cb.type = d.v;
@@ -996,12 +1001,37 @@ function cbOnClick(e){
     default: return;
   }
   renderCaseBuilder();
-  // A card that just folded up: keep it in view so the next one follows.
+  // A card that just folded up: keep it in view and bring the next card
+  // up under it. A card that grew: scroll so its new rows aren't hidden
+  // under the bottom bar.
+  const findCard = k => k==null ? null : typeof k==='string' ? document.getElementById(k) : cards()[k] || null;
   if(cb && cb.lastDone){
     const el = document.getElementById(cb.lastDone);
     cb.lastDone = null;
     if(el && el.getBoundingClientRect().top < 70) window.scrollBy({top: el.getBoundingClientRect().top - 80});
+    const all = cards(), next = el && all[all.indexOf(el)+1];
+    if(next) cbReveal(next, el);
+  } else if(d.a==='need' && cb.needed.includes(d.l)){
+    // A part just ticked: show its new card, keeping the ticked chip in view.
+    const el = document.getElementById('cb-part-' + d.l.replace(/\W+/g,'-'));
+    const chip = [...document.querySelectorAll('.cb-chip[data-a="need"]')].find(c=>c.dataset.l===d.l);
+    if(el) cbReveal(el, chip || el);
+  } else if(['opt','group','gpre','edit','dg','tab','xadd','relink'].includes(d.a)){
+    const el = findCard(tappedKey);
+    if(el) cbReveal(el, el);
   }
+}
+
+/* Scroll down just enough that el's bottom clears the sticky bottom bar,
+   but never so far that keepTop's top goes under the page header. */
+function cbReveal(el, keepTop){
+  const foot = document.querySelector('#builderView .cb-foot');
+  const limit = (foot ? foot.getBoundingClientRect().top : window.innerHeight) - 12;
+  const over = el.getBoundingClientRect().bottom - limit;
+  if(over <= 0) return;
+  const room = keepTop.getBoundingClientRect().top - 80;
+  const by = Math.min(over, room);
+  if(by > 0) window.scrollBy({top: by, behavior:'smooth'});
 }
 
 /* Pieces per package for a counted All-on-X part. */
