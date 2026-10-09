@@ -1454,7 +1454,7 @@ function renderOrder(){
       row.innerHTML = `
         <div class="info">
           <div class="nm">${describeItem(it)}${toothTags}</div>
-          <div class="rf">REF ${it.ref}</div>
+          <div class="rf">REF ${it.ref}${backupNote(it)}</div>
           ${packLine}
         </div>
         <input class="qty" type="number" min="1" value="${it.qty}" onchange="updateQty('${key}', this.value)">
@@ -1464,6 +1464,12 @@ function renderOrder(){
     });
   }
   updateOutput();
+}
+
+/* " (incl. 1 backup)" for implants the case builder added as backups. */
+function backupNote(it){
+  const n = Math.min(it.backup || 0, it.qty);
+  return n ? ` (incl. ${n} backup)` : '';
 }
 
 function clearTreatmentPlan(){
@@ -1549,7 +1555,7 @@ function updateOutput(){
     items.forEach(it=>{
       counter++;
       lines.push(`${counter}. ${describeItem(it)}`);
-      lines.push(`    REF ${it.ref}  ·  Qty: ${it.qty}`);
+      lines.push(`    REF ${it.ref}  ·  Qty: ${it.qty}${backupNote(it)}`);
       if(showCatalogPages){
         const c = catalogSourceFor(it);
         lines.push(c.source ? `    Catalog: ${c.source}` : `    Catalog: not verified — ${c.unverified}`);

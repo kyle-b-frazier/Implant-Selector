@@ -314,7 +314,7 @@ function cbSetSystem(sysId){
   const mem = cbLoadMemory();
   const v = mem[`${sysId}|variant`];
   cb.variant = grid.variants.includes(v) ? v : grid.variants[0];
-  const labels = (cb.kind==='allonx' ? ['Primary Implants','Backup Implants'] : []).concat(cbPartTypes().map(p=>p.label));
+  const labels = cbNeedLabels();
   const lastNeeded = mem[`${sysId}|aox|needed`];
   if(cb.kind==='allonx' && !cb.needed.length && Array.isArray(lastNeeded)) cb.needed = lastNeeded.slice();
   cb.needed = cb.needed.filter(l=>labels.includes(l));
@@ -323,6 +323,14 @@ function cbSetSystem(sysId){
   cb.counts = {};
   cb.implantCounts = { 'Primary Implants':{}, 'Backup Implants':{} };
   cb.narrow = {}; cb.pickers = {}; cb.adding = {}; cb.editing = new Set(); cb.confirmed = new Set(); cb.follow = {}; cb.touched = {}; cb.fromLast = {};
+}
+
+/* Every "Parts needed" chip in order: All-on-X starts with its implants;
+   a crown, bridge or overdenture case ends with backup implants. */
+function cbNeedLabels(){
+  const parts = cbPartTypes().map(p=>p.label);
+  if(cb.kind==='allonx') return ['Primary Implants','Backup Implants'].concat(parts);
+  return cb.fixedImplant ? parts : parts.concat('Backup Implants');
 }
 
 function cbPartTypes(){
@@ -424,6 +432,7 @@ function renderCaseBuilder(){
     parts.push(cbTeethCard(), cbSystemCard());
     if(cb.sys && cbImplantTeeth().length){
       parts.push(cbToothTabs(), cbImplantCard(), cbNeededCard(), cbPartCards());
+      if(cb.needed.includes('Backup Implants')) parts.push(cbCountImplantCard('Backup Implants'));
     }
   }
   parts.push(cbFooter());
@@ -537,9 +546,7 @@ function cbImplantCard(){
 }
 
 function cbNeededCard(){
-  const types = cbPartTypes();
-  const prefix = cb.kind==='allonx' ? [{label:'Primary Implants'},{label:'Backup Implants'}] : [];
-  const all = prefix.concat(types);
+  const all = cbNeedLabels().map(label=>({label}));
   const noOd = cb.kind==='case' && cb.type==='overdenture' && !overdentureLabels(cb.sys).length
     ? `<p class="cb-warn">This app has no overdenture attachments for ${cbEsc(SYSTEMS[cb.sys].name)} yet. Order them from the manufacturer's catalog or your rep.</p>` : '';
   return `<div class="cb-card"><h3>Parts needed</h3><p class="cb-note cb-top">Tick only what this case needs.</p>${noOd}<div class="cb-chips">${
@@ -754,9 +761,15 @@ function cbCountImplantCard(role){
   (SYSTEMS[cb.sys].catalog[cat] || []).forEach(g=>g.items.forEach(([nm,rf])=>{
     if(counts[rf]) picked.push(cbCountRow('implant:'+role, `${g.label}, ${nm}`, rf, counts[rf], 1, g.caution));
   }));
-  return `<div class="cb-card" id="cb-part-${role.replace(/\W+/g,'-')}"><h3>${role}<button type="button" class="cb-x" data-a="need"${cbData({l:role})} title="Not needed">✕</button></h3>${cbDiagram(role,'implant')}${variants}
+  // Crown, bridge or overdenture: backups are for the whole case, and the
+  // usual pick is one more of each implant planned.
+  const planned = cb.kind==='case' ? [...new Set(cbImplantTeeth().map(t=>cbConfig(t).implant).filter(Boolean).map(i=>i.ref))] : [];
+  const same = planned.length
+    ? `<button type="button" class="cb-link" data-a="bsame">+ One more of ${planned.length>1 ? 'each implant planned' : 'the planned implant'}</button>` : '';
+  const note = cb.kind==='case' ? '<p class="cb-note cb-top">Extra implants to have on hand for the whole case, in case one doesn\'t fit as planned.</p>' : '';
+  return `<div class="cb-card" id="cb-part-${role.replace(/\W+/g,'-')}"><h3>${role}<button type="button" class="cb-x" data-a="need"${cbData({l:role})} title="Not needed">✕</button></h3>${note}${cbDiagram(role,'implant')}${variants}
     <div class="cb-gridwrap"><table class="cb-grid"><thead>${head}</thead><tbody>${body}</tbody></table></div>
-    <p class="cb-note cb-axis">Tap a cell once per implant · Rows: diameter · Columns: length (mm)</p>${picked.join('')}</div>`;
+    <p class="cb-note cb-axis">Tap a cell once per implant · Rows: diameter · Columns: length (mm)</p>${same}${picked.join('')}</div>`;
 }
 
 /* ---------- What will be added ---------- */
@@ -770,7 +783,7 @@ function cbCollect(){
   let slots = 0;
   const add = (ref, name, group, category, n, unit, tooth) => {
     let l = lines.get(ref);
-    if(!l){ l = { ref, name, group, category, pieces:0, packages:0, teeth:new Set() }; lines.set(ref, l); }
+    if(!l){ l = { ref, name, group, category, pieces:0, packages:0, backup:0, teeth:new Set() }; lines.set(ref, l); }
     l[unit] += n;
     if(tooth!=null) l.teeth.add(tooth);
   };
@@ -783,7 +796,10 @@ function cbCollect(){
       slots++;
       let any = false;
       (sys.catalog[implantCat] || []).forEach(g=>g.items.forEach(([nm,rf])=>{
-        if(counts[rf]){ any = true; add(rf, nm, g, implantCat, counts[rf], 'packages'); }
+        if(counts[rf]){
+          any = true; add(rf, nm, g, implantCat, counts[rf], 'packages');
+          if(role==='Backup Implants') lines.get(rf).backup += counts[rf];
+        }
       }));
       if(!any) missing.push(role.toLowerCase());
     });
@@ -829,6 +845,15 @@ function cbCollect(){
       add(item[1], item[0], g.group, g.group.sourceCategory || pt.options[pick.opt].category, per, 'pieces', tooth);
     });
   });
+  if(cb.needed.includes('Backup Implants') && !cb.fixedImplant){
+    slots++;
+    const counts = cb.implantCounts['Backup Implants'];
+    let any = false;
+    (sys.catalog[implantCat] || []).forEach(g=>g.items.forEach(([nm,rf])=>{
+      if(counts[rf]){ any = true; add(rf, nm, g, implantCat, counts[rf], 'packages'); lines.get(rf).backup += counts[rf]; }
+    }));
+    if(!any) missing.push('backup implants');
+  }
   if(cb.fixedImplant && !cb.needed.length) missing.push('parts');
   return { lines:[...lines.values()], missing, slots };
 }
@@ -877,6 +902,8 @@ async function cbAddToOrder(){
     selected[key] = { name:l.name, group:l.group.label, category:l.category, qty:(prev?prev.qty:0)+qty, system:cb.sys, ref:l.ref };
     const teeth = [...new Set([...((prev && prev.teeth) || []), ...l.teeth])].sort((a,b)=>a-b);
     if(teeth.length) selected[key].teeth = teeth;
+    const backup = ((prev && prev.backup) || 0) + l.backup;
+    if(backup) selected[key].backup = backup;
   });
   cbRemember();
   cbSaveRecent();
@@ -988,7 +1015,7 @@ function cbTickOverdenture(){
   const od = overdentureLabels(cb.sys);
   if(cb.type==='overdenture') od.forEach(l=>{ if(!cb.needed.includes(l)) cb.needed.push(l); });
   else cb.needed = cb.needed.filter(l=>!od.includes(l));
-  const order = cbPartTypes().map(p=>p.label);
+  const order = cbNeedLabels();
   cb.needed.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
 }
 
@@ -1034,7 +1061,7 @@ function cbOnClick(e){
       const i = cb.needed.indexOf(d.l);
       if(i>=0) cb.needed.splice(i,1);
       else{
-        const order = (cb.kind==='allonx' ? ['Primary Implants','Backup Implants'] : []).concat(cbPartTypes().map(p=>p.label));
+        const order = cbNeedLabels();
         cb.needed.push(d.l);
         cb.needed.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
       }
@@ -1089,6 +1116,11 @@ function cbOnClick(e){
       if(!x && d.a!=='item') cb.editing.add(cbEditKey(d.l));
       break;
     }
+    case 'bsame': {
+      const counts = cb.implantCounts['Backup Implants'];
+      new Set(cbImplantTeeth().map(t=>cbConfig(t).implant).filter(Boolean).map(i=>i.ref)).forEach(r=>{ counts[r] = (counts[r] || 0) + 1; });
+      break;
+    }
     case 'icnt': {
       const counts = cb.implantCounts[d.role];
       counts[d.r] = (counts[d.r] || 0) + 1;
@@ -1125,7 +1157,7 @@ function cbOnClick(e){
     const el = document.getElementById('cb-part-' + d.l.replace(/\W+/g,'-'));
     const chip = [...document.querySelectorAll('.cb-chip[data-a="need"]')].find(c=>c.dataset.l===d.l);
     if(el) cbReveal(el, chip || el);
-  } else if(['opt','group','gpre','edit','dg','tab','xadd','relink'].includes(d.a)){
+  } else if(['opt','group','gpre','edit','dg','tab','xadd','relink','bsame','icnt'].includes(d.a)){
     const el = findCard(tappedKey);
     if(el) cbReveal(el, el);
   }
@@ -1140,7 +1172,10 @@ function cbReveal(el, keepTop){
   if(over <= 0) return;
   const room = keepTop.getBoundingClientRect().top - 80;
   const by = Math.min(over, room);
-  if(by > 0) window.scrollBy({top: by, behavior:'smooth'});
+  if(by <= 0) return;
+  // Older iPhone Safari ignores scroll options; jump there instead.
+  if('scrollBehavior' in document.documentElement.style) window.scrollBy({top: by, behavior:'smooth'});
+  else window.scrollBy(0, by);
 }
 
 /* Pieces per package for a counted All-on-X part. */
