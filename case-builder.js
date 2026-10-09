@@ -419,7 +419,7 @@ function renderCaseBuilder(){
   cbRefreshAll();
   const parts = [];
   if(cb.kind==='allonx'){
-    parts.push(`<div class="cb-head"><p class="cb-eyebrow">New case</p><h2>All-on-X</h2></div>`);
+    parts.push(`<div class="cb-head"><p class="cb-eyebrow">${cb.editCaseId!=null ? 'Editing case' : 'New case'}</p><h2>All-on-X</h2></div>`);
     parts.push(cbSystemCard());
     if(cb.sys) parts.push(cbNeededCard(), cbAllOnXCards());
   } else if(cb.fixedImplant){
@@ -428,7 +428,7 @@ function renderCaseBuilder(){
     parts.push(`<div class="cb-card"><div class="cb-summary"><b>${cbEsc(it.group)}, ${cbEsc(it.name)}</b><span class="cb-ref">REF ${cbEsc(it.ref)} · already in your order${it.qty>1?` · qty ${it.qty}`:''}</span></div></div>`);
     parts.push(cbNeededCard(), cbPartCards());
   } else {
-    parts.push(`<div class="cb-head"><p class="cb-eyebrow">New case</p><h2>${cb.type==='overdenture' ? 'Overdenture' : 'Crown &amp; Bridge'}</h2></div>`);
+    parts.push(`<div class="cb-head"><p class="cb-eyebrow">${cb.editCaseId!=null ? 'Editing case' : 'New case'}</p><h2>${cb.type==='overdenture' ? 'Overdenture' : 'Crown &amp; Bridge'}</h2></div>`);
     parts.push(cbTeethCard(), cbSystemCard());
     if(cb.sys && cbImplantTeeth().length){
       parts.push(cbToothTabs(), cbImplantCard(), cbNeededCard(), cbPartCards());
@@ -866,7 +866,7 @@ function cbFooter(){
   const done = Math.max(0, slots - missing.length);
   const counted = slots>0 && missing.length<=slots && done>0;
   let label;
-  if(!missing.length) label = `Add ${n} item${n===1?'':'s'} to order`;
+  if(!missing.length) label = cb.editCaseId!=null ? 'Update order' : `Add ${n} item${n===1?'':'s'} to order`;
   else if(!cb.sys) label = 'Pick a system';
   else if(counted) label = `${done} of ${slots} picked · Next: ${missing[0]} ›`;
   else label = `Still to pick: ${missing.slice(0,3).join(', ')}${missing.length>3?'…':''}`;
@@ -894,6 +894,18 @@ async function cbAddToOrder(){
     const cat = lines.find(l=>l.group===g).category;
     if(!(await confirmGroupCaution(cb.sys, cat, g.label))) return;
   }
+  // Editing a case already in the order: take out what it added before.
+  const editing = cb.editCaseId!=null ? orderCases.find(c=>c.id===cb.editCaseId) : null;
+  if(editing) editing.added.forEach(a=>{
+    const it = selected[a.key];
+    if(!it) return;
+    it.qty -= a.qty;
+    if(it.backup) it.backup = Math.max(0, it.backup - a.backup) || undefined;
+    if(it.teeth) it.teeth = it.teeth.filter(t=>!a.teeth.includes(t));
+    if(it.teeth && !it.teeth.length) delete it.teeth;
+    if(it.qty<=0) delete selected[a.key];
+  });
+  const added = [];
   lines.forEach(l=>{
     const key = cb.sys+'::'+l.ref;
     const pack = parsePackSize(l.name, l.group.label);
@@ -904,12 +916,15 @@ async function cbAddToOrder(){
     if(teeth.length) selected[key].teeth = teeth;
     const backup = ((prev && prev.backup) || 0) + l.backup;
     if(backup) selected[key].backup = backup;
+    added.push({ key, qty, backup:l.backup, teeth:[...l.teeth] });
   });
   cbRemember();
-  cbSaveRecent();
-  if(cb.kind==='case' && !cb.fixedImplant){
-    currentTreatmentPlan = { type:cb.type, implants:cbImplantTeeth(), pontics:cbPontics() };
-  }
+  if(!editing) cbSaveRecent();
+  const entry = { id: editing ? editing.id : Date.now(), kind:cb.kind, type:cb.type, sys:cb.sys, fixed:!!cb.fixedImplant,
+    implants: cb.kind==='case' && !cb.fixedImplant ? cbImplantTeeth() : [], pontics: cb.kind==='case' ? cbPontics() : [],
+    state: cbSnapshot(), added };
+  if(editing) orderCases[orderCases.indexOf(editing)] = entry;
+  else orderCases.push(entry);
   const sysId = cb.sys;
   const kind = cb.kind;
   cb = null;
@@ -921,7 +936,7 @@ async function cbAddToOrder(){
     renderOrder();
     window.scrollTo(0,0);
   });
-  showToast(`Added ${lines.length} item${lines.length===1?'':'s'} to your order`);
+  showToast(editing ? 'Order updated' : `Added ${lines.length} item${lines.length===1?'':'s'} to your order`);
 }
 
 /* Saves each part pick (and the implant surface) as the starting point
@@ -961,13 +976,30 @@ function cbLoadRecent(){
 }
 function cbSaveRecent(){
   if(!cb || cb.fixedImplant) return;
-  const state = { ...cb, editing:[], confirmed:[...cb.confirmed], showMissing:false, dgOpen:null, lastDone:null };
+  const state = cbSnapshot();
   const { lines } = cbCollect();
   const entry = { at: Date.now(), state, items: lines.length };
   const list = cbLoadRecent();
   list.unshift(entry);
   try{ localStorage.setItem(CB_RECENT_KEY, JSON.stringify(list.slice(0, CB_RECENT_MAX))); }catch(e){}
 }
+/* The builder's state as plain data, to open again later. */
+function cbSnapshot(){
+  return JSON.parse(JSON.stringify({ ...cb, editing:[], confirmed:[...cb.confirmed], showMissing:false, dgOpen:null, lastDone:null, editCaseId:null }));
+}
+function cbRestore(state){
+  return { ...newCase(state.kind), ...JSON.parse(JSON.stringify(state)), editing:new Set(), confirmed:new Set(state.confirmed || []) };
+}
+/* Opens a case already in the order to change it; "Update order" then
+   replaces what it added. */
+function openOrderCase(id){
+  const c = orderCases.find(c=>c.id===id);
+  if(!c) return;
+  cb = cbRestore(c.state);
+  cb.editCaseId = id;
+  navigateWithFade(()=>{ viewMode = 'builder'; render(); window.scrollTo(0,0); });
+}
+
 function recentCaseTitle(r){
   const st = r.state;
   const sys = SYSTEMS[st.sys] ? SYSTEMS[st.sys].name : '';
@@ -992,18 +1024,21 @@ function recentCasesHtml(){
 function reopenRecentCase(i){
   const r = cbLoadRecent().filter(r=>r && r.state && SYSTEMS[r.state.sys])[i];
   if(!r) return;
-  cb = { ...newCase(r.state.kind), ...r.state, editing:new Set(), confirmed:new Set(r.state.confirmed || []) };
+  cb = cbRestore(r.state);
   navigateWithFade(()=>{ viewMode = 'builder'; render(); window.scrollTo(0,0); });
   showToast('Opened a recent case. Review it, then add to order.');
 }
 
 async function cbCancel(){
   const touched = cb && (Object.keys(cb.teeth).length || cb.needed.length || cb.sys && cb.kind==='allonx' && Object.keys(cb.counts).length);
+  const editing = cb && cb.editCaseId!=null;
   if(touched){
-    const ok = await showModal({ type:'confirm', title:'Leave this case?', message:'Nothing from this case has been added to your order yet.', okText:'Leave', cancelText:'Keep going' });
+    const ok = await showModal({ type:'confirm', title: editing ? 'Stop editing?' : 'Leave this case?',
+      message: editing ? 'Changes made here won\'t be saved. The order stays as it was.' : 'Nothing from this case has been added to your order yet.',
+      okText:'Leave', cancelText:'Keep going' });
     if(!ok) return;
   }
-  const back = cb && cb.fixedImplant ? 'category' : 'home';
+  const back = cb && (cb.fixedImplant || editing) ? 'category' : 'home';
   cb = null;
   navigateWithFade(()=>{ viewMode = back; render(); window.scrollTo(0,0); });
 }

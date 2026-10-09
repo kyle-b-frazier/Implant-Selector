@@ -266,6 +266,8 @@
   }
   .treatment-plan-card .tp-title{font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;}
   .treatment-plan-card .tp-clear{background:none; border:none; color:#3E6310; text-decoration:underline; font-size:11px; cursor:pointer; padding:0;}
+  .treatment-plan-card .tp-btns{display:flex; gap:14px; align-items:center; flex:0 0 auto; margin-left:10px;}
+  .treatment-plan-card .tp-edit{background:#fff; border:1px solid #9CC46A; color:#3E6310; border-radius:7px; font:700 11.5px var(--sans); padding:5px 10px; cursor:pointer; text-transform:none; letter-spacing:0;}
   .order-row .tooth-tag{
     display:inline-block; background:#EAF4DC; color:#4F8A16; border-radius:5px; padding:1px 6px;
     font-size:10px; font-weight:700; margin-left:6px; font-family:var(--sans);
@@ -1065,7 +1067,10 @@ function navigateWithFade(fn){
   }, 140);
 }
 
-let currentTreatmentPlan = null; // {type:'single'|'bridge', implants:[...], pontics:[...]} — shown atop the order panel
+/* Cases added from the case builder, shown atop the order panel so each
+   can be opened again and changed: {id, kind, type, sys, implants,
+   pontics, fixed, state, added:[{key, qty, backup, teeth}]}. */
+let orderCases = [];
 
 function goToFullCatalog(){
   navigateWithFade(()=>{
@@ -1316,8 +1321,8 @@ function updateQty(key, val){
 
 /* Removing or clearing takes effect at once; the toast offers Undo. */
 function snapshotOrder(){
-  const before = { selected: JSON.parse(JSON.stringify(selected)), plan: currentTreatmentPlan };
-  return ()=>{ selected = before.selected; currentTreatmentPlan = before.plan; render(); renderOrder(); };
+  const before = JSON.parse(JSON.stringify({ selected, orderCases }));
+  return ()=>{ selected = before.selected; orderCases = before.orderCases; render(); renderOrder(); };
 }
 
 function removeItem(key){
@@ -1332,7 +1337,7 @@ function clearAll(){
   if(Object.keys(selected).length===0) return;
   const undo = snapshotOrder();
   selected = {};
-  currentTreatmentPlan = null;
+  orderCases = [];
   render();
   renderOrder();
   showToast('Order cleared', {label:'Undo', run:undo});
@@ -1413,17 +1418,20 @@ function renderOrder(){
 
   list.innerHTML = '';
 
-  if(currentTreatmentPlan){
-    const tp = currentTreatmentPlan;
+  orderCases.forEach(tp=>{
     const parts = [];
     if(tp.implants.length) parts.push(`<b>Implant:</b> #${tp.implants.join(', #')}`);
     if(tp.pontics.length) parts.push(`<b>Pontic:</b> #${tp.pontics.join(', #')}`);
+    if(orderCases.length>1 || tp.kind!=='case' || tp.fixed) parts.push(escapeHtml(SYSTEMS[tp.sys].name));
+    const title = tp.kind==='allonx' ? 'All-on-X Case' : tp.fixed ? 'Parts for an Implant'
+      : tp.type==='bridge' ? 'Bridge Treatment Plan' : tp.type==='overdenture' ? 'Overdenture Treatment Plan' : 'Single Implant Crown(s) Treatment Plan';
     const card = document.createElement('div');
     card.className = 'treatment-plan-card';
-    card.innerHTML = `<div class="tp-title"><span>${tp.type==='bridge' ? 'Bridge Treatment Plan' : tp.type==='overdenture' ? 'Overdenture Treatment Plan' : 'Single Implant Crown(s) Treatment Plan'}</span>` +
-      `<button class="tp-clear" onclick="clearTreatmentPlan()">Clear</button></div>${parts.join(' &nbsp;·&nbsp; ')}`;
+    card.innerHTML = `<div class="tp-title"><span>${title}</span><span class="tp-btns">` +
+      `<button class="tp-edit" onclick="openOrderCase(${tp.id})">Edit case</button>` +
+      `<button class="tp-clear" onclick="clearTreatmentPlan(${tp.id})" title="Hide this summary; the items stay in the order">Clear</button></span></div>${parts.join(' &nbsp;·&nbsp; ')}`;
     list.appendChild(card);
-  }
+  });
 
   if(keys.length===0){
     const empty = document.createElement('div');
@@ -1472,8 +1480,8 @@ function backupNote(it){
   return n ? ` (incl. ${n} backup)` : '';
 }
 
-function clearTreatmentPlan(){
-  currentTreatmentPlan = null;
+function clearTreatmentPlan(id){
+  orderCases = orderCases.filter(c=>c.id!==id);
   renderOrder();
 }
 
