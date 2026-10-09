@@ -60,17 +60,17 @@ const CATALOG_BLC = {
 ],
 
 "Healing Abutments — Crown": [
-  {label:"RB/WB, Ø3.8mm platform (Crown ∅4mm)", source:"Straumann iEXCEL 2026 p.26", material:"TAN", items:[
+  {label:"RB/WB, ∅4mm (for final abutments ∅3.8mm)", source:"Straumann iEXCEL 2026 p.26", material:"TAN", items:[
     ["GH 1.5 / AH 2mm (3.5mm)","064.4202S"],["GH 1.5 / AH 4mm (5.5mm)","064.4203S"],["GH 1.5 / AH 6mm (7.5mm)","064.4238S"],
     ["GH 2.5 / AH 2mm (4.5mm)","064.4204S"],["GH 2.5 / AH 4mm (6.5mm)","064.4205S"],["GH 2.5 / AH 6mm (8.5mm)","064.4239S"],
     ["GH 3.5 / AH 2mm (5.5mm)","064.4206S"],["GH 3.5 / AH 4mm (7.5mm)","064.4207S"],["GH 3.5 / AH 6mm (9.5mm)","064.4240S"]
   ]},
-  {label:"RB/WB, Ø4.5mm platform (Crown ∅5mm)", source:"Straumann iEXCEL 2026 p.26", material:"TAN", items:[
+  {label:"RB/WB, ∅5mm (for final abutments ∅4.5mm)", source:"Straumann iEXCEL 2026 p.26", material:"TAN", items:[
     ["GH 1.5 / AH 2mm (3.5mm)","064.4212S"],["GH 1.5 / AH 4mm (5.5mm)","064.4213S"],["GH 1.5 / AH 6mm (7.5mm)","064.4241S"],
     ["GH 2.5 / AH 2mm (4.5mm)","064.4214S"],["GH 2.5 / AH 4mm (6.5mm)","064.4215S"],["GH 2.5 / AH 6mm (8.5mm)","064.4243S"],
     ["GH 3.5 / AH 2mm (5.5mm)","064.4216S"],["GH 3.5 / AH 4mm (7.5mm)","064.4217S"],["GH 3.5 / AH 6mm (9.5mm)","064.4244S"]
   ]},
-  {label:"RB/WB, Ø6.0mm platform (Crown ∅6.5mm)", source:"Straumann iEXCEL 2026 p.26", material:"TAN", items:[
+  {label:"RB/WB, ∅6.5mm (for final abutments ∅6.0mm)", source:"Straumann iEXCEL 2026 p.26", material:"TAN", items:[
     ["GH 1.5 / AH 2mm (3.5mm)","064.4222S"],["GH 1.5 / AH 4mm (5.5mm)","064.4223S"],
     ["GH 2.5 / AH 2mm (4.5mm)","064.4224S"],["GH 2.5 / AH 4mm (6.5mm)","064.4225S"],
     ["GH 3.5 / AH 2mm (5.5mm)","064.4226S"],["GH 3.5 / AH 4mm (7.5mm)","064.4227S"]
@@ -86,7 +86,7 @@ const CATALOG_BLC = {
 ],
 
 "Healing Abutments — Bridge": [
-  {label:"RB/WB, Ø4.5mm platform (Bridge/Bar ∅5mm)", source:"Straumann iEXCEL 2026 p.27", material:"Titanium", items:[
+  {label:"RB/WB, Bridge/Bar ∅5mm (for final abutments ∅4.5mm)", source:"Straumann iEXCEL 2026 p.27", material:"Titanium", items:[
     ["GH 1.5 / AH 2mm (3.5mm)","064.4232S"],["GH 1.5 / AH 4mm (5.5mm)","064.4233S"]
   ]}
 ],

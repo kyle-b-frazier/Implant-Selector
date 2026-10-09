@@ -114,6 +114,46 @@ function ghahTable(items){
   return { ghs, ahs, cells };
 }
 
+/* A table for a group whose items are all "<row>, <column>" (e.g.
+   "Ø4.5mm, H2mm") and fill most of a grid, or null. */
+function axisTable(items){
+  const parsed = items.map(it=>({ it, p: it[0].split(', ') }));
+  if(parsed.length<4 || !parsed.every(x=>x.p.length===2)) return null;
+  const rows = [...new Set(parsed.map(x=>x.p[0]))];
+  const num = t => parseFloat((t.match(/[\d.]+/)||['0'])[0]);
+  const cols = [...new Set(parsed.map(x=>x.p[1]))].sort((a,b)=>num(a)-num(b));
+  if(rows.length<2 || cols.length<2 || parsed.length < rows.length*cols.length*0.6) return null;
+  const cells = {};
+  for(const {it,p} of parsed){
+    cells[p[0]] = cells[p[0]] || {};
+    if(cells[p[0]][p[1]]) return null;
+    cells[p[0]][p[1]] = it;
+  }
+  return { rows, cols, cells };
+}
+
+/* Long lists of group names like "For Crowns — RB/WB ∅3.8mm" are offered
+   in two steps: the part before " — ", then the part after. Null when
+   that would not shorten the list. */
+function splitTypeLabels(labels){
+  if(labels.length<5) return null;
+  const parts = labels.map(l=>{ const i = l.indexOf(' — '); return i<0 ? [l, ''] : [l.slice(0,i), l.slice(i+3)]; });
+  const heads = [...new Set(parts.map(x=>x[0]))];
+  if(heads.length<2 || heads.length>labels.length-2) return null;
+  const at = l => parts[labels.indexOf(l)] || [l, ''];
+  return { heads, head: l=>at(l)[0], tail: l=>at(l)[1] || at(l)[0] };
+}
+
+/* A lead-in every label shares, up to a ", " or " — " (e.g. "RB/WB, "),
+   so chips can leave it off. */
+function commonLead(labels){
+  if(labels.length<2) return '';
+  let lead = labels[0];
+  labels.forEach(l=>{ while(lead && !l.startsWith(lead)) lead = lead.slice(0,-1); });
+  const m = lead.match(/^.*(?:, | — )/);
+  return m && labels.every(l=>l.length>m[0].length) ? m[0] : '';
+}
+
 /* Fills in a part pick: keeps whatever of `pick` is still valid, takes
    the only choice wherever there is just one, then falls back to the
    remembered pick. Returns {opt, group, ref} with nulls for what is
@@ -172,8 +212,11 @@ function newCase(kind){
     fixedImplant:null,    // parts-only: the implant already in the order
     counts:{},            // allonx: part label -> { ref -> packages }
     implantCounts:{ 'Primary Implants':{}, 'Backup Implants':{} },
-    openGroups:{},        // allonx: long part lists, which groups are expanded
     dgOpen:null,          // which card's explanatory drawing is showing
+    editing:new Set(),    // finished cards reopened to change them
+    narrow:{},            // two-step type chips: the first step picked
+    pickers:{},           // allonx: each card's size picker
+    adding:{},            // allonx: cards with "add another size" open
     showMissing:false
   };
 }
@@ -234,7 +277,7 @@ function cbSetSystem(sysId){
   cb.own = {};
   cb.counts = {};
   cb.implantCounts = { 'Primary Implants':{}, 'Backup Implants':{} };
-  cb.openGroups = {};
+  cb.narrow = {}; cb.pickers = {}; cb.adding = {}; cb.editing = new Set();
 }
 
 function cbPartTypes(){
@@ -368,6 +411,7 @@ function cbSystemCard(){
   const ids = cb.kind==='allonx'
     ? SYSTEM_IDS.filter(id=>(SYSTEMS[id].catalog['All-on-X Components']||[]).length>0)
     : SYSTEM_IDS;
+  if(cb.sys && !cb.editing.has(cbEditKey('sys'))) return cbDoneCard('cb-system', 'System', SYSTEMS[cb.sys].name, '', 'sys', false);
   return `<div class="cb-card"><div class="cb-lbl">System</div><div class="cb-chips">${
     ids.map(id=>cbChip(SYSTEMS[id].name, cb.sys===id, 'sys', cbData({id}))).join('')}</div></div>`;
 }
@@ -398,6 +442,10 @@ function cbImplantCard(){
   const sel = config.implant;
   const g = cbImplantGroup(sel);
   const selItem = g && g.items.find(([,r])=>r===sel.ref);
+  if(selItem && !cb.editing.has(cbEditKey('implant'))){
+    return cbDoneCard('cb-implant', `Implant${cbImplantTeeth().length>1?` · #${cb.activeTooth}`:''}`, `${g.label}, ${selItem[0]}`,
+      `REF ${cbEsc(selItem[1])}${g.caution?` · <span class="cb-warn-i">⚠ ${cbEsc(g.caution)}</span>`:''}`, 'implant', false);
+  }
   const variants = grid.variants.length>1
     ? `<div class="cb-chips cb-variants">${grid.variants.map(v=>cbChip(v, v===cb.variant, 'variant', cbData({v}))).join('')}</div>` : '';
   const head = `<tr><th></th>${cols.map(c=>`<th>${cbEsc(c)}</th>`).join('')}</tr>`;
@@ -426,6 +474,74 @@ function cbNeededCard(){
     all.map(pt=>cbChip((cb.needed.includes(pt.label)?'✓ ':'+ ')+pt.label, cb.needed.includes(pt.label), 'need', cbData({l:pt.label}))).join('')}</div></div>`;
 }
 
+/* The chips that narrow a part type down to one item: option, then type
+   (in two steps when the type names share lead-ins), then the item, as a
+   table when the names allow. `mode` is 'x' for the All-on-X cards. */
+function cbChooser(pt, pick, profile, mode){
+  const L = pt.label, m = mode || '';
+  const res = { html:'', group:null, item:null, kinds:[] };
+  if(pt.options.length>1){
+    res.html += `<div class="cb-chips">${pt.options.map((o,i)=>cbChip(o.label, pick.opt===i, 'opt', cbData({l:L, i, m}))).join('')}</div>`;
+  }
+  if(pick.opt==null) return res;
+  const opt = pt.options[pick.opt];
+  const groups = optionGroups(cb.sys, opt, profile);
+  const shown = groups.find(g=>g.group.label===pick.group) || groups[0];
+  if(shown) res.kinds = diagramKindsFor(cb.sys, shown.group.sourceCategory || opt.category, shown.group);
+  if(!groups.length){
+    res.html += `<p class="cb-warn">None of these fit ${m?'the implants picked':'this implant'}. Order directly from the manufacturer's catalog or your rep if you need one.</p>`;
+    return res;
+  }
+  if(groups.length>1){
+    const labels = groups.map(g=>g.group.label);
+    const split = splitTypeLabels(labels);
+    if(split){
+      const cur = pick.group ? split.head(pick.group) : cb.narrow[cbNarrowKey(L, m)];
+      res.html += `<div class="cb-lbl">Type</div><div class="cb-chips">${split.heads.map(h=>cbChip(h, cur===h, 'gpre', cbData({l:L, p:h, m}))).join('')}</div>`;
+      const inHead = labels.filter(l=>split.head(l)===cur);
+      if(inHead.length>1){
+        res.html += `<div class="cb-lbl">Size</div><div class="cb-chips">${inHead.map(l=>cbChip(split.tail(l), pick.group===l, 'group', cbData({l:L, g:l, m}))).join('')}</div>`;
+      }
+    } else {
+      const lead = commonLead(labels);
+      res.html += `<div class="cb-lbl">Type</div><div class="cb-chips">${labels.map(l=>cbChip(l.slice(lead.length), pick.group===l, 'group', cbData({l:L, g:l, m}))).join('')}</div>`;
+    }
+  }
+  const g = groups.find(g=>g.group.label===pick.group);
+  if(!g) return res;
+  res.group = g.group;
+  const on = rf => !m && pick.ref===rf;
+  const ghah = ghahTable(g.items), axis = !ghah && axisTable(g.items);
+  if(ghah){
+    res.html += `<div class="cb-lbl">GH × AH (mm) · cells show total height</div><table class="cb-grid cb-ghah"><thead><tr><th></th>${ghah.ahs.map(a=>`<th>AH ${a}</th>`).join('')}</tr></thead><tbody>${
+      ghah.ghs.map(gh=>`<tr><th>GH ${gh}</th>${ghah.ahs.map(ah=>{
+        const c = ghah.cells[gh][ah];
+        if(!c) return `<td class="na"></td>`;
+        return `<td><button type="button" class="cb-cell txt${on(c.item[1])?' on':''}" data-a="item"${cbData({l:L, r:c.item[1], m})}>${cbEsc(c.total || '✓')}</button></td>`;
+      }).join('')}</tr>`).join('')}</tbody></table>`;
+  } else if(axis){
+    res.html += `<table class="cb-grid cb-ghah"><thead><tr><th></th>${axis.cols.map(c=>`<th>${cbEsc(c)}</th>`).join('')}</tr></thead><tbody>${
+      axis.rows.map(r=>`<tr><th>${cbEsc(r)}</th>${axis.cols.map(c=>{
+        const it = axis.cells[r][c];
+        if(!it) return `<td class="na"></td>`;
+        return `<td><button type="button" class="cb-cell${on(it[1])?' on':''}" data-a="item"${cbData({l:L, r:it[1], m})} title="${cbEsc(it[0])}"></button></td>`;
+      }).join('')}</tr>`).join('')}</tbody></table>`;
+  } else if(g.items.length>1 || m){
+    res.html += `<div class="cb-lbl">${groups.length>1 ? 'Size / option' : 'Pick one'}</div><div class="cb-chips">${g.items.map(([nm,rf])=>cbChip(nm, on(rf), 'item', cbData({l:L, r:rf, m}))).join('')}</div>`;
+  }
+  if(!m) res.item = g.items.find(([,r])=>r===pick.ref) || null;
+  return res;
+}
+function cbNarrowKey(label, mode){ return `${mode||''}|${mode ? '' : cb.activeTooth}|${label}`; }
+function cbEditKey(key){ return `${cb.activeTooth}|${key}`; }
+
+/* A finished card, folded to one line; tapping it opens it again. */
+function cbDoneCard(id, title, summary, sub, key, removable){
+  return `<div class="cb-card cb-done" id="${id}"><button type="button" class="cb-donebtn" data-a="edit"${cbData({k:key})}>
+    <span class="cb-done-t">✓ ${cbEsc(title)}</span><b>${cbEsc(summary)}</b>${sub?`<small>${sub}</small>`:''}<span class="cb-done-c">Change</span></button>${
+    removable ? `<button type="button" class="cb-x" data-a="need"${cbData({l:title})} title="Not needed">✕</button>` : ''}</div>`;
+}
+
 function cbPartCards(){
   const tooth = cb.activeTooth ?? cbImplantTeeth()[0];
   const config = cbConfig(tooth);
@@ -434,46 +550,23 @@ function cbPartCards(){
   return cbPartTypes().filter(pt=>cb.needed.includes(pt.label)).map(pt=>{
     const pick = config.picks[pt.label] || {};
     const id = 'cb-part-' + pt.label.replace(/\W+/g,'-');
-    let html = '';
-    if(pt.options.length>1){
-      html += `<div class="cb-chips">${pt.options.map((o,i)=>cbChip(o.label, pick.opt===i, 'opt', cbData({l:pt.label, i}))).join('')}</div>`;
+    const c = cbChooser(pt, pick, profile, '');
+    const pack = c.item ? parsePackSize(c.item[0], c.group.label) : 1;
+    const sub = c.item ? `REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}${c.group.caution?` · <span class="cb-warn-i">⚠ confirm before ordering</span>`:''}` : '';
+    if(c.item && !cb.editing.has(cbEditKey(pt.label))){
+      return cbDoneCard(id, pt.label, `${c.group.label}, ${c.item[0]}`, sub, pt.label, true);
     }
-    let ref = null, groupObj = null, itemName = null, kind = null;
-    if(pick.opt!=null){
-      const groups = optionGroups(cb.sys, pt.options[pick.opt], profile);
-      const shown = groups.find(g=>g.group.label===pick.group) || groups[0];
-      if(shown) kind = diagramKindsFor(cb.sys, shown.group.sourceCategory || pt.options[pick.opt].category, shown.group);
-      if(!groups.length){
-        html += `<p class="cb-warn">None of these fit this implant. Order directly from the manufacturer's catalog or your rep if you need one.</p>`;
-      } else {
-        if(groups.length>1){
-          html += `<div class="cb-lbl">Type</div><div class="cb-chips">${groups.map(g=>cbChip(g.group.label, pick.group===g.group.label, 'group', cbData({l:pt.label, g:g.group.label}))).join('')}</div>`;
-        }
-        const g = groups.find(g=>g.group.label===pick.group);
-        if(g){
-          groupObj = g.group;
-          const table = ghahTable(g.items);
-          if(table){
-            html += `<div class="cb-lbl">GH × AH (mm) · cells show total height</div><table class="cb-grid cb-ghah"><thead><tr><th></th>${table.ahs.map(a=>`<th>AH ${a}</th>`).join('')}</tr></thead><tbody>${
-              table.ghs.map(gh=>`<tr><th>GH ${gh}</th>${table.ahs.map(ah=>{
-                const c = table.cells[gh][ah];
-                if(!c) return `<td class="na"></td>`;
-                return `<td><button type="button" class="cb-cell txt${pick.ref===c.item[1]?' on':''}" data-a="item"${cbData({l:pt.label, r:c.item[1]})}>${cbEsc(c.total || '✓')}</button></td>`;
-              }).join('')}</tr>`).join('')}</tbody></table>`;
-          } else if(g.items.length>1){
-            html += `<div class="cb-lbl">${groups.length>1 ? 'Size / option' : 'Pick one'}</div><div class="cb-chips">${g.items.map(([nm,rf])=>cbChip(nm, pick.ref===rf, 'item', cbData({l:pt.label, r:rf}))).join('')}</div>`;
-          }
-          const item = g.items.find(([,r])=>r===pick.ref);
-          if(item){ ref = item[1]; itemName = item[0]; }
-        }
-      }
-    }
-    const missing = !ref && cb.showMissing;
-    const done = ref
-      ? `<div class="cb-summary"><b>${cbEsc(groupObj.label)}, ${cbEsc(itemName)}</b><span class="cb-ref">REF ${cbEsc(ref)}${parsePackSize(itemName, groupObj.label)>1?` · ships ${parsePackSize(itemName, groupObj.label)}/pkg`:''}</span>${groupObj.caution?`<span class="cb-warn">⚠ ${cbEsc(groupObj.caution)}</span>`:''}</div>`
+    const missing = !c.item && cb.showMissing;
+    const done = c.item
+      ? `<div class="cb-summary"><b>${cbEsc(c.group.label)}, ${cbEsc(c.item[0])}</b><span class="cb-ref">REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}</span>${c.group.caution?`<span class="cb-warn">⚠ ${cbEsc(c.group.caution)}</span>`:''}</div>`
       : '';
-    return `<div class="cb-card${missing?' cb-missing-card':''}" id="${id}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${cbDiagram(pt.label, kind)}${html}${done}</div>`;
+    return `<div class="cb-card${missing?' cb-missing-card':''}" id="${id}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${cbDiagram(pt.label, c.kinds)}${c.html}${done}</div>`;
   }).join('');
+}
+
+/* How many implants the All-on-X case has, for default part counts. */
+function cbAllOnXImplantTotal(){
+  return Object.values(cb.implantCounts['Primary Implants'] || {}).reduce((n,x)=>n+(x||0),0);
 }
 
 function cbAllOnXCards(){
@@ -483,31 +576,29 @@ function cbAllOnXCards(){
   });
   const profile = cbAllOnXProfile();
   allOnXPartTypes(cb.sys).forEach(pt=>{
-    if(!cb.needed.includes(pt.label)) return;
-    const counts = cb.counts[pt.label] = cb.counts[pt.label] || {};
-    const sections = [];
-    pt.options.forEach(opt=>{
-      optionGroups(cb.sys, opt, profile).forEach(g=>sections.push({
-        key: opt.label+' / '+g.group.label,
-        title: pt.options.length>1 ? `${opt.label} — ${g.group.label}` : g.group.label,
-        group: g.group, items: g.items, category: opt.category
-      }));
-    });
-    const total = sections.reduce((n,s)=>n+s.items.length,0);
-    const open = cb.openGroups[pt.label] = cb.openGroups[pt.label] || {};
-    const collapsible = total>12 && sections.length>1;
-    let html = '';
-    if(!sections.length) html = `<p class="cb-warn">None of these fit the implants picked.</p>`;
-    sections.forEach(s=>{
-      const hasCount = s.items.some(([,r])=>counts[r]>0);
-      const shown = !collapsible || open[s.key] || hasCount;
-      html += collapsible
-        ? `<button type="button" class="cb-sec${shown?' on':''}" data-a="sec"${cbData({l:pt.label, k:s.key})}>${shown?'▾':'▸'} ${cbEsc(s.title)}</button>`
-        : `<div class="cb-lbl">${cbEsc(s.title)}</div>`;
-      if(shown) html += s.items.map(([nm,rf])=>cbCountRow(pt.label, nm, rf, counts[rf]||0, parsePackSize(nm, s.group.label), s.group.caution)).join('');
-    });
-    const kind = sections.flatMap(sec=>diagramKindsFor(cb.sys, sec.group.sourceCategory || sec.category, sec.group));
-    out.push(`<div class="cb-card" id="cb-part-${pt.label.replace(/\W+/g,'-')}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${cbDiagram(pt.label, kind)}${html}</div>`);
+    const L = pt.label;
+    if(!cb.needed.includes(L)) return;
+    const counts = cb.counts[L] = cb.counts[L] || {};
+    const lines = [];
+    let groupCount = 0;
+    pt.options.forEach(opt=>optionGroups(cb.sys, opt, profile).forEach(g=>{ groupCount++; g.items.forEach(([nm,rf])=>{
+      if(counts[rf]) lines.push({ g, nm, rf, cat: opt.category });
+    }); }));
+    let html = lines.map(l=>cbCountRow(L, groupCount>1 ? `${l.g.group.label} · ${l.nm}` : l.nm, l.rf, counts[l.rf], parsePackSize(l.nm, l.g.group.label), l.g.group.caution)).join('');
+    let kinds = lines.flatMap(l=>diagramKindsFor(cb.sys, l.g.group.sourceCategory || l.cat, l.g.group));
+    if(!lines.length || cb.adding[L]){
+      const r = resolvePartPick(cb.sys, pt, profile, cb.pickers[L], null);
+      const picker = cb.pickers[L] = { opt:r.opt, group:r.group, ref:null };
+      const c = cbChooser(pt, picker, profile, 'x');
+      kinds = c.kinds.concat(kinds);
+      html += `<div class="cb-picker">${lines.length?`<div class="cb-lbl">Add another</div>`:''}${c.html}${
+        c.group ? `<p class="cb-note">Tap a size to add it${cbAllOnXImplantTotal()?', one per implant':''}.</p>` : ''}${
+        lines.length ? `<button type="button" class="cb-link" data-a="xadd"${cbData({l:L})}>Done adding</button>` : ''}</div>`;
+    } else {
+      html += `<button type="button" class="cb-link" data-a="xadd"${cbData({l:L})}>+ Add another size</button>`;
+    }
+    const missing = !lines.length && cb.showMissing;
+    out.push(`<div class="cb-card${missing?' cb-missing-card':''}" id="cb-part-${L.replace(/\W+/g,'-')}"><h3>${cbEsc(L)}<button type="button" class="cb-x" data-a="need"${cbData({l:L})} title="Not needed">✕</button></h3>${cbDiagram(L, kinds)}${html}</div>`);
   });
   return out.join('');
 }
@@ -708,13 +799,15 @@ function cbOnClick(e){
       if(!teeth.includes(cb.activeTooth)) cb.activeTooth = teeth[0] ?? null;
       break;
     }
-    case 'sys': cbSetSystem(d.id); break;
+    case 'sys': cbSetSystem(d.id); cb.editing.delete(cbEditKey('sys')); break;
     case 'variant': cb.variant = d.v; break;
     case 'tab': cb.activeTooth = Number(d.n); break;
     case 'relink': delete cb.own[cb.activeTooth]; break;
     case 'implant': {
       const config = cbEditableConfig();
       config.implant = { group:d.g, ref:d.r };
+      cb.editing.delete(cbEditKey('implant'));
+      cb.lastDone = 'cb-implant';
       break;
     }
     case 'need': {
@@ -727,19 +820,43 @@ function cbOnClick(e){
       }
       break;
     }
-    case 'opt': {
-      const config = cbEditableConfig();
-      config.picks[d.l] = { opt:Number(d.i), group:null, ref:null };
-      break;
-    }
-    case 'group': {
-      const config = cbEditableConfig();
-      config.picks[d.l] = { ...config.picks[d.l], group:d.g, ref:null };
-      break;
-    }
-    case 'item': {
-      const config = cbEditableConfig();
-      config.picks[d.l] = { ...config.picks[d.l], ref:d.r };
+    case 'opt': case 'group': case 'gpre': case 'item': {
+      const x = d.m==='x';
+      const picks = x ? cb.pickers : cbEditableConfig().picks;
+      const cur = picks[d.l] || {};
+      if(d.a==='opt'){ picks[d.l] = { opt:Number(d.i), group:null, ref:null }; delete cb.narrow[cbNarrowKey(d.l, d.m)]; }
+      else if(d.a==='group') picks[d.l] = { ...cur, group:d.g, ref:null };
+      else if(d.a==='gpre'){
+        // First step of a two-step type pick; a step with one type picks it.
+        cb.narrow[cbNarrowKey(d.l, d.m)] = d.p;
+        const pt = cbPartTypes().find(t=>t.label===d.l);
+        const profile = x ? cbAllOnXProfile() : cbProfileFor(cbConfig(cb.activeTooth ?? cbImplantTeeth()[0]).implant);
+        const labels = optionGroups(cb.sys, pt.options[cur.opt], profile).map(g=>g.group.label);
+        const split = splitTypeLabels(labels);
+        const inHead = split ? labels.filter(l=>split.head(l)===d.p) : [];
+        picks[d.l] = { ...cur, group: inHead.length===1 ? inHead[0] : null, ref:null };
+      }
+      else if(x){
+        // All-on-X: tapping a size adds it, one per implant not yet covered.
+        const counts = cb.counts[d.l] = cb.counts[d.l] || {};
+        if(!counts[d.r]){
+          const pt = cbPartTypes().find(t=>t.label===d.l);
+          const g = optionGroups(cb.sys, pt.options[cur.opt], cbAllOnXProfile()).find(g=>g.group.label===cur.group);
+          const name = g ? (g.items.find(([,r])=>r===d.r) || [''])[0] : '';
+          const pack = parsePackSize(name, cur.group || '');
+          const covered = Object.keys(counts).reduce((n,r)=>n+counts[r]*cbPackFor(d.l, r), 0);
+          const want = Math.max(1, cbAllOnXImplantTotal() - covered);
+          counts[d.r] = Math.max(1, Math.ceil(want / pack));
+        }
+        cb.adding[d.l] = false;
+        cb.lastDone = 'cb-part-' + d.l.replace(/\W+/g,'-');
+      }
+      else {
+        picks[d.l] = { ...cur, ref:d.r };
+        cb.editing.delete(cbEditKey(d.l));
+        cb.lastDone = 'cb-part-' + d.l.replace(/\W+/g,'-');
+      }
+      if(!x && d.a!=='item') cb.editing.add(cbEditKey(d.l));
       break;
     }
     case 'icnt': {
@@ -754,15 +871,30 @@ function cbOnClick(e){
       if(!counts[d.r]) delete counts[d.r];
       break;
     }
-    case 'sec': {
-      const open = cb.openGroups[d.l] = cb.openGroups[d.l] || {};
-      open[d.k] = !open[d.k];
-      break;
-    }
+    case 'edit': cb.editing.add(cbEditKey(d.k)); break;
+    case 'xadd': cb.adding[d.l] = !cb.adding[d.l]; break;
     case 'dg': cb.dgOpen = cb.dgOpen===d.k ? null : d.k; break;
     case 'add': cbAddToOrder(); return;
     case 'cancel': cbCancel(); return;
     default: return;
   }
   renderCaseBuilder();
+  // A card that just folded up: keep it in view so the next one follows.
+  if(cb && cb.lastDone){
+    const el = document.getElementById(cb.lastDone);
+    cb.lastDone = null;
+    if(el && el.getBoundingClientRect().top < 70) window.scrollBy({top: el.getBoundingClientRect().top - 80});
+  }
+}
+
+/* Pieces per package for a counted All-on-X part. */
+function cbPackFor(label, ref){
+  const pt = cbPartTypes().find(t=>t.label===label);
+  for(const opt of (pt ? pt.options : [])){
+    for(const g of SYSTEMS[cb.sys].catalog[opt.category] || []){
+      const it = g.items.find(([,r])=>r===ref);
+      if(it) return parsePackSize(it[0], g.label);
+    }
+  }
+  return 1;
 }

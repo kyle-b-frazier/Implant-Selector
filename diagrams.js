@@ -33,6 +33,7 @@ function diagramConceptsFor(systemId, category, group){
   if(category === WIZARD_IMPLANTS_CATEGORY_NAME[systemId]) return [];
   const text = group.label + ' ' + group.items.map(([nm])=>nm).join(' ');
   const out = [];
+  if(/for final abutments/i.test(group.label)) out.push('pair-dia');
   if(/Open Tray|Closed Tray/i.test(text)) out.push('tray');
   if(/Cover Screw|Closure Cap/i.test(category) ||
      (/Healing Abutment/i.test(category) && !/Healing Cap|Multi-unit/i.test(group.label))) out.push('cover');
@@ -56,6 +57,7 @@ const DIAGRAM_CAPTIONS = {
   'gh-angled': '<b>GH (gingival height)</b> is the height of the collar that passes through the gum, measured from the implant platform. Angled versions tilt the top to make up for an implant placed at an angle.',
   collar: '<b>H</b> is the collar height: the part that passes through the gum, measured from the implant platform. Nobel Biocare lists it as H.',
   'collar-angled': '<b>H</b> is the collar height: the part that passes through the gum, measured from the implant platform. Nobel Biocare lists it as H. Angled versions tilt the top to make up for an implant placed at an angle.',
+  'pair-dia': 'Two diameters: the <b>first</b> is the healing abutment\'s own width. <b>"For final abutments ∅…"</b> is the width of the final or temporary abutment it is sized for (e.g. a ∅4.5mm Variobase® or temporary abutment), so the gum heals to the right size for it. Both fit the same RB/WB connection on the implant.',
   tray: '<b>Open tray:</b> the coping has a long guide screw that sticks out through a hole in the tray. You undo the screw before lifting the tray, so the coping comes out locked inside the impression. <b>Closed tray:</b> the coping is short and stays on the implant when the tray comes off; you then unscrew it and press it back into its spot in the impression. Open tray is often chosen for several or angled implants; closed tray is simpler when there is little room to open.',
   cover: 'A <b>cover screw</b> (Straumann calls it a closure cap) sits flush on the implant and the gum is closed over it. A second visit uncovers it and swaps in a healing abutment (two-stage). A <b>healing abutment</b> goes on at surgery instead and stays through the gum, so the gum heals around it (one-stage). Which one goes on at surgery depends on whether the implant is buried or left exposed.',
   engaging: '<b>Engaging</b> parts have an anti-rotation shape at the bottom that keys into the implant, so a single crown can\'t spin. <b>Non-engaging</b> parts have a smooth bottom, so a bridge or bar joining several implants can still seat when the implants aren\'t parallel. Straumann labels these "for Crown" and "for Bridge/Bar".',
@@ -203,6 +205,12 @@ function dgLeader(x1, y1, x2, y2, title, sub, color, anchor){
     `<circle cx="${x1}" cy="${y1}" r="2" fill="${DG.soft}"/>` +
     dgLabel(x2 + (anchor==='end' ? -4 : 4), y2+4, title, sub, color || DG.ink, anchor);
 }
+function dgHArrow(x1, x2, y, color){
+  const a = 5;
+  return `<line x1="${x1+a}" y1="${y}" x2="${x2-a}" y2="${y}" stroke="${color}" stroke-width="1.6"/>` +
+    `<path d="M${x1+a+1} ${y-a} L${x1} ${y} L${x1+a+1} ${y+a}" fill="none" stroke="${color}" stroke-width="1.6"/>` +
+    `<path d="M${x2-a-1} ${y-a} L${x2} ${y} L${x2-a-1} ${y+a}" fill="none" stroke="${color}" stroke-width="1.6"/>`;
+}
 function dgDivider(){
   return `<line x1="180" y1="6" x2="180" y2="230" stroke="#D5DBE4" stroke-width="1" stroke-dasharray="4 4"/>`;
 }
@@ -210,6 +218,27 @@ const DG_TRAY = {fill:'#EEF4E4', line:'#8DAA62', tray:'#C9D3E0'};
 const NOVALOC_INSERT_COLORS = {Red:'#D23B3B', White:'#FFFFFF', Yellow:'#F2C230', Green:'#3E9B4F', Blue:'#2F6FD0', Black:'#222'};
 
 function diagramConceptSvg(kind){
+  if(kind==='pair-dia'){
+    const p = 172, g = 126;
+    let s = dgPanel(0, p, g, false) + dgPanel(180, p, g, false) + dgDivider();
+    // Now: the healing abutment, its own width across the top.
+    s += dgImplantTop(90, p, 236) +
+      `<path d="M70 ${p} L62 ${g} L62 102 Q62 94 70 94 L110 94 Q118 94 118 102 L118 ${g} L110 ${p} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.6"/>` +
+      `<line x1="62" y1="74" x2="62" y2="92" stroke="${DG.partLine}" stroke-width="1"/><line x1="118" y1="74" x2="118" y2="92" stroke="${DG.partLine}" stroke-width="1"/>` +
+      dgHArrow(62, 118, 80, DG.partLine) +
+      `<text x="90" y="68" text-anchor="middle" font-size="13" font-weight="700" fill="${DG.partLine}">first ∅</text>`;
+    // Later: the final abutment it was sized for, in the gum it shaped.
+    s += dgImplantTop(270, p, 236) +
+      `<path d="M250 ${p} L246 ${g} L294 ${g} L290 ${p} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.6"/>` +
+      `<path d="M254 ${g} L258 96 L282 96 L286 ${g} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.6"/>` +
+      `<line x1="246" y1="74" x2="246" y2="${g-2}" stroke="${DG.dim}" stroke-width="1" stroke-dasharray="2 2"/><line x1="294" y1="74" x2="294" y2="${g-2}" stroke="${DG.dim}" stroke-width="1" stroke-dasharray="2 2"/>` +
+      dgHArrow(246, 294, 80, DG.dim) +
+      `<text x="270" y="68" text-anchor="middle" font-size="13" font-weight="700" fill="${DG.dim}">"for final abutments" ∅</text>`;
+    s += dgLabel(8, 20, 'Now', 'healing abutment', DG.ink) + dgLabel(188, 20, 'Later', 'final abutment it is sized for', DG.ink) +
+      `<text x="8" y="228" font-size="10.5" fill="#9A845C">Bone</text>` +
+      `<text x="8" y="${g+22}" font-size="10.5" fill="#B06B6B">Gum</text>`;
+    return dgSvg(s, 'Healing abutment diameter compared with the final abutment diameter it is sized for');
+  }
   if(kind==='cover'){
     const p = 160, g = 116;
     let s = dgPanel(0, p, g, true) + dgPanel(180, p, g, false) + dgDivider();
@@ -362,11 +391,10 @@ function diagramHtml(kind){
 
 /* Text for the ⓘ button. */
 const DIAGRAM_BUTTON_LABELS = {
-  ghah:'What do GH and AH mean?', 'gh-h':'What do GH and H mean?', h:'Healing abutment height (H)',
-  gh:'What does GH mean?', 'gh-angled':'What do GH and the angle mean?',
-  collar:'Collar height (H)', 'collar-angled':'Collar height (H) and angle', implant:'Diameter, length and platform',
-  tray:'Open vs closed tray', cover:'Cover screw vs healing abutment', engaging:'Engaging vs non-engaging',
-  'mu-stack':'How the multi-unit parts stack', novaloc:'How Novaloc parts fit together', locator:'How Locator parts fit together'
+  ghah:'GH & AH', 'gh-h':'GH & H', h:'Height (H)', gh:'What is GH?', 'gh-angled':'GH & angle',
+  collar:'Collar height (H)', 'collar-angled':'Collar height & angle', implant:'Ø, length & platform',
+  'pair-dia':'Which Ø is which?', tray:'Open vs closed tray', cover:'Cover screw vs healer', engaging:'Engaging vs non-engaging',
+  'mu-stack':'Multi-unit stack', novaloc:'Novaloc parts', locator:'Locator parts'
 };
 
 /* The drawings to offer for a set of groups, without repeats: the angled

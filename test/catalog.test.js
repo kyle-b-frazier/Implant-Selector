@@ -375,7 +375,7 @@ test('case builder: picks fill in single choices and remembered ones, and drop w
   const rb = implant('blc', '035.9310S');
   // Three subtypes and several groups: nothing is chosen for you.
   assert.deepEqual(plain($('resolvePartPick')('blc', healing, wb, null, null)), { opt: null, group: null, ref: null });
-  const remembered = { opt: 0, group: 'RB/WB, Ø3.8mm platform (Crown ∅4mm)', ref: '064.4204S' };
+  const remembered = { opt: 0, group: 'RB/WB, ∅4mm (for final abutments ∅3.8mm)', ref: '064.4204S' };
   assert.deepEqual(plain($('resolvePartPick')('blc', healing, wb, null, remembered)), remembered);
   // A WB-only healing abutment remembered for a WB implant is not carried over to an RB one.
   const wbOnly = { opt: 0, group: 'WB, ∅6.0mm (for final abutments ∅5.5mm)', ref: '064.8201S' };
@@ -387,7 +387,7 @@ test('case builder: picks fill in single choices and remembered ones, and drop w
 });
 
 test('case builder: GH × AH table and pack sizes', () => {
-  const group = SYSTEMS.blc.catalog['Healing Abutments — Crown'].find((g) => g.label === 'RB/WB, Ø3.8mm platform (Crown ∅4mm)');
+  const group = SYSTEMS.blc.catalog['Healing Abutments — Crown'].find((g) => g.label === 'RB/WB, ∅4mm (for final abutments ∅3.8mm)');
   const table = plain($('ghahTable')(group.items));
   assert.deepEqual(table.ghs, ['1.5', '2.5', '3.5']);
   assert.deepEqual(table.ahs, ['2', '4', '6']);
@@ -402,7 +402,7 @@ test('case builder: GH × AH table and pack sizes', () => {
 test('explanatory drawings: each size naming gets the drawing that explains it', () => {
   const kind = (sid, category, label) => $('diagramKindFor')(sid, category, SYSTEMS[sid].catalog[category].find((g) => g.label === label));
   assert.equal(kind('blc', 'Implants', 'Ø 4.5mm WB — SLActive®, Roxolid®'), 'implant');
-  assert.equal(kind('blc', 'Healing Abutments — Crown', 'RB/WB, Ø3.8mm platform (Crown ∅4mm)'), 'ghah');
+  assert.equal(kind('blc', 'Healing Abutments — Crown', 'RB/WB, ∅4mm (for final abutments ∅3.8mm)'), 'ghah');
   assert.equal(kind('blc', 'Anatomic Healing Abutments XC', 'RB/WB XL shape, Ø4.5mm'), 'gh-h');
   assert.equal(kind('blc', 'Screw-retained / Multi-unit Abutments', 'Straight, angulation 0° (sterile)'), 'gh');
   assert.equal(kind('blc', 'Screw-retained / Multi-unit Abutments', 'Angled 17° (sterile)'), 'gh-angled');
@@ -431,8 +431,23 @@ test('explanatory drawings: concept drawings attach to the groups they explain',
   // Nobel's zygoma "Position Locator" is not a Locator attachment.
   assert.ok(!kinds('nzcc', 'Impression & Position Locators', 'Position Locator, Desktop (fits all multi-unit abutments except the Brånemark System wide-platform external hex)').includes('locator'));
   assert.deepEqual(kinds('blc', 'Implants', 'Ø 4.5mm WB — SLActive®, Roxolid®'), ['implant']);
-  for (const k of ['tray', 'cover', 'engaging', 'mu-stack', 'novaloc', 'locator']) {
+  assert.deepEqual(kinds('blc', 'Healing Abutments — Crown', 'RB/WB, ∅5mm (for final abutments ∅4.5mm)'), ['ghah', 'pair-dia', 'cover']);
+  for (const k of ['pair-dia', 'tray', 'cover', 'engaging', 'mu-stack', 'novaloc', 'locator']) {
     assert.match($('diagramHtml')(k), /<svg[\s\S]*<\/svg>/, k);
     assert.ok($('DIAGRAM_BUTTON_LABELS')[k], k);
   }
+});
+
+test('case builder: long chip lists are shortened', () => {
+  const split = $('splitTypeLabels')(['VITA CAD-Temp®', 'For Crowns — RB/WB ∅3.8mm', 'For Crowns — RB/WB ∅4.5mm', 'For Crowns — RB/WB ∅6.0mm', 'For Bridge/Bar — RB/WB ∅4.5mm', 'Accessories']);
+  assert.deepEqual(plain(split.heads), ['VITA CAD-Temp®', 'For Crowns', 'For Bridge/Bar', 'Accessories']);
+  assert.equal(split.tail('For Crowns — RB/WB ∅4.5mm'), 'RB/WB ∅4.5mm');
+  assert.equal($('splitTypeLabels')(['A', 'B', 'C', 'D', 'E']), null);
+  assert.equal($('commonLead')(['RB/WB, ∅4mm (x)', 'RB/WB, ∅5mm (y)']), 'RB/WB, ');
+  assert.equal($('commonLead')(['RB/WB, ∅4mm', 'WB, ∅6mm']), '');
+  const rc = SYSTEMS.blt.catalog['Healing Abutments'].find((g) => g.label === 'RC — Ø4.5/5/6/6.5mm, conical');
+  const t = $('axisTable')(rc.items);
+  assert.deepEqual(plain(t.rows), ['Ø4.5mm', 'Ø5mm', 'Ø6mm', 'Ø6.5mm']);
+  assert.deepEqual(plain(t.cols), ['H2mm', 'H4mm', 'H6mm']);
+  assert.equal($('axisTable')([['Open Tray, short', 'a'], ['Closed Tray', 'b']]), null);
 });

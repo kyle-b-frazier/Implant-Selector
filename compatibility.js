@@ -207,7 +207,7 @@ const WIZARD_CONFIG = {
       {label:"Anatomic (cementable)", category:"Anatomic Abutments"},
       {label:"Variobase® (screw-retained crown)", category:"Variobase® for Crown"},
       {label:"Gold", category:"Gold Abutments"},
-      {label:"Novaloc® (overdenture)", category:"Novaloc® Abutments"}
+      {label:"Novaloc® (overdenture)", category:"Novaloc® Abutments", labelMustInclude:["angulation","Angled"]}
     ]},
     {label:"Replacement Screw", options:[{label:"Replacement Screw", category:"Replacement Screws"}]}
   ],
