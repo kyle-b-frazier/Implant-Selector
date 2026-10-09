@@ -22,7 +22,7 @@ function diagramKindFor(systemId, category, group){
   if(/Healing/i.test(category) && heightOnly) return 'h';
   // Nobel Biocare writes an abutment's collar height as "H" (its S series
   // brochure labels the same column "Collar height").
-  if(NOBEL_PLATFORM_SYSTEMS.has(systemId) && heightOnly && /Abutment/i.test(category) && !/Healing Cap|Impression/i.test(group.label)){
+  if(NOBEL_PLATFORM_SYSTEMS.has(systemId) && heightOnly && /Abutment/i.test(category) && !/Healing Cap|Impression|Coping/i.test(group.label + ' ' + names.join(' '))){
     return angled() ? 'collar-angled' : 'collar';
   }
   return null;
@@ -61,7 +61,7 @@ const DIAGRAM_CAPTIONS = {
   tray: '<b>Open tray:</b> the coping has a long guide screw that sticks out through a hole in the tray. You undo the screw before lifting the tray, so the coping comes out locked inside the impression. <b>Closed tray:</b> the coping is short and stays on the implant when the tray comes off; you then unscrew it and press it back into its spot in the impression. Open tray is often chosen for several or angled implants; closed tray is simpler when there is little room to open.',
   cover: 'A <b>cover screw</b> (Straumann calls it a closure cap) sits flush on the implant and the gum is closed over it. A second visit uncovers it and swaps in a healing abutment (two-stage). A <b>healing abutment</b> goes on at surgery instead and stays through the gum, so the gum heals around it (one-stage). Which one goes on at surgery depends on whether the implant is buried or left exposed.',
   engaging: '<b>Engaging</b> parts have an anti-rotation shape at the bottom that keys into the implant, so a single crown can\'t spin. <b>Non-engaging</b> parts have a smooth bottom, so a bridge or bar joining several implants can still seat when the implants aren\'t parallel. Straumann labels these "for Crown" and "for Bridge/Bar".',
-  'mu-stack': 'The <b>multi-unit abutment</b> is screwed into the implant and normally stays in. Everything after that attaches to the abutment, not the implant: a <b>healing or protective cap</b> while there is no bridge, then a <b>temporary coping</b> built into the bridge and held by a <b>prosthetic screw</b>. Angled abutments (e.g. 17° or 30°) correct for tilted implants so all the screws come out in a usable direction.',
+  'mu-stack': 'The <b>multi-unit abutment</b> is screwed into the implant and normally stays in. Everything after that attaches to the abutment, not the implant: a <b>healing or protective cap</b> until the fixed denture or bridge goes in, then a <b>temporary coping</b> built into the <b>fixed denture or bridge</b> and held by a <b>prosthetic screw</b>. Angled abutments (e.g. 17° or 30°) correct for tilted implants so all the screws come out in a usable direction.',
   novaloc: 'The <b>abutment</b> screws into the implant. A <b>matrix housing</b> is set into the denture, and a <b>retention insert</b> clicks into the housing and snaps over the abutment head. Swapping the insert changes how firmly the denture holds; Novaloc color-codes the inserts by retention force, shown in the strip.',
   locator: 'The <b>Locator abutment</b> screws into the implant. A metal cap (housing) is processed into the denture, and a nylon <b>retention insert</b> sits in the cap and snaps onto the abutment. Inserts come in Zero, Low, Medium and High retention; swapping them changes how firmly the denture holds.',
   implant: '<b>Ø</b> is the implant\'s diameter and <b>length</b> is how far it goes into the bone. The <b>platform</b> (e.g. RB/WB, NC/RC, NP/RP) is the connection on top; every part has to match it, which is why the app only offers parts for the implant\'s platform.'
@@ -322,19 +322,26 @@ function diagramConceptSvg(kind){
     // Multi-unit abutment: collar through the gum, then a short cone.
     s += `<path d="M158 ${p} L152 ${g} L208 ${g} L202 ${p} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.6"/>` +
       `<path d="M152 ${g} L162 ${g-20} L198 ${g-20} L208 ${g} Z" fill="${DG.part}" stroke="${DG.partLine}" stroke-width="1.6"/>`;
-    // Bridge, with a screw channel.
-    s += `<path d="M96 100 Q96 52 130 50 L230 50 Q264 52 264 100 L264 112 Q180 124 96 112 Z" fill="#FBF6EA" stroke="#B9A77F" stroke-width="1.4"/>` +
-      `<rect x="170" y="50" width="20" height="70" fill="#FFFFFF" stroke="#B9A77F" stroke-width="1" stroke-dasharray="2 2"/>`;
+    // Fixed denture (or bridge): teeth set in pink acrylic, with a screw
+    // channel through the middle tooth.
+    const tooth = (cx, w, top, bottom) => {
+      const h = w/2, q = w/4;
+      return `<path d="M${cx-h+3} ${bottom} C${cx-h-2} ${top+34} ${cx-h} ${top+12} ${cx-h+5} ${top+6} Q${cx-q} ${top-3} ${cx-q/2} ${top+5} Q${cx} ${top-1} ${cx+q/2} ${top+5} Q${cx+q} ${top-3} ${cx+h-5} ${top+6} C${cx+h} ${top+12} ${cx+h+2} ${top+34} ${cx+h-3} ${bottom} Z" fill="#FFFDF6" stroke="#A8996F" stroke-width="1.3"/>`;
+    };
+    s += tooth(119, 56, 52, 112) + tooth(241, 56, 52, 112) + tooth(180, 64, 42, 112);
+    s += `<path d="M78 104 Q110 116 140 98 Q180 118 220 98 Q250 116 282 104 L282 130 Q180 142 78 130 Z" fill="#EFA9B5" stroke="#C47585" stroke-width="1.3"/>` +
+      `<path d="M140 98 Q141 104 143 108 M220 98 Q219 104 217 108" fill="none" stroke="#C47585" stroke-width="1"/>` +
+      `<rect x="171" y="44" width="18" height="${136-44}" fill="#FFFFFF" fill-opacity=".85" stroke="#A8996F" stroke-width="1" stroke-dasharray="2 2"/>`;
     // Temporary coping over the cone, then the prosthetic screw.
-    s += `<path d="M160 ${g-18} L160 104 L200 104 L200 ${g-18} Z" fill="#E9EEF5" stroke="${DG.metalLine}" stroke-width="1.4"/>` +
-      `<rect x="177" y="74" width="6" height="${g-20-74}" fill="${DG.metal}" stroke="${DG.metalLine}" stroke-width="1.2"/>` +
-      `<rect x="171" y="66" width="18" height="9" rx="2" fill="${DG.metal}" stroke="${DG.metalLine}" stroke-width="1.2"/>`;
+    s += `<path d="M160 ${g-18} L160 120 L200 120 L200 ${g-18} Z" fill="#E9EEF5" stroke="${DG.metalLine}" stroke-width="1.4"/>` +
+      `<rect x="177" y="76" width="6" height="${g-20-76}" fill="${DG.metal}" stroke="${DG.metalLine}" stroke-width="1.2"/>` +
+      `<rect x="171" y="68" width="18" height="9" rx="2" fill="${DG.metal}" stroke="${DG.metalLine}" stroke-width="1.2"/>`;
     s += `</g>` +
-      dgLeader(133, 70, 222, 30, 'Prosthetic screw', '', DG.ink) +
-      dgLeader(190, 80, 222, 72, 'Bridge', '', DG.ink) +
-      dgLeader(144, 130, 222, 118, 'Temporary coping', 'or a healing cap first', DG.ink) +
-      dgLeader(150, 172, 222, 160, 'Multi-unit abutment', 'stays in the implant', DG.partLine) +
-      dgLeader(147, 230, 222, 226, 'Implant', '', DG.ink);
+      dgLeader(133, 72, 222, 30, 'Prosthetic screw', '', DG.ink) +
+      dgLeader(212, 122, 222, 76, 'Fixed denture', 'or bridge', DG.ink) +
+      dgLeader(144, 144, 222, 124, 'Temporary coping', 'or a healing cap first', DG.ink) +
+      dgLeader(150, 182, 222, 184, 'Multi-unit abutment', 'stays in the implant', DG.partLine) +
+      dgLeader(147, 236, 222, 236, 'Implant', '', DG.ink);
     return dgSvg(s, 'How multi-unit parts stack', H);
   }
   if(kind==='novaloc' || kind==='locator'){
