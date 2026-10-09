@@ -91,7 +91,7 @@
   .home-card-outer{max-width:640px; width:100%; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.12); border:1px solid #d5d8dd; height:fit-content;}
   .home-hero{background:var(--navy); display:flex; align-items:center; gap:28px; padding:32px 36px; opacity:0; animation:homeFadeDown .5s ease-out forwards;}
   .home-hero .art{flex:0 0 auto; width:130px; height:130px; border-radius:14px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.06); color:var(--green); box-shadow:0 8px 24px rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.12);}
-  .home-hero .art svg{width:62%; height:62%; display:block;}
+  .home-hero .art svg{width:72%; height:72%; display:block;}
   .home-hero .txt .eyebrow{font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--green); font-weight:700; margin:0 0 8px;}
   .home-hero .txt h2{margin:0; font-size:26px; color:#fff; font-weight:700; letter-spacing:-.01em; line-height:1.2;}
   .home-btn-row{padding:26px 36px 34px; display:flex; flex-direction:column; gap:14px;}
@@ -120,6 +120,8 @@
   @media (max-width:640px){
     .home-hero{flex-direction:column; text-align:center; padding:28px 24px;}
     .home-hero .art{width:110px; height:110px;}
+    .home-btn-row{padding:20px 16px 24px; gap:12px;}
+    .home-card{padding:16px; gap:14px;}
   }
 
   /* ---- Explanatory drawings (diagrams.js) ---- */
@@ -172,6 +174,9 @@
   .cb-note{font-size:12.5px; color:var(--ink-soft); margin:8px 0 0; line-height:1.45;}
   .cb-note b{color:var(--ink);}
   .cb-note.cb-top{margin:-4px 0 10px;}
+  .cb-note.cb-last{color:var(--green-deep); font-weight:600;}
+  .cb-brand{font-size:12.5px; font-weight:700; color:var(--navy); margin:12px 0 6px;}
+  .cb-lbl + .cb-brand{margin-top:2px;}
   .cb-note.cb-axis{margin-top:6px; font-size:11.5px;}
   .cb-note.cb-pad{padding:0 4px;}
   .cb-missing{color:#B23 !important; font-weight:600;}
@@ -1028,7 +1033,10 @@ function renderGroupHead(container, systemId, category, group, labelPrefix){
 }
 
 /* ---------- Render category / search view ---------- */
-const ICON_IMPLANT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.6c0-1.1 1.6-2 3.5-2s3.5.9 3.5 2-1.6 2-3.5 2-3.5-.9-3.5-2z"/><line x1="12" y1="5.6" x2="12" y2="8"/><path d="M9 8h6l-1 10.3-2 3.1-2-3.1z"/><line x1="9.3" y1="10" x2="14.7" y2="10"/><line x1="9.5" y1="12" x2="14.5" y2="12"/><line x1="9.7" y1="14" x2="14.3" y2="14"/><line x1="10" y1="16" x2="14" y2="16"/></svg>`;
+const ICON_IMPLANT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 7.4c-.5-2.7.6-5 2.6-5.2 1.3-.1 1.8.7 2.8.7s1.5-.8 2.8-.7c2 .2 3.1 2.5 2.6 5.2-.3 1.6-1.2 2.6-2.1 3H8.7c-.9-.4-1.8-1.4-2.1-3z"/><path d="M9.8 10.4h4.4l-.5 2.1h-3.4z"/><path d="M10.1 12.5h3.8l-.4 6.6-1.5 2.6-1.5-2.6z"/><line x1="10" y1="14.6" x2="14" y2="14.2"/><line x1="10.1" y1="16.8" x2="13.9" y2="16.4"/></svg>`;
+/* The larger, filled version for the home screen: crown, abutment and a
+   threaded implant body. */
+const ICON_IMPLANT_HERO = `<svg viewBox="0 0 64 84" xmlns="http://www.w3.org/2000/svg"><path d="M13 21C11 12 14 4.5 20.5 4c4-.3 6 2.6 11.5 2.6S39.5 3.7 43.5 4C50 4.5 53 12 51 21c-1 4.6-3.6 8-6.4 9.4H19.4C16.6 29 14 25.6 13 21z" fill="#F4F7FC"/><path d="M20.5 9.5c-2.2.6-3.4 3-3.2 6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".9"/><path d="M23 30.4h18l-2.2 8.2H25.2z" fill="#AFC0D6"/><path d="M24.6 38.6h14.8l-1.3 29.4L32 79l-6.1-11z" fill="currentColor"/>${[43,49,55,61,67].map(y=>`<path d="M24.2 ${y+2.6}L39.8 ${y-1.2}" stroke="#0B2559" stroke-width="2.2" stroke-linecap="round"/>`).join('')}</svg>`;
 const ICON_ARCH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.2c0 5.9 4 10.3 9 10.3s9-4.4 9-10.3"/><path d="M4.3 7c2.3 1.9 4.9 2.9 7.7 2.9S17.4 8.9 19.7 7"/><line x1="7.1" y1="9.5" x2="7.7" y2="12.4"/><line x1="10.5" y1="10.7" x2="10.7" y2="13.6"/><line x1="13.5" y1="10.7" x2="13.3" y2="13.6"/><line x1="16.9" y1="9.5" x2="16.3" y2="12.4"/></svg>`;
 const ICON_BOOK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.8c-1.7-1.3-3.8-1.9-5.9-1.9-.7 0-1.3.6-1.3 1.3v11c0 .7.6 1.3 1.3 1.3 2.1 0 4.2.6 5.9 1.9 1.7-1.3 3.8-1.9 5.9-1.9.7 0 1.3-.6 1.3-1.3v-11c0-.7-.6-1.3-1.3-1.3-2.1 0-4.2.6-5.9 1.9z"/><line x1="12" y1="6.8" x2="12" y2="19.4"/></svg>`;
 
@@ -1060,7 +1068,7 @@ function renderHomeView(){
   el.innerHTML = `
     <div class="home-card-outer">
       <div class="home-hero">
-        <div class="art">${ICON_IMPLANT}</div>
+        <div class="art">${ICON_IMPLANT_HERO}</div>
         <div class="txt">
           <p class="eyebrow">Implant Reference</p>
           <h2>Implant Parts Selector</h2>
@@ -1069,7 +1077,7 @@ function renderHomeView(){
       <div class="home-btn-row">
         <button class="home-card" id="homeCardWizard" type="button">
           <div class="hc-icon">${ICON_IMPLANT}</div>
-          <div class="hc-txt"><h3>Single Implant / Bridge Wizard</h3></div>
+          <div class="hc-txt"><h3>Crown &amp; Bridge Wizard</h3></div>
           <div class="hc-arrow">&rsaquo;</div>
         </button>
         <button class="home-card" id="homeCardAllOnX" type="button">

@@ -226,6 +226,7 @@ function newCase(kind){
     implantCounts:{ 'Primary Implants':{}, 'Backup Implants':{} },
     dgOpen:null,          // which card's explanatory drawing is showing
     editing:new Set(),    // finished cards reopened to change them
+    confirmed:new Set(),  // parts picked by a tap (not just remembered) — see cbConfKey
     narrow:{},            // two-step type chips: the first step picked
     pickers:{},           // allonx: each card's size picker
     adding:{},            // allonx: cards with "add another size" open
@@ -264,7 +265,10 @@ function cbConfig(tooth){
 function cbEditableConfig(){
   const tooth = cb.activeTooth;
   if(cb.fixedImplant || tooth==null || cbIsLead(tooth)) return cb.lead;
-  if(!cb.own[tooth]) cb.own[tooth] = JSON.parse(JSON.stringify(cb.lead));
+  if(!cb.own[tooth]){
+    cb.own[tooth] = JSON.parse(JSON.stringify(cb.lead));
+    [...cb.confirmed].filter(k=>k.startsWith('lead|')).forEach(k=>cb.confirmed.add(tooth + k.slice(4)));
+  }
   return cb.own[tooth];
 }
 
@@ -293,7 +297,7 @@ function cbSetSystem(sysId){
   cb.own = {};
   cb.counts = {};
   cb.implantCounts = { 'Primary Implants':{}, 'Backup Implants':{} };
-  cb.narrow = {}; cb.pickers = {}; cb.adding = {}; cb.editing = new Set(); cb.follow = {}; cb.touched = {}; cb.fromLast = {};
+  cb.narrow = {}; cb.pickers = {}; cb.adding = {}; cb.editing = new Set(); cb.confirmed = new Set(); cb.follow = {}; cb.touched = {}; cb.fromLast = {};
 }
 
 function cbPartTypes(){
@@ -391,7 +395,7 @@ function renderCaseBuilder(){
     parts.push(`<div class="cb-card"><div class="cb-summary"><b>${cbEsc(it.group)}, ${cbEsc(it.name)}</b><span class="cb-ref">REF ${cbEsc(it.ref)} · already in your order${it.qty>1?` · qty ${it.qty}`:''}</span></div></div>`);
     parts.push(cbNeededCard(), cbPartCards());
   } else {
-    parts.push(`<div class="cb-head"><p class="cb-eyebrow">New case</p><h2>Single Implant / Bridge</h2></div>`);
+    parts.push(`<div class="cb-head"><p class="cb-eyebrow">New case</p><h2>Crown &amp; Bridge</h2></div>`);
     parts.push(cbTeethCard(), cbSystemCard());
     if(cb.sys && cbImplantTeeth().length){
       parts.push(cbToothTabs(), cbImplantCard(), cbNeededCard(), cbPartCards());
@@ -428,8 +432,20 @@ function cbSystemCard(){
     ? SYSTEM_IDS.filter(id=>(SYSTEMS[id].catalog['All-on-X Components']||[]).length>0)
     : SYSTEM_IDS;
   if(cb.sys && !cb.editing.has(cbEditKey('sys'))) return cbDoneCard('cb-system', 'System', SYSTEMS[cb.sys].name, '', 'sys', false);
-  return `<div class="cb-card"><div class="cb-lbl">System</div><div class="cb-chips">${
-    ids.map(id=>cbChip(SYSTEMS[id].name, cb.sys===id, 'sys', cbData({id}))).join('')}</div></div>`;
+  // Grouped by maker; Straumann and Neodent chips drop the repeated brand name.
+  const brands = [];
+  ids.forEach(id=>{
+    const brand = systemBrand(id);
+    let b = brands.find(x=>x.brand===brand);
+    if(!b) brands.push(b = { brand, ids:[] });
+    b.ids.push(id);
+  });
+  return `<div class="cb-card"><div class="cb-lbl">System</div>${brands.map(b=>`<div class="cb-brand">${cbEsc(b.brand)}</div><div class="cb-chips">${
+    b.ids.map(id=>cbChip(SYSTEMS[id].name.replace(/^(?:Straumann|Neodent) /, ''), cb.sys===id, 'sys', cbData({id}))).join('')}</div>`).join('')}</div>`;
+}
+function systemBrand(id){
+  const name = SYSTEMS[id].name;
+  return /^Straumann/.test(name) ? 'Straumann' : /^Nobel/.test(name) ? 'Nobel Biocare' : /^Neodent/.test(name) ? 'Neodent' : 'Other';
 }
 
 function cbToothTabs(){
@@ -551,6 +567,8 @@ function cbChooser(pt, pick, profile, mode){
 }
 function cbNarrowKey(label, mode){ return `${mode||''}|${mode ? '' : cb.activeTooth}|${label}`; }
 function cbEditKey(key){ return `${cb.activeTooth}|${key}`; }
+/* Teeth that share the first tooth's picks share its confirmations too. */
+function cbConfKey(label){ return `${cb.own[cb.activeTooth] ? cb.activeTooth : 'lead'}|${label}`; }
 
 /* A finished card, folded to one line; tapping it opens it again. */
 function cbDoneCard(id, title, summary, sub, key, removable){
@@ -570,11 +588,17 @@ function cbPartCards(){
     const c = cbChooser(pt, pick, profile, '');
     const pack = c.item ? parsePackSize(c.item[0], c.group.label) : 1;
     const sub = c.item ? `REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}${c.group.caution?` · <span class="cb-warn-i">⚠ confirm before ordering</span>`:''}` : '';
-    if(c.item && !cb.editing.has(cbEditKey(pt.label))){
+    // A part that had to be this one folds; one only filled in from the
+    // last case stays open, pre-picked, so the other choices still show.
+    const forced = c.item && resolvePartPick(cb.sys, pt, profile, null, null).ref===c.item[1];
+    const fromMemory = c.item && !forced && !cb.confirmed.has(cbConfKey(pt.label));
+    if(c.item && !fromMemory && !cb.editing.has(cbEditKey(pt.label))){
       return cbDoneCard(id, pt.label, `${c.group.label}, ${c.item[0]}`, sub, pt.label, true);
     }
     const missing = !c.item && cb.showMissing;
-    const done = c.item
+    const done = fromMemory
+      ? `<p class="cb-note cb-last">Picked the same as your last case. Tap it to confirm, or pick another.</p>`
+      : c.item
       ? `<div class="cb-summary"><b>${cbEsc(c.group.label)}, ${cbEsc(c.item[0])}</b><span class="cb-ref">REF ${cbEsc(c.item[1])}${pack>1?` · ships ${pack}/pkg`:''}</span>${c.group.caution?`<span class="cb-warn">⚠ ${cbEsc(c.group.caution)}</span>`:''}</div>`
       : '';
     return `<div class="cb-card${missing?' cb-missing-card':''}" id="${id}"><h3>${cbEsc(pt.label)}<button type="button" class="cb-x" data-a="need"${cbData({l:pt.label})} title="Not needed">✕</button></h3>${cbDiagram(pt.label, c.kinds)}${c.html}${done}</div>`;
@@ -899,9 +923,11 @@ function cbOnClick(e){
         if(cb.fromLast) delete cb.fromLast[d.l];
         cb.lastDone = 'cb-part-' + d.l.replace(/\W+/g,'-');
       }
-      else if(cur.ref===d.r) picks[d.l] = { ...cur, ref:null };
+      else if(cur.ref===d.r && cb.confirmed.has(cbConfKey(d.l))) picks[d.l] = { ...cur, ref:null };
       else {
+        // A tap on a pre-picked (remembered) part confirms it.
         picks[d.l] = { ...cur, ref:d.r };
+        cb.confirmed.add(cbConfKey(d.l));
         cb.editing.delete(cbEditKey(d.l));
         cb.lastDone = 'cb-part-' + d.l.replace(/\W+/g,'-');
       }
