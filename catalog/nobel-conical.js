@@ -2,6 +2,18 @@
    One of the catalog/*.js files that index.html loads, in order, before
    compatibility.js and the app code; see catalog/common.js. */
 
+/* Torque & driver (group `torque` / `driver`): from the icon beside each
+   table in the Nobel 2024/2025 conical connection pages — impression
+   copings p.70, healing abutments and cover screws p.72, temporary
+   abutments p.73, esthetic abutments and Universal Base p.74, multi-unit
+   abutments p.76 — and the multi-unit pages p.124 (impression coping) and
+   p.126 (healing caps Hand, temporary copings 15 Ncm). "Uni"/"MUA" icons =
+   Unigrip / multi-unit screwdriver (p.69). The 3.0 platform rows carry a
+   footnote icon of 15 Ncm (pp.73–74). Left out: the engaging Temporary
+   Abutment group (icon "Hand", but its 3.0 row carries the 15 Ncm
+   footnote), Locator R-Tx (p.77 gives none), and the screws (p.79/128 give
+   none). */
+
 /* =========================================================================
    NOBEL BIOCARE — Conical Connection prosthetic portfolio
    Shared by NobelReplace CC, NobelActive & NobelParallel CC (same NP/RP/WP
@@ -16,31 +28,31 @@
    the NobelActive length/article pairs had been shifted by one length. */
 const NOBEL_CONICAL_SHARED = {
 "Healing Abutments — Crown": [
-  {label:"3.0 Platform, Ø3.2mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"3.0 Platform, Ø3.2mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","36794"],["H 5mm","36795"],["H 7mm","36796"]
   ]},
-  {label:"3.0 Platform, Ø3.8mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"3.0 Platform, Ø3.8mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","36797"],["H 5mm","36798"],["H 7mm","36799"]
   ]},
-  {label:"NP, Ø3.6mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"NP, Ø3.6mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","36639"],["H 5mm","36640"],["H 7mm","36867"]
   ]},
-  {label:"NP, Ø5.0mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"NP, Ø5.0mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","36641"],["H 5mm","36642"],["H 7mm","36868"]
   ]},
-  {label:"RP, Ø3.6mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"RP, Ø3.6mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","36643"],["H 5mm","36644"],["H 7mm","36872"]
   ]},
-  {label:"RP, Ø5.0mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"RP, Ø5.0mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","36645"],["H 5mm","36646"],["H 7mm","36873"]
   ]},
-  {label:"RP, Ø6.0mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"RP, Ø6.0mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","36647"],["H 5mm","36648"],["H 7mm","36874"]
   ]},
-  {label:"WP, Ø5.0mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"WP, Ø5.0mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","37813"],["H 5mm","37814"]
   ]},
-  {label:"WP, Ø6.5mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"WP, Ø6.5mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","37815"],["H 5mm","37816"]
   ]}
 ],
@@ -48,62 +60,62 @@ const NOBEL_CONICAL_SHARED = {
   /* Platform per Nobel's conical connection product overview and store
      ("Healing Abutment Conical Connection WP Bridge Ø 6 x 3 mm" = 37817):
      Ø4.0 is NP, Ø5.0 is RP, Ø6.0 is WP. Each fits only its own platform. */
-  {label:"NP, Ø4.0mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"NP, Ø4.0mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","36864"],["H 5mm","36865"],["H 7mm","36866"]
   ]},
-  {label:"RP, Ø5.0mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"RP, Ø5.0mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","36869"],["H 5mm","36870"],["H 7mm","36871"]
   ]},
-  {label:"WP, Ø6.0mm", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"WP, Ø6.0mm", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H 3mm","37817"],["H 5mm","37818"]
   ]}
 ],
 "Anatomic Healing Abutments (PEEK)": [
-  {label:"WP", source:"Nobel 2024/2025 p.72", material:"PEEK", items:[
+  {label:"WP", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"PEEK", items:[
     ["6.0 × 7.0mm","37819"],["7.0 × 8.0mm","37820"]
   ]}
 ],
 "Impression Copings": [
-  {label:"3.0 Platform — Closed & Open Tray", source:"Nobel 2024/2025 p.70", material:"Ti", items:[
+  {label:"3.0 Platform — Closed & Open Tray", source:"Nobel 2024/2025 p.70", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Open Tray, Ø3.2mm, H14mm","36800"],["Closed Tray, Ø3.3mm, H13mm","36801"],
     ["Open Tray, Ø3.8mm, H14mm","36802"],["Closed Tray, Ø3.8mm, H13mm","36803"]
   ]},
-  {label:"NP — Closed Tray", source:"Nobel 2024/2025 p.70", material:"Ti", items:[
+  {label:"NP — Closed Tray", source:"Nobel 2024/2025 p.70", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Ø3.6mm, H13mm","36538"],["Ø5.0mm, H13mm","36539"]
   ]},
-  {label:"NP — Open Tray", source:"Nobel 2024/2025 p.70", material:"Ti", items:[
+  {label:"NP — Open Tray", source:"Nobel 2024/2025 p.70", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Ø3.6mm, H10mm","36258"],["Ø3.6mm, H14mm","36260"],["Ø5.0mm, H10mm","36259"],["Ø5.0mm, H14mm","36261"]
   ]},
-  {label:"RP — Closed Tray", source:"Nobel 2024/2025 p.70", material:"Ti", items:[
+  {label:"RP — Closed Tray", source:"Nobel 2024/2025 p.70", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Ø3.6mm, H9mm","36541"],["Ø3.6mm, H13mm","36540"],["Ø5.0mm, H9mm","36543"],["Ø5.0mm, H13mm","36542"],
     ["Ø6.0mm, H9mm","36545"],["Ø6.0mm, H13mm","36544"]
   ]},
-  {label:"RP — Open Tray", source:"Nobel 2024/2025 p.70", material:"Ti", items:[
+  {label:"RP — Open Tray", source:"Nobel 2024/2025 p.70", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Ø3.6mm, H10mm","36263"],["Ø3.6mm, H14mm","36262"],["Ø5.0mm, H10mm","36265"],["Ø5.0mm, H14mm","36264"],
     ["Ø6.0mm, H10mm","36267"],["Ø6.0mm, H14mm","36266"]
   ]},
-  {label:"WP — Closed Tray", source:"Nobel 2024/2025 p.70", material:"Ti", items:[
+  {label:"WP — Closed Tray", source:"Nobel 2024/2025 p.70", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Ø5.0mm, H9mm","37851"],["Ø5.0mm, H13mm","37850"],["Ø6.5mm, H9mm","37853"],["Ø6.5mm, H13mm","37852"]
   ]},
-  {label:"WP — Open Tray", source:"Nobel 2024/2025 p.70", material:"Ti", items:[
+  {label:"WP — Open Tray", source:"Nobel 2024/2025 p.70", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Ø5.0mm, H10mm","37855"],["Ø5.0mm, H14mm","37854"],["Ø6.5mm, H10mm","37857"],["Ø6.5mm, H14mm","37856"]
   ]},
-  {label:"Bridge — Open Tray", source:"Nobel 2024/2025 p.70", material:"Ti", items:[
+  {label:"Bridge — Open Tray", source:"Nobel 2024/2025 p.70", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["NP, H12mm","36930"],["RP, H12mm","36931"],["WP, H12mm","37858"]
   ]}
 ],
 "Temporary Abutments": [
-  {label:"Temporary Snap Abutment, Engaging (single-unit)", source:"Nobel 2024/2025 p.73", material:"Ti", items:[
+  {label:"Temporary Snap Abutment, Engaging (single-unit)", source:"Nobel 2024/2025 p.73", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["NP, H1.5mm","38760"],["RP, H1.5mm","38761"],["WP, H1.5mm","38762"],
     ["NP, H3.0mm","38847"],["RP, H3.0mm","38848"],["WP, H3.0mm","38849"]
   ]},
   {label:"Temporary Abutment, Engaging (single-unit, incl. clinical screw)", source:"Nobel 2024/2025 p.73", material:"Ti", items:[
     ["3.0, H1.5mm","36779"],["NP, H1.5mm","36663"],["RP, H1.5mm","36664"],["WP, H1.5mm","37823"],["WP, H3.0mm","37824"]
   ]},
-  {label:"Temporary Abutment, Non-Engaging (bridge, incl. clinical screw)", source:"Nobel 2024/2025 p.73", material:"Ti", items:[
+  {label:"Temporary Abutment, Non-Engaging (bridge, incl. clinical screw)", source:"Nobel 2024/2025 p.73", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["NP, H1.5mm","36661"],["RP, H1.5mm","36662"],["WP, H1.5mm","37825"],["WP, H3.0mm","37826"]
   ]},
-  {label:"Temporary Abutment Anatomical PEEK (WP)", source:"Nobel 2024/2025 p.73", material:"PEEK", items:[
+  {label:"Temporary Abutment Anatomical PEEK (WP)", source:"Nobel 2024/2025 p.73", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"PEEK", items:[
     ["6.0 × 7.0mm","37821"],["7.0 × 8.0mm","37822"]
   ]}
 ],
@@ -116,18 +128,18 @@ const NOBEL_CONICAL_SHARED = {
   ]}
 ],
 "Esthetic Abutments & Universal Base": [
-  {label:"Esthetic Abutment, straight (incl. clinical screw)", source:"Nobel 2024/2025 p.74", material:"Ti", items:[
+  {label:"Esthetic Abutment, straight (incl. clinical screw)", source:"Nobel 2024/2025 p.74", torque:"35 Ncm (3.0: 15 Ncm)", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["3.0, H1.5mm","36782"],["3.0, H3.0mm","36783"],["3.0, H4.5mm","36814"],
     ["NP, H1.5mm","36665"],["NP, H3.0mm","36666"],["NP, H4.5mm","36249"],
     ["RP, H1.5mm","36669"],["RP, H3.0mm","36671"],["RP, H4.5mm","36251"],
     ["WP, 6.0×7.0mm","37827"],["WP, 7.0×8.0mm","37828"]
   ]},
-  {label:"Esthetic Abutment 15° (incl. clinical screw)", source:"Nobel 2024/2025 p.74", material:"Ti", items:[
+  {label:"Esthetic Abutment 15° (incl. clinical screw)", source:"Nobel 2024/2025 p.74", torque:"35 Ncm (3.0: 15 Ncm)", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["3.0, H1.5mm","36784"],["3.0, H3.0mm","36785"],["3.0, H4.5mm","36815"],
     ["NP, H1.5mm","36667"],["NP, H3.0mm","36668"],["NP, H4.5mm","36250"],
     ["RP, H1.5mm","36672"],["RP, H3.0mm","36673"],["RP, H4.5mm","36252"]
   ]},
-  {label:"Universal Base, engaging (incl. clinical screw)", source:"Nobel 2024/2025 p.74", material:"Ti",
+  {label:"Universal Base, engaging (incl. clinical screw)", source:"Nobel 2024/2025 p.74", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti",
     note:"US article numbers. Outside the US the same bases are 38213–38218 and also include a burn-out coping (Nobel Biocare 2024/2025 catalog p.74).",
     items:[
     ["NP, H1.5mm","301101"],["NP, H3.0mm","301104"],
@@ -136,20 +148,20 @@ const NOBEL_CONICAL_SHARED = {
   ]}
 ],
 "Multi-unit Abutments Plus": [
-  {label:"Straight", source:"Nobel 2024/2025 p.76", material:"Ti", items:[
+  {label:"Straight", source:"Nobel 2024/2025 p.76", torque:"35 Ncm", driver:"Multi-unit screwdriver", material:"Ti", items:[
     ["NP, H1.5mm","38878"],["RP, H1.5mm","38879"],["WP, H1.5mm","38880"],
     ["NP, H2.5mm","38881"],["RP, H2.5mm","38882"],["WP, H2.5mm","38883"],
     ["NP, H3.5mm","38884"],["RP, H3.5mm","38885"],["WP, H3.5mm","38886"],
     ["RP, H4.5mm","38887"]
   ]},
-  {label:"17°", source:"Nobel 2024/2025 p.76", material:"Ti", items:[
+  {label:"17°", source:"Nobel 2024/2025 p.76", torque:"15 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["NP, H2.5mm","38888"],["RP, H2.5mm","38889"],["WP, H2.5mm","38890"],
     ["NP, H3.5mm","38891"],["RP, H3.5mm","38892"],["WP, H3.5mm","38893"]
   ]},
-  {label:"30°", source:"Nobel 2024/2025 p.76", material:"Ti", items:[
+  {label:"30°", source:"Nobel 2024/2025 p.76", torque:"15 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["NP, H3.5mm","38894"],["RP, H3.5mm","38895"],["NP, H4.5mm","38896"],["RP, H4.5mm","38897"]
   ]},
-  {label:"Multi-unit Accessories", source:"Nobel 2024/2025 pp.124, 126, 128–129", material:"Ti / POM / SST", items:[
+  {label:"Multi-unit Accessories", source:"Nobel 2024/2025 pp.124, 126, 128–129", torque:"Hand-tight (temporary copings: 15 Ncm)", driver:"Unigrip screwdriver", material:"Ti / POM / SST", items:[
     ["Impression Coping, Open Tray","29089"],["Impression Coping, Closed Tray","38924"],
     ["Healing Cap Ø5.0, H4.1mm (2/pkg)","300162"],["Healing Cap Ø6.0, H4.1mm (2/pkg)","300164"],["Healing Cap Wide, H4.1mm (2/pkg)","300166"],
     ["Healing Cap Ø5.0, H5.5mm (2/pkg)","300163"],["Healing Cap Ø6.0, H5.5mm (2/pkg)","300165"],["Healing Cap Wide, H5.5mm (2/pkg)","300167"],
@@ -240,7 +252,7 @@ const CATALOG_NOBEL_RC = {
   ]}
 ],
 "Cover Screws": [
-  {label:"Cover screw", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"Cover screw", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["3.0 Platform","36775"],["NP","36649"],["RP","36650"],["WP","37812"]
   ]}
 ],
@@ -299,7 +311,7 @@ const CATALOG_NOBEL_NA = {
   ]}
 ],
 "Cover Screws": [
-  {label:"Cover screw", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"Cover screw", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["3.0 Platform","36775"],["NP","36649"],["RP","36650"],["WP","37812"]
   ]}
 ],
@@ -354,7 +366,7 @@ const CATALOG_NOBEL_PARALLEL = {
   ]}
 ],
 "Cover Screws": [
-  {label:"Cover screw", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"Cover screw", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["3.0 Platform","36775"],["NP","36649"],["RP","36650"],["WP","37812"]
   ]}
 ],

@@ -2,6 +2,14 @@
    One of the catalog/*.js files that index.html loads, in order, before
    compatibility.js and the app code; see catalog/common.js. */
 
+/* Torque & driver: Neodent 2026 — cover screws and healing abutments
+   "use the manual Neo Screwdriver (104.060); do not exceed 10 Ncm"
+   (pp.13, 15); abutment torques and the numbered driver key on the
+   installation-sequence pages (GM Exact Abutment p.18, Mini Conical p.19,
+   Micro Abutment p.20, impression coping and scanbody driver p.23).
+   Coping torques (10 Ncm) sit in the mixed "Accessories" groups, so those
+   groups carry none. */
+
 /* =========================================================================
    NEODENT® GRAND MORSE® (GM) — Helix GM® Implant Line, Acqua® & NeoPoros®
    surfaces. Source: Neodent® GM Product Catalog 2026, Global Edition
@@ -60,30 +68,30 @@ const CATALOG_NEODENT_GM = {
   ]}
 ],
 "GM Cover Screw": [
-  {label:"All GM implant diameters — use manual Neo Screwdriver, max 10 N.cm", source:"Neodent 2026 p.15", material:"Titanium", items:[
+  {label:"All GM implant diameters — use manual Neo Screwdriver, max 10 N.cm", source:"Neodent 2026 p.15", torque:"Max 10 Ncm", driver:"Neo Manual Screwdriver", material:"Titanium", items:[
     ["0mm profile","117.021"],["2mm profile","117.022"]
   ]}
 ],
 "GM Healing Abutments": [
-  {label:"GM Healing Abutment, Ø3.3mm", source:"Neodent 2026 p.13", material:"Titanium", items:[
+  {label:"GM Healing Abutment, Ø3.3mm", source:"Neodent 2026 p.13", torque:"Max 10 Ncm", driver:"Neo Manual Screwdriver", material:"Titanium", items:[
     ["Profile 0.8mm","106.207"],["Profile 1.5mm","106.208"],["Profile 2.5mm","106.209"],
     ["Profile 3.5mm","106.210"],["Profile 4.5mm","106.211"],["Profile 5.5mm","106.212"]
   ]},
-  {label:"GM Healing Abutment, Ø4.5mm", source:"Neodent 2026 p.13", material:"Titanium", items:[
+  {label:"GM Healing Abutment, Ø4.5mm", source:"Neodent 2026 p.13", torque:"Max 10 Ncm", driver:"Neo Manual Screwdriver", material:"Titanium", items:[
     ["Profile 0.8mm","106.213"],["Profile 1.5mm","106.214"],["Profile 2.5mm","106.215"],
     ["Profile 3.5mm","106.216"],["Profile 4.5mm","106.217"],["Profile 5.5mm","106.218"]
   ]},
-  {label:"GM Customizable Healing Abutment, Ø5.5mm", source:"Neodent 2026 p.13", material:"Titanium", items:[
+  {label:"GM Customizable Healing Abutment, Ø5.5mm", source:"Neodent 2026 p.13", torque:"Max 10 Ncm", driver:"Neo Manual Screwdriver", material:"Titanium", items:[
     ["Profile 1.5mm","106.223"],["Profile 2.5mm","106.224"],["Profile 3.5mm","106.225"],
     ["Profile 4.5mm","106.226"],["Profile 5.5mm","106.227"]
   ]},
-  {label:"GM Customizable Healing Abutment, Ø7.0mm", source:"Neodent 2026 p.13", material:"Titanium", items:[
+  {label:"GM Customizable Healing Abutment, Ø7.0mm", source:"Neodent 2026 p.13", torque:"Max 10 Ncm", driver:"Neo Manual Screwdriver", material:"Titanium", items:[
     ["Profile 2.5mm","106.228"],["Profile 3.5mm","106.229"],["Profile 4.5mm","106.230"],
     ["Profile 5.5mm","106.231"],["Profile 6.5mm","106.232"]
   ]}
 ],
 "Impression Components & Analogs": [
-  {label:"GM Implant Exact Impression Coping", source:"Neodent 2026 p.23", material:"Titanium", items:[
+  {label:"GM Implant Exact Impression Coping", source:"Neodent 2026 p.23", driver:"Neo Screwdriver + manual handle", material:"Titanium", items:[
     ["Closed Tray, Regular","108.160"],["Closed Tray, Long","108.161"],
     ["Open Tray, Regular","108.162"],["Open Tray, Long","108.163"]
   ]},
@@ -93,12 +101,12 @@ const CATALOG_NEODENT_GM = {
     items:[
     ["Ø3.5/3.75mm","101.103"],["Ø4.0/4.3mm","101.089"],["Ø5.0/6.0mm","101.090"]
   ]},
-  {label:"Digital", source:"Neodent 2026 p.23", material:"SST", items:[
+  {label:"Digital", source:"Neodent 2026 p.23", driver:"Neo Screwdriver + manual handle", material:"SST", items:[
     ["GM Implant Intraoral Scanbody","108.207"]
   ]}
 ],
 "Abutments": [
-  {label:"GM Exact Abutment (single-unit screw-retained, Ø4.8mm, incl. Neo Removable Screw)", source:"Neodent 2026 p.18", material:"Titanium", items:[
+  {label:"GM Exact Abutment (single-unit screw-retained, Ø4.8mm, incl. Neo Removable Screw)", source:"Neodent 2026 p.18", torque:"20 Ncm", driver:"Neo Screwdriver + torque wrench", material:"Titanium", items:[
     ["GH 0.8mm","115.269"],["GH 1.5mm","115.270"],["GH 2.5mm","115.271"],["GH 3.5mm","115.272"],["GH 4.5mm","115.273"]
   ]},
   {label:"GM Abutment — Accessories", source:"Neodent 2026 p.18", material:"Titanium / SST", items:[
@@ -106,7 +114,7 @@ const CATALOG_NEODENT_GM = {
     ["Coping for Crown — Digital Workflow","118.362"],["Scanbody","108.220"],
     ["Protection Cylinder","106.221"],["Titanium Coping","118.300"]
   ]},
-  {label:"GM Micro Abutment (Ø3.5mm, single/multi-unit screw-retained)", source:"Neodent 2026 p.20", material:"Titanium", items:[
+  {label:"GM Micro Abutment (Ø3.5mm, single/multi-unit screw-retained)", source:"Neodent 2026 p.20", torque:"32 Ncm", driver:"Hexagonal Prosthetic Driver + torque wrench", material:"Titanium", items:[
     ["GH 0.8mm","115.255"],["GH 1.5mm","115.256"],["GH 2.5mm","115.257"],
     ["GH 3.5mm","115.258"],["GH 4.5mm","115.259"],["GH 5.5mm","115.260"]
   ]},
@@ -117,14 +125,14 @@ const CATALOG_NEODENT_GM = {
   ]}
 ],
 "GM Mini Conical Abutments (Multi-unit)": [
-  {label:"GM Mini Conical Abutment, straight (Ø4.8mm, multi-unit screw-retained)", source:"Neodent 2026 p.19", material:"Titanium", items:[
+  {label:"GM Mini Conical Abutment, straight (Ø4.8mm, multi-unit screw-retained)", source:"Neodent 2026 p.19", torque:"32 Ncm", driver:"Hexagonal Prosthetic Driver + torque wrench", material:"Titanium", items:[
     ["GH 0.8mm","115.243"],["GH 1.5mm","115.244"],["GH 2.5mm","115.245"],
     ["GH 3.5mm","115.246"],["GH 4.5mm","115.247"],["GH 5.5mm","115.248"]
   ]},
-  {label:"GM Exact Mini Conical Abutment, 17°", source:"Neodent 2026 p.19", material:"Titanium", items:[
+  {label:"GM Exact Mini Conical Abutment, 17°", source:"Neodent 2026 p.19", torque:"20 Ncm", driver:"Neo Screwdriver + torque wrench", material:"Titanium", items:[
     ["GH 1.5mm","115.275"],["GH 2.5mm","115.276"],["GH 3.5mm","115.277"]
   ]},
-  {label:"GM Exact Mini Conical Abutment, 30°", source:"Neodent 2026 p.19", material:"Titanium", items:[
+  {label:"GM Exact Mini Conical Abutment, 30°", source:"Neodent 2026 p.19", torque:"20 Ncm", driver:"Neo Screwdriver + torque wrench", material:"Titanium", items:[
     ["GH 1.5mm","115.278"],["GH 2.5mm","115.279"],["GH 3.5mm","115.280"]
   ]},
   {label:"GM Mini Conical Abutment — Accessories", source:"Neodent 2026 p.19", material:"Titanium / SST", items:[

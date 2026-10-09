@@ -2,6 +2,12 @@
    One of the catalog/*.js files that index.html loads, in order, before
    compatibility.js and the app code; see catalog/common.js. */
 
+/* Torque & driver: from the icons in the Nobel 2024/2025 catalog — zygoma
+   multi-unit abutments pp.122–123 (all 35 Ncm; Unigrip, or the multi-unit
+   screwdriver for the straight 0° ones), CC RP cover screw p.72, impression
+   coping p.124, healing caps and temporary coping p.126. The Brånemark
+   zygoma cover screw and abutment screws have no icon, so carry none. */
+
 /* =========================================================================
    NOBEL ZYGOMA — two systems, split by implant head angle (0° and 45°).
    NOTE: the 0° system's TiUltra implants use the Conical Connection, but
@@ -31,14 +37,25 @@
    folded into each item's name for visibility, matching how the S-series
    caveat was handled.
 
-   OPEN GAP: no healing cap/coping was found in the captured pages for the
-   NEWER TiUltra/Xeal-paired multi-unit abutments (Image 7) — only the
-   OLDER TiUnite-paired "Healing Abutment" (32332/32333, CC only) was
-   listed. Not enough to assume the standard Ø5.0/Ø6.0/Wide healing cap
-   (300162 etc.) fits the zygoma-specific Xeal abutment collar geometry,
-   so nothing was added for that gap rather than guess — flag if you find
-   the correct part.
+   MULTI-UNIT HEALING CAPS AND TEMPORARY COPING: pp.122 and 123 refer
+   every zygoma multi-unit abutment (Xeal and the older TiUnite-paired RP
+   ones) to the standard multi-unit prosthetic components ("listed on
+   page 124"). The titanium healing caps (300162–300167) and the regular
+   temporary coping (29046) on p.126 are listed for NP/RP/WP, "compatible
+   with all multi-unit abutments except multi-unit abutment Brånemark WP
+   (external hex)"; the zygoma abutments are all RP, so both fit. The
+   Temporary Snap Coping (38915) is left out: p.126 limits it to
+   "Multi-unit abutment Xeal for CC and TCC", which doesn't clearly cover
+   the zygoma Xeal abutments.
    ========================================================================= */
+/* Standard multi-unit healing caps and temporary coping, shared by both
+   zygoma systems (see MULTI-UNIT HEALING CAPS above). Item names match the
+   conical connection line's "Multi-unit Accessories" for the same REFs. */
+const NOBEL_ZYGOMA_MU_ACCESSORIES = {label:"Multi-unit Accessories (fit all zygoma multi-unit abutments)", source:"Nobel 2024/2025 p.126", torque:"Hand-tight (temporary coping: 15 Ncm)", driver:"Unigrip screwdriver", material:"Ti", items:[
+  ["Healing Cap Ø5.0, H4.1mm (2/pkg)","300162"],["Healing Cap Ø6.0, H4.1mm (2/pkg)","300164"],["Healing Cap Wide, H4.1mm (2/pkg)","300166"],
+  ["Healing Cap Ø5.0, H5.5mm (2/pkg)","300163"],["Healing Cap Ø6.0, H5.5mm (2/pkg)","300165"],["Healing Cap Wide, H5.5mm (2/pkg)","300167"],
+  ["Temporary Coping","29046"]
+]};
 const CATALOG_NZCC = {
 "Implants": [
   {label:"0° CC RP — TiUltra®", source:"Nobel 2024/2025 p.42", note:"Length shown is nominal; each option lists its actual total length in parentheses.", material:"TiUltra®", items:[
@@ -60,7 +77,7 @@ const CATALOG_NZCC = {
   ]}
 ],
 "Cover Screws": [
-  {label:"CC RP — for TiUltra® implants (same REF as standard Conical Connection RP)", source:"Nobel 2024/2025 p.72", material:"Ti", items:[
+  {label:"CC RP — for TiUltra® implants (same REF as standard Conical Connection RP)", source:"Nobel 2024/2025 p.72", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Cover Screw","36650"]
   ]},
   {label:"Brånemark System Zygoma Cover Screw — for TiUnite® implants", source:"Nobel 2024/2025 p.122", material:"Ti", items:[
@@ -68,19 +85,19 @@ const CATALOG_NZCC = {
   ]}
 ],
 "Multi-unit Abutments": [
-  {label:"Multi-unit Abutment Xeal Zygoma CC RP, 45° (for TiUltra® implants)", source:"Nobel 2024/2025 p.122", material:"Ti", items:[
+  {label:"Multi-unit Abutment Xeal Zygoma CC RP, 45° (for TiUltra® implants)", source:"Nobel 2024/2025 p.122", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["S","301575"],["M","301576"],["L","301577"],["XL","301578"]
   ]},
-  {label:"Multi-unit Abutment Xeal Zygoma CC RP, 60° (for TiUltra® implants)", source:"Nobel 2024/2025 p.122", material:"Ti", items:[
+  {label:"Multi-unit Abutment Xeal Zygoma CC RP, 60° (for TiUltra® implants)", source:"Nobel 2024/2025 p.122", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["S","301652"],["M","301653"],["L","301654"],["XL","301655"]
   ]},
   {label:"Multi-unit Abutment Xeal Zygoma Screw, 45°/60°, all sizes", source:"Nobel 2024/2025 p.122", material:"Ti", items:[
     ["Screw","301759"]
   ]},
-  {label:"Multi-unit Abutment External Hex RP, 45° (for 0° TiUnite® implants)", source:"Nobel 2024/2025 p.123", material:"Ti", items:[
+  {label:"Multi-unit Abutment External Hex RP, 45° (for 0° TiUnite® implants)", source:"Nobel 2024/2025 p.123", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H6mm","37624"],["H8mm","37625"],["H10mm","37626"]
   ]},
-  {label:"Multi-unit Abutment External Hex RP, 60° (for 0° TiUnite® implants)", source:"Nobel 2024/2025 p.123", material:"Ti", items:[
+  {label:"Multi-unit Abutment External Hex RP, 60° (for 0° TiUnite® implants)", source:"Nobel 2024/2025 p.123", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H6mm","37774"],["H8mm","37775"]
   ]},
   {label:"Multi-unit Abutment Screw — for TiUnite® 45°/60° abutments", source:"Nobel 2024/2025 p.123", material:"Ti", items:[
@@ -88,10 +105,11 @@ const CATALOG_NZCC = {
   ]},
   {label:"Healing Abutment — for TiUnite® 45°/60° multi-unit abutments", unverified:"Not in Nobel 2024/2025", material:"Ti", items:[
     ["Ø4×3mm","32332"],["Ø4×5mm","32333"]
-  ]}
+  ]},
+  NOBEL_ZYGOMA_MU_ACCESSORIES
 ],
 "Impression & Position Locators": [
-  {label:"Impression Coping (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", source:"Nobel 2024/2025 p.124", material:"POM / Ti", items:[
+  {label:"Impression Coping (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", source:"Nobel 2024/2025 p.124", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"POM / Ti", items:[
     ["Open Tray (15mm guide pin incl.)","29089"],["Closed Tray","38924"]
   ]},
   {label:"Elos Accurate® Intra-oral Position Locator (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", source:"Nobel 2024/2025 p.124", material:"Ti", items:[
@@ -184,10 +202,10 @@ const CATALOG_NZEH = {
   ]}
 ],
 "Multi-unit Abutments": [
-  {label:"Multi-unit Abutment Xeal Zygoma Ext Hex RP, 0° (for TiUltra® implants)", source:"Nobel 2024/2025 p.122", material:"Ti", items:[
+  {label:"Multi-unit Abutment Xeal Zygoma Ext Hex RP, 0° (for TiUltra® implants)", source:"Nobel 2024/2025 p.122", torque:"35 Ncm", driver:"Multi-unit screwdriver", material:"Ti", items:[
     ["S","301567"],["M","301568"],["L","301569"],["XL","301570"]
   ]},
-  {label:"Multi-unit Abutment Xeal Zygoma Ext Hex RP, 17° (for TiUltra® implants — only S/M offered)", source:"Nobel 2024/2025 p.122", material:"Ti", items:[
+  {label:"Multi-unit Abutment Xeal Zygoma Ext Hex RP, 17° (for TiUltra® implants — only S/M offered)", source:"Nobel 2024/2025 p.122", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["S","301571"],["M","301572"]
   ]},
   {label:"Multi-unit Abutment Xeal Zygoma Screw, 0°", source:"Nobel 2024/2025 p.122", material:"Ti", items:[
@@ -196,10 +214,10 @@ const CATALOG_NZEH = {
   {label:"Multi-unit Abutment Xeal Zygoma Screw, 17°, all sizes", source:"Nobel 2024/2025 p.122", material:"Ti", items:[
     ["Screw","301995"]
   ]},
-  {label:"Multi-unit Abutment RP, 0° (for TiUnite® implants — only 3mm/5mm offered)", source:"Nobel 2024/2025 p.123", material:"Ti", items:[
+  {label:"Multi-unit Abutment RP, 0° (for TiUnite® implants — only 3mm/5mm offered)", source:"Nobel 2024/2025 p.123", torque:"35 Ncm", driver:"Multi-unit screwdriver", material:"Ti", items:[
     ["H3mm","32330"],["H5mm","32331"]
   ]},
-  {label:"Multi-unit Abutment RP, 17° (for TiUnite® implants — only 2mm/3mm offered)", source:"Nobel 2024/2025 p.123", material:"Ti", items:[
+  {label:"Multi-unit Abutment RP, 17° (for TiUnite® implants — only 2mm/3mm offered)", source:"Nobel 2024/2025 p.123", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H2mm","32328"],["H3mm","32329"]
   ]},
   {label:"Multi-unit Abutment Screw — for TiUnite® 0°/17° abutments", source:"Nobel 2024/2025 p.123", material:"Ti", items:[
@@ -207,10 +225,11 @@ const CATALOG_NZEH = {
   ]},
   {label:"Impression Coping — for TiUnite® 0°/17° multi-unit abutments", source:"Nobel 2024/2025 p.123", material:"Ti", items:[
     ["Open Tray Ø4mm","33396"]
-  ]}
+  ]},
+  NOBEL_ZYGOMA_MU_ACCESSORIES
 ],
 "Impression & Position Locators": [
-  {label:"Impression Coping (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", source:"Nobel 2024/2025 p.124", material:"POM / Ti", items:[
+  {label:"Impression Coping (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", source:"Nobel 2024/2025 p.124", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"POM / Ti", items:[
     ["Open Tray (15mm guide pin incl.)","29089"],["Closed Tray","38924"]
   ]},
   {label:"Elos Accurate® Intra-oral Position Locator (fits all multi-unit abutments except the Brånemark System wide-platform external hex)", source:"Nobel 2024/2025 p.124", material:"Ti", items:[

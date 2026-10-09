@@ -2,6 +2,10 @@
    One of the catalog/*.js files that index.html loads, in order, before
    compatibility.js and the app code; see catalog/common.js. */
 
+/* Torque & driver: the iEXCEL 2026 catalog gives no tightening torques.
+   The only driver it names for a part is the AS screwdriver for the RB/WB
+   Basal Screw AS, which it lists for Variobase for Crown AS (p.30). */
+
 const CATALOG_BLC = {
 "Implants": [
   {label:"Ø 3.3mm RB — SLActive®, Roxolid®", source:"Straumann iEXCEL 2026 p.5", material:"Roxolid®", items:[
@@ -77,7 +81,8 @@ const CATALOG_BLC = {
   ]},
   {label:"WB, ∅6.0mm (for final abutments ∅5.5mm)", source:"Straumann iEXCEL 2026 p.27", material:"TAN", items:[
     ["GH 0.75 / AH 2mm (2.75mm)","064.8201S"],["GH 0.75 / AH 4mm (4.75mm)","064.8202S"],
-    ["GH 1.5 / AH 2mm (3.5mm)","064.8212S"],["GH 1.5 / AH 4mm (5.5mm)","064.8213S"]
+    ["GH 1.5 / AH 2mm (3.5mm)","064.8212S"],["GH 1.5 / AH 4mm (5.5mm)","064.8213S"],
+    ["GH 2.5 / AH 2mm (4.5mm)","064.8217S"],["GH 2.5 / AH 4mm (6.5mm)","064.8218S"]
   ]},
   {label:"WB, ∅7.0mm (for final abutments ∅6.5mm)", source:"Straumann iEXCEL 2026 p.27", material:"TAN", items:[
     ["GH 1.5 / AH 2mm (3.5mm)","064.8511S"],["GH 1.5 / AH 4mm (5.5mm)","064.8512S"],
@@ -176,8 +181,10 @@ const CATALOG_BLC = {
 "Replacement Screws": [
   {label:"Basal & Occlusal Screws", source:"Straumann iEXCEL 2026 p.30", material:"TAN", items:[
     ["RB/WB Basal Screw, 6.1mm","065.0036"],
-    ["RB/WB Basal Screw AS, 6.5mm (AS driver only)","065.0037"],
     ["Occlusal Screw, 3.7mm","023.4763"]
+  ]},
+  {label:"Basal Screw AS (for Variobase® for Crown AS)", source:"Straumann iEXCEL 2026 p.30", driver:"AS screwdriver", material:"TAN", items:[
+    ["RB/WB Basal Screw AS, 6.5mm (AS driver only)","065.0037"]
   ]}
 ],
 
@@ -214,7 +221,7 @@ const CATALOG_BLC = {
 ],
 
 "Variobase® for Crown AS": [
-  {label:"Abutments — incl. screw, AH 5.5mm", source:"Straumann iEXCEL 2026 p.31", material:"TAN", items:[
+  {label:"Abutments — incl. screw, AH 5.5mm", source:"Straumann iEXCEL 2026 p.31", driver:"AS screwdriver", material:"TAN", items:[
     ["RB/WB ∅4.5mm, GH 1.5mm","062.4972"],["WB ∅5.5mm, GH 1.5mm","062.4971"]
   ]},
   {label:"Burn-out Copings — 25°", source:"Straumann iEXCEL 2026 p.31", material:"POM", items:[

@@ -1344,6 +1344,9 @@ async function maybeOfferMultiUnitCap(systemId, category, groupLabel){
   if(!trigger) return;
   if(resolveTrueCategory(systemId, category, groupLabel) !== trigger.category) return;
   if(groupLabel === trigger.capGroupLabel) return; // the item just added IS a cap
+  // Screws, impression parts and accessories share the category with the
+  // abutments; only an abutment itself needs a cap.
+  if(/\bScrews?\b|Healing|Impression|Auxiliar|Accessor|Coping|Analog|Plan Abutment/.test(groupLabel)) return;
 
   const wants = await showModal({
     type:'confirm', title:`Add a ${trigger.capLabel}?`,

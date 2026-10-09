@@ -209,6 +209,21 @@ test('NobelZygoma: TiUltra and TiUnite implants each get their own abutment line
   assert.ok(!fits('nzcc', 'Multi-unit Abutments', '301575', tiUnite));
 });
 
+test('NobelZygoma: standard multi-unit healing caps and temporary coping fit both surfaces', () => {
+  for (const sid of ['nzcc', 'nzeh']) {
+    const profiles = sid === 'nzcc' ? [implant(sid, '301541'), implant(sid, '38275')] : [implant(sid, '301554'), implant(sid, '38283')];
+    for (const p of profiles) {
+      for (const ref of ['300162', '300163', '300164', '300165', '300166', '300167', '29046']) assert.ok(fits(sid, 'Multi-unit Abutments', ref, p), `${sid} ${ref}`);
+    }
+    assert.ok(!has(sid, 'Multi-unit Abutments', '38915'), `${sid}: snap coping is Xeal CC/TCC only`);
+    const cfg = $('MULTI_UNIT_TEMP_COPING_CONFIG')[sid];
+    const group = SYSTEMS[sid].catalog[cfg.category].find((g) => g.label === cfg.groupLabel);
+    assert.deepEqual(Array.from(group.items.filter(([name]) => name.includes(cfg.nameFilter)), ([, ref]) => ref), ['29046']);
+    assert.ok($('MULTI_UNIT_CAP_TRIGGER')[sid], sid);
+    assert.ok(has(sid, 'All-on-X Components', '300162'), sid);
+  }
+});
+
 test('Neodent GM: implant analogs match the implant diameter', () => {
   // Numbering per the Neodent 2026 catalog (the 2018 edition swaps 101.089/101.103 — see FOLLOW-UP.md).
   const analogs = 'Impression Components & Analogs';
@@ -273,6 +288,9 @@ test('catalog-verified article numbers', () => {
     ['nact', 'Esthetic Abutments & Universal Base', '301106', 'WP, H3.0mm'],
     ['blc', 'Healing Abutments — Crown', '064.8511S', 'GH 1.5 / AH 2mm (3.5mm)'],
     ['blc', 'Healing Abutments — Crown', '064.8514S', 'GH 2.5 / AH 4mm (6.5mm)'],
+    ['blc', 'Healing Abutments — Crown', '064.8217S', 'GH 2.5 / AH 2mm (4.5mm)'], // iEXCEL 2026 p.27, WB ∅6.0
+    ['blc', 'Healing Abutments — Crown', '064.8218S', 'GH 2.5 / AH 4mm (6.5mm)'],
+    ['blt', 'Replacement Screws', '025.4900', 'For Anatomic/Variobase Crown'], // RC basal screw, Straumann 2022/2023 p.222
   ];
   for (const [sid, category, ref, name] of expected) {
     assert.ok(find(sid, category, ref).name.startsWith(name), `${sid} ${ref}: "${find(sid, category, ref).name}"`);
@@ -282,6 +300,38 @@ test('catalog-verified article numbers', () => {
   for (const ref of ['36773', '36774', '37859', '37860', '37861', '37862', '37869', '37870']) assert.ok(!has('nrcc', 'Surgical Instruments', ref), `nrcc ${ref}`);
   // Lab screw 37894 is NP only.
   assert.ok(!fits('nact', 'Clinical & Laboratory Screws', '37894', implant('nact', '34131')));
+});
+
+test('torque and driver: catalog-format strings, only on sourced groups', () => {
+  const value = '(?:Max )?\\d+(?:–\\d+)? Ncm|Hand-tight';
+  const torqueFormat = new RegExp(`^(?:${value})(?: \\([^():]+: (?:${value})\\))?$`);
+  let n = 0;
+  for (const sid of SYSTEM_IDS) {
+    for (const [cat, groups] of Object.entries(SYSTEMS[sid].catalog)) {
+      for (const g of groups) {
+        const where = `${sid} > ${cat} > ${g.label}`;
+        if (g.torque !== undefined) assert.match(g.torque, torqueFormat, where);
+        if (g.driver !== undefined) {
+          assert.equal(typeof g.driver, 'string', where);
+          assert.ok(g.driver.trim() === g.driver && g.driver.length > 0 && g.driver.length <= 50, `${where}: driver "${g.driver}"`);
+        }
+        if (g.torque || g.driver) { assert.ok(g.source, `${where}: torque/driver needs a catalog source`); n++; }
+      }
+    }
+  }
+  assert.ok(n > 0);
+  const tq = (sid, category, ref) => { const { group } = find(sid, category, ref); return [group.torque, group.driver]; };
+  assert.deepEqual(tq('nact', 'Multi-unit Abutments Plus', '38879'), ['35 Ncm', 'Multi-unit screwdriver']); // Nobel p.76
+  assert.deepEqual(tq('nact', 'Multi-unit Abutments Plus', '38889'), ['15 Ncm', 'Unigrip screwdriver']); // 17°
+  assert.deepEqual(tq('nact', 'Esthetic Abutments & Universal Base', '36665'), ['35 Ncm (3.0: 15 Ncm)', 'Unigrip screwdriver']);
+  assert.deepEqual(tq('nzeh', 'Multi-unit Abutments', '301567'), ['35 Ncm', 'Multi-unit screwdriver']); // zygoma p.122
+  assert.deepEqual(tq('gm', 'GM Mini Conical Abutments (Multi-unit)', '115.243'), ['32 Ncm', 'Hexagonal Prosthetic Driver + torque wrench']); // Neodent p.19
+  assert.deepEqual(tq('gm', 'GM Healing Abutments', '106.207'), ['Max 10 Ncm', 'Neo Manual Screwdriver']);
+  assert.deepEqual(tq('blc', 'Replacement Screws', '065.0037'), [undefined, 'AS screwdriver']);
+  // Neither Straumann catalog states a tightening torque.
+  for (const sid of ['blc', 'blt']) {
+    for (const groups of Object.values(SYSTEMS[sid].catalog)) for (const g of groups) assert.equal(g.torque, undefined, `${sid}: ${g.label}`);
+  }
 });
 
 test('order output catalog pages: each line gets its group\'s page, or the unverified note', () => {
@@ -469,4 +519,26 @@ test('case builder: long chip lists are shortened', () => {
   assert.deepEqual(plain(t.rows), ['Ø4.5mm', 'Ø5mm', 'Ø6mm', 'Ø6.5mm']);
   assert.deepEqual(plain(t.cols), ['H2mm', 'H4mm', 'H6mm']);
   assert.equal($('axisTable')([['Open Tray, short', 'a'], ['Closed Tray', 'b']]), null);
+});
+
+test('case builder: overdenture parts exist and the abutment fits the implant platform', () => {
+  const OD = $('OVERDENTURE_PARTS');
+  for (const sid of Object.keys(OD)) {
+    // Every part type is offered for at least one of the system's implants
+    // (Nobel's 3.0 platform has no overdenture abutment).
+    const profiles = SYSTEMS[sid].catalog[IMPLANTS_CATEGORY[sid]].map((g) => implant(sid, g.items[0][1]));
+    for (const pt of OD[sid]) {
+      for (const opt of pt.options) {
+        assert.ok(profiles.some((pr) => $('optionGroups')(sid, opt, pr).length > 0), `${sid}: "${pt.label}" offers nothing`);
+      }
+    }
+    // Overdenture abutments get their own card, not a Final Abutment option.
+    const final = $('builderPartTypes')(sid).find((p) => p.label === 'Final Abutment');
+    assert.ok(!final || final.options.every((o) => !$('OVERDENTURE_CATEGORIES').has(o.category)));
+    assert.ok($('builderPartTypes')(sid).some((p) => p.label === 'Overdenture Abutment'));
+  }
+  // A Nobel NP implant is offered only NP Locator abutments.
+  const np = implant('nact', SYSTEMS.nact.catalog.Implants.find((g) => /3\.5mm/.test(g.label)).items[0][1]);
+  const labels = $('optionGroups')('nact', OD.nact[0].options[0], np).map((g) => g.group.label);
+  assert.ok(labels.length && labels.every((l) => l.startsWith('NP')), labels.join(', '));
 });

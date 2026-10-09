@@ -2,6 +2,11 @@
    One of the catalog/*.js files that index.html loads, in order, before
    compatibility.js and the app code; see catalog/common.js. */
 
+/* Torque & driver: the 2022/2023 catalog gives no tightening torques. The
+   only driver it names for a part is the AS screwdriver for the NC/RC
+   Basal Screw AS 025.0055, the screw of NC/RC Variobase for Crown AS
+   (pp.120, 222). */
+
 /* =========================================================================
    STRAUMANN BLT (Bone Level Tapered) — uses the CrossFit® connection
    (SC/NC/RC platforms), entirely different from BLC/BLX's TorcFit®
@@ -149,7 +154,7 @@ const CATALOG_BLT = {
   {label:"NC Variobase® for Crown, Ø3.8mm/H5.5mm (incl. screw 025.2900)", source:"Straumann 2022/2023 p.122", material:"TAN", items:[
     ["GH1mm","022.0027"],["GH2mm","022.0106"],["GH3mm","022.0108"]
   ]},
-  {label:"NC Variobase® for Crown AS (incl. screw 025.0055)", source:"Straumann 2022/2023 p.122", material:"TAN", items:[
+  {label:"NC Variobase® for Crown AS (incl. screw 025.0055)", source:"Straumann 2022/2023 p.122", driver:"AS screwdriver", material:"TAN", items:[
     ["Ø4.1mm, H3.5mm, GH1mm","022.0084"],["Ø4.1mm, H5.5mm, GH1mm","022.0093"]
   ]},
   {label:"NC Variobase® for Bridge/Bar Cylindrical (incl. screw 025.2926 + Cementation Aid 2)", source:"Straumann 2022/2023 p.122", material:"TAN", items:[
@@ -164,7 +169,7 @@ const CATALOG_BLT = {
   {label:"RC Variobase® for Crown (incl. screw)", source:"Straumann 2022/2023 p.149", material:"TAN", items:[
     ["Ø4.5mm, AH3.5mm, GH2mm","022.0103"]
   ]},
-  {label:"RC Variobase® for Crown AS (incl. screw)", source:"Straumann 2022/2023 p.149", material:"TAN", items:[
+  {label:"RC Variobase® for Crown AS (incl. screw)", source:"Straumann 2022/2023 p.149", driver:"AS screwdriver", material:"TAN", items:[
     ["Ø4.7mm, AH3.5mm, GH1mm","022.0087"],["Ø4.7mm, AH5.5mm, GH1mm","022.0096"]
   ]},
   {label:"RC Variobase® C", source:"Straumann 2022/2023 p.149", material:"TAN", items:[
@@ -182,10 +187,17 @@ const CATALOG_BLT = {
     ["For IPS e.max®/CARES® Zirconia Abutments, 8.9mm","025.2906"],
     ["For VITA CAD-Temp®/Cementable Abutments, 7.9mm","025.2908"]
   ]},
+  {label:"RC Basal Screws", source:"Straumann 2022/2023 p.222", material:"TAN", items:[
+    ["For Anatomic/Variobase Crown/Variobase C/Gold crown/bar Abutments, 7.9mm","025.4900"],
+    ["For IPS e.max®/CARES® Zirconia Abutments, 8.2mm","025.4906"],
+    ["For VITA CAD-Temp®/Cementable Abutments, 7.9mm","025.4908"]
+  ]},
   {label:"NC/RC Shared Screws", source:"Straumann 2022/2023 p.119", material:"TAN", items:[
     ["SRBB Bone Level Screw (Variobase Bridge/Bar Cylindrical), 7.9mm","025.2926"],
-    ["Basal Screw AS (Variobase Crown AS), 7.9mm","025.0055"],
     ["Occlusal Screw (Ti/Gold/Burn-out/Variobase copings, Screw-retained Abutments), 3.7mm","023.4763"]
+  ]},
+  {label:"NC/RC Basal Screw AS", source:"Straumann 2022/2023 p.222", driver:"AS screwdriver", material:"TAN", items:[
+    ["Basal Screw AS (Variobase Crown AS), 7.9mm","025.0055"]
   ]},
   {label:"SC Screws", source:"Straumann 2022/2023 p.108", material:"TAN / SST", items:[
     ["Basal Screw B, 7mm","025.0031"],["Polishing Aid","025.0029"]

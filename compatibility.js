@@ -281,7 +281,7 @@ WIZARD_CONFIG.nrs = WIZARD_CONFIG.nas;
 // catalogs are structured identically, just different category contents).
 WIZARD_CONFIG.nzcc = [
   {label:"Cover Screw", options:[{label:"Cover Screw", category:"Cover Screws"}]},
-  {label:"Multi-unit Abutment", options:[{label:"Multi-unit Abutment", category:"Multi-unit Abutments", labelMustExclude:["Screw", "Healing Abutment", "Impression Coping"]}]},
+  {label:"Multi-unit Abutment", options:[{label:"Multi-unit Abutment", category:"Multi-unit Abutments", labelMustExclude:["Screw", "Healing Abutment", "Impression Coping", "Accessories"]}]},
   {label:"Multi-unit Abutment Screw", options:[{label:"Multi-unit Abutment Screw", category:"Multi-unit Abutments", labelMustInclude:"Screw"}]},
   {label:"Impression / Position Locator", options:[{label:"Impression or Position Locator", category:"Impression & Position Locators"}]}
 ];
@@ -361,6 +361,15 @@ MULTI_UNIT_CAP_TRIGGER.nrs = MULTI_UNIT_CAP_TRIGGER.nas;
 MULTI_UNIT_CAP_TRIGGER.blx = MULTI_UNIT_CAP_TRIGGER.blc;
 MULTI_UNIT_CAP_TRIGGER.nact = MULTI_UNIT_CAP_TRIGGER.nrcc;
 MULTI_UNIT_CAP_TRIGGER.npcc = MULTI_UNIT_CAP_TRIGGER.nrcc;
+// NobelZygoma: both systems' multi-unit abutments take the standard
+// titanium multi-unit healing caps (catalog/nobel-zygoma.js).
+MULTI_UNIT_CAP_TRIGGER.nzcc = {
+  category: "Multi-unit Abutments",
+  capLabel: "Healing Cap",
+  capGroupLabel: NOBEL_ZYGOMA_MU_ACCESSORIES.label,
+  capNameFilter: "Healing Cap"
+};
+MULTI_UNIT_CAP_TRIGGER.nzeh = MULTI_UNIT_CAP_TRIGGER.nzcc;
 
 /* Multi-unit temporary/pick-up copings — used for the immediate provisional
    restoration. No confirmed data for Neodent or BLT, so those are left out
@@ -384,6 +393,15 @@ const MULTI_UNIT_TEMP_COPING_CONFIG = {
 MULTI_UNIT_TEMP_COPING_CONFIG.blx = MULTI_UNIT_TEMP_COPING_CONFIG.blc;
 MULTI_UNIT_TEMP_COPING_CONFIG.nact = MULTI_UNIT_TEMP_COPING_CONFIG.nrcc;
 MULTI_UNIT_TEMP_COPING_CONFIG.npcc = MULTI_UNIT_TEMP_COPING_CONFIG.nrcc;
+MULTI_UNIT_TEMP_COPING_CONFIG.nzcc = {
+  category: "Multi-unit Abutments",
+  label: "Temporary Coping",
+  groupLabel: NOBEL_ZYGOMA_MU_ACCESSORIES.label,
+  // Regular coping only: Nobel limits the Snap coping to Multi-unit
+  // Abutment Xeal for CC and TCC, which doesn't clearly include zygoma.
+  nameFilter: "Temporary Coping"
+};
+MULTI_UNIT_TEMP_COPING_CONFIG.nzeh = MULTI_UNIT_TEMP_COPING_CONFIG.nzcc;
 
 /* Resolves an item back to its TRUE home category, even if it was added
    from the All-on-X Components duplicate tab (which carries a different

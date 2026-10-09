@@ -2,6 +2,13 @@
    One of the catalog/*.js files that index.html loads, in order, before
    compatibility.js and the app code; see catalog/common.js. */
 
+/* Torque & driver: the S series brochure gives none. Groups whose article
+   numbers are the same conical connection NP parts listed in the Nobel
+   2024/2025 catalog carry that catalog's icon values: cover screw and
+   bridge healing abutment p.72, bridge impression coping p.70, esthetic
+   abutments p.74, Multi-unit Abutments Xeal p.76, healing cap p.126.
+   S-series-only parts have none. */
+
 /* =========================================================================
    NOBEL BIOCARE S SERIES — a new platform (separate from the existing NP/
    RP/WP conical-connection Nobel systems above) built around ONE prosthetic
@@ -38,7 +45,7 @@
    ========================================================================= */
 const S_SERIES_SHARED = {
 "Cover Screws": [
-  {label:"NP (all implant sizes)", source:"Nobel S series 2026 p.28", material:"Ti", items:[
+  {label:"NP (all implant sizes)", source:"Nobel S series 2026 p.28", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Cover Screw","36649"]
   ]}
 ],
@@ -49,7 +56,7 @@ const S_SERIES_SHARED = {
   {label:"Healing Abutment, Ø5.0mm", source:"Nobel S series 2026 p.28", material:"Ti", items:[
     ["H3.0mm","302043"],["H4.0mm","302044"],["H5.0mm","302045"],["H7.0mm","302046"]
   ]},
-  {label:"Healing Abutment Bridge, Ø4.0mm", source:"Nobel S series 2026 p.28", material:"Ti", items:[
+  {label:"Healing Abutment Bridge, Ø4.0mm", source:"Nobel S series 2026 p.28", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H3.0mm","36864"],["H5.0mm","36865"],["H7.0mm","36866"]
   ]}
 ],
@@ -74,7 +81,7 @@ const S_SERIES_SHARED = {
   {label:"Open Tray, Ø5.0mm", source:"Nobel S series 2026 p.29", material:"POM / Ti", items:[
     ["H10.0mm","302082"],["H14.0mm","302083"]
   ]},
-  {label:"Bridge Open Tray", source:"Nobel S series 2026 p.29", material:"POM / Ti", items:[
+  {label:"Bridge Open Tray", source:"Nobel S series 2026 p.29", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"POM / Ti", items:[
     ["H12.0mm","36930"]
   ]}
 ],
@@ -101,13 +108,13 @@ const S_SERIES_SHARED = {
   ]}
 ],
 "Multi-unit Abutments": [
-  {label:"Multi-unit Abutment Xeal, straight", source:"Nobel S series 2026 p.29", material:"Ti", items:[
+  {label:"Multi-unit Abutment Xeal, straight", source:"Nobel S series 2026 p.29", torque:"35 Ncm", driver:"Multi-unit screwdriver", material:"Ti", items:[
     ["H1.5mm","300171"],["H2.5mm","300174"],["H3.5mm","300177"]
   ]},
-  {label:"17° Multi-unit Abutment Xeal", source:"Nobel S series 2026 p.29", material:"Ti", items:[
+  {label:"17° Multi-unit Abutment Xeal", source:"Nobel S series 2026 p.29", torque:"15 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H2.5mm","300181"],["H3.5mm","300184"]
   ]},
-  {label:"30° Multi-unit Abutment Xeal", source:"Nobel S series 2026 p.29", material:"Ti", items:[
+  {label:"30° Multi-unit Abutment Xeal", source:"Nobel S series 2026 p.29", torque:"15 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H3.5mm","300187"],["H4.5mm","300189"]
   ]},
   /* Verified against Nobel Biocare's official "Conical connection implants
@@ -119,16 +126,16 @@ const S_SERIES_SHARED = {
      cap as "compatible with all Multi-unit Abutments," so it's the correct
      cap for the Xeal MUA line above, same REFs as the other Nobel systems
      already in this tool. */
-  {label:"Multi-unit Healing Cap (2/pkg) — compatible with all Multi-unit Abutments", source:"Nobel 2024/2025 p.126", material:"Ti", items:[
+  {label:"Multi-unit Healing Cap (2/pkg) — compatible with all Multi-unit Abutments", source:"Nobel 2024/2025 p.126", torque:"Hand-tight", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["Ø5.0, H4.1mm","300162"],["Ø6.0, H4.1mm","300164"],["Wide, H4.1mm","300166"],
     ["Ø5.0, H5.5mm","300163"],["Ø6.0, H5.5mm","300165"],["Wide, H5.5mm","300167"]
   ]}
 ],
 "Esthetic Abutments": [
-  {label:"Esthetic Abutment 15°", source:"Nobel S series 2026 p.29", material:"Ti", items:[
+  {label:"Esthetic Abutment 15°", source:"Nobel S series 2026 p.29", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H1.5mm","36667"],["H3.0mm","36668"],["H4.5mm","36250"]
   ]},
-  {label:"Esthetic Abutment", source:"Nobel S series 2026 p.29", material:"Ti", items:[
+  {label:"Esthetic Abutment", source:"Nobel S series 2026 p.29", torque:"35 Ncm", driver:"Unigrip screwdriver", material:"Ti", items:[
     ["H1.5mm","36665"],["H3.0mm","36666"],["H4.5mm","36249"]
   ]}
 ],

@@ -27,11 +27,11 @@ Checked against the Neodent 2026 Product Catalog (CALIT.2040). It confirms 180 o
 - [ ] ⚠ **Neotorque coping screw for GM Abutment.** The 2026 catalog (p.18) prints 116.266 for both the titanium and the Neotorque screw. The app shows the Neotorque one as 116.267, which the catalog doesn't contain. Ask Neodent for the Neotorque number.
 - [ ] **DirectFit screw 116.303** isn't in the 2026 catalog, which only links to a DirectFit Screw DME file. Confirm the article number.
 
-## Gaps (not errors, nothing changed)
+## Gaps (filled October 2026)
 
-- **Zygoma healing caps and temporary copings.** Nobel's catalog says zygoma multi-unit abutments use the standard multi-unit prosthetic parts (p.122–126), including the titanium healing caps 300162–300167 and temporary coping 29046. The app doesn't offer these for zygoma cases.
-- **BLT:** no RC basal screw in Replacement Screws.
-- **BLC/BLX:** the WB ∅6.0mm healing abutment group is missing its GH 2.5 versions (064.8217S/064.8218S, iEXCEL p.27).
+- [x] **Zygoma healing caps and temporary coping.** Added to both zygoma systems: titanium healing caps 300162–300167 and temporary coping 29046 (Nobel 2024/2025 p.126, "compatible with all multi-unit abutments except multi-unit abutment Brånemark WP"; the zygoma abutments are all RP). The case builder and All-on-X builder now offer them. The Snap coping 38915 is left out: p.126 limits it to Multi-unit Abutment Xeal for CC and TCC.
+- [x] **BLT RC basal screws** 025.4900, 025.4906, 025.4908 added to Replacement Screws (Straumann 2022/2023 p.222).
+- [x] **BLC/BLX WB ∅6.0mm healing abutment** GH 2.5 versions 064.8217S/064.8218S added (iEXCEL 2026 p.27).
 
 ## Repository housekeeping (PDF removal)
 
