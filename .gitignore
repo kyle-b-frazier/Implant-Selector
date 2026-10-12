@@ -1,0 +1,4 @@
+# Catalogs and surgical manuals are uploaded for reading only and must never be
+# published with the site (see FOLLOW-UP.md).
+*.pdf
+*.PDF

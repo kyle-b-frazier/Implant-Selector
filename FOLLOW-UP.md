@@ -33,9 +33,33 @@ Checked against the Neodent 2026 Product Catalog (CALIT.2040). It confirms 180 o
 - [x] **BLT RC basal screws** 025.4900, 025.4906, 025.4908 added to Replacement Screws (Straumann 2022/2023 p.222).
 - [x] **BLC/BLX WB ∅6.0mm healing abutment** GH 2.5 versions 064.8217S/064.8218S added (iEXCEL 2026 p.27).
 
-## Drill sequences (not built yet)
+## Drill sequences (planned, not built yet)
 
-- [ ] **Drilling protocol for each implant size.** The catalogs list the drills but not which ones to use, in what order, for each implant diameter, length and bone density. That's in each maker's surgical manual: Straumann's "Basic information on the surgical procedures" for BLX/BLC and BLT, Nobel's procedure manuals for NobelActive, NobelReplace CC, NobelParallel CC, the S series and NobelZygoma, and Neodent's GM surgical manual. Upload those and the app can show the sequence for the implant picked, citing the manual page the way it cites catalog pages now.
+Goal: when an implant is picked, show its drilling sequence: which drills, in what order, for that diameter and length (and bone density, where the maker distinguishes it). Each sequence cites its source page, as part numbers cite catalog pages now.
+
+**Plan for the next session**
+
+1. **Upload the six catalogs again** (the ones listed at the top of this file). Some may already have complete drill sequence charts. For each implant line, check whether its catalog gives the full sequence for every diameter (and, where the maker distinguishes it, by bone density and length or depth). Use the catalog wherever it's complete.
+2. **Upload surgical manuals only where the catalog falls short.** The most needed is one per line:
+
+   | Line | Systems in the app | Manual |
+   |---|---|---|
+   | Straumann BLX | BLX | BLX surgical procedure manual |
+   | Straumann BLC | BLC | BLC surgical procedure manual (own profile drills, so not covered by the BLX one) |
+   | Straumann BLT | BLT | Bone Level Tapered surgical procedure manual |
+   | Nobel conical connection | NobelActive, NobelReplace CC, NobelParallel CC | Procedures manual(s) covering all three (their drill sequences differ) |
+   | Nobel S series | NobelActive S, NobelParallel S, NobelReplace S | S series surgical procedure manual |
+   | NobelZygoma | NobelZygoma 0°, 45° | NobelZygoma surgical procedure manual (TiUltra and TiUnite drills) |
+   | Neodent | GM Helix | Grand Morse / Helix GM surgical manual |
+
+   Get the current edition from the rep or the makers' IFU sites (ifu.straumann.com, ifu.nobelbiocare.com, Neodent's IFU page).
+3. **Build it.** Put the sequence data in `catalog/` with a `source` (document + page) on every entry, linked to the drill REFs already in the catalog. Show it in the case builder and catalog for the implant picked. Extend the tests so every implant size either has a sourced sequence or is listed here as missing. Nothing goes in from memory: a size with no sourced sequence shows none.
+
+**Rules for the PDFs:** they're for reading only and never go in the repository (the site is public, and the makers' terms generally don't allow republishing). `.gitignore` already excludes `*.pdf`. The app takes facts (drill order, diameters, depths) with page citations, never copied text, tables or drawings.
+
+- [ ] Catalogs re-uploaded and checked for drill sequences
+- [ ] Manuals uploaded for the lines the catalogs don't cover
+- [ ] Drill sequences built, sourced and tested
 
 ## Barcode scanning
 
